@@ -14,10 +14,11 @@
     "test": "pnpm -r test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "program:build": "anchor build",
-    "program:test": "anchor build && cargo test -p manifest && cargo test -p manifest-tests",
+    "program:build": "anchor build && node packages/sdk/scripts/sync-idl.mjs",
+    "program:test": "anchor build && node packages/sdk/scripts/sync-idl.mjs && cargo test -p manifest && cargo test -p manifest-tests",
     "program:lint": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings",
-    "check-env": "pnpm --filter @manifest/scripts check-env"
+    "check-env": "pnpm --filter @manifest/scripts check-env",
+    "idl:sync": "node packages/sdk/scripts/sync-idl.mjs"
   },
   "devDependencies": {
     "@eslint/js": "9.39.5",

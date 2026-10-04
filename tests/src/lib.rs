@@ -41,4 +41,7 @@ mod pickup;
 mod disputes;
 
 #[cfg(test)]
+mod layout;
+
+#[cfg(test)]
 mod smoke;

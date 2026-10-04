@@ -54,7 +54,9 @@ pnpm install                  # JS deps
 anchor build                  # program -> target/deploy/manifest.so + target/idl + target/types
 cargo test -p manifest        # program unit tests (math, validation)
 cargo test -p manifest-tests  # LiteSVM program tests (needs anchor build first)
-pnpm program:test             # all of the above
+pnpm program:test             # all of the above (+ IDL sync into the SDK)
+pnpm idl:sync                 # copy target/idl + target/types into packages/sdk/src/idl
+pnpm --filter @manifest/scripts e2e:local   # full lifecycle via the SDK on solana-test-validator
 pnpm program:lint             # cargo fmt --check + clippy -D warnings
 pnpm -r build                 # sdk, scripts (typecheck), app (next build)
 pnpm -r lint && pnpm -r typecheck && pnpm -r test
