@@ -168,6 +168,54 @@ config.arbitrator` (the Squads vault pays the rent, so it needs a little SOL).
 - **sBPF v3:** Solana is making v3 the only format accepted for new deployments
   (SIMD-0500, mainnet Nov 2026), so the Anchor 1.2 default is the right target.
 
+## Frontend (Phase 3)
+
+**Phantom Connect findings** (docs.phantom.com, checked Oct 4, 2026; spec 9.1):
+
+1. **`signAllTransactions` and sign-only `signTransaction` are not supported for embedded
+   (Google/Apple) wallets**; only `signAndSendTransaction`
+   (docs.phantom.com/sdks/react-sdk/sign-and-send-transaction). Every user action is one
+   transaction. This also rules out a plain Kora flow for embedded wallets.
+2. **Dapp fee payer is possible**: `signAndSendTransaction(tx, { presignTransaction })`
+   lets our backend co-sign as fee payer for embedded wallets. That is the gasless path to
+   evaluate in Phase 4 (gas tank as fee payer) instead of Kora.
+3. **Embedded wallets have a $1,000 per app per user per day spending limit**
+   (docs.phantom.com/phantom-connect#spending-limits). The booking summary warns when an
+   embedded-wallet booking exceeds $1,000 and recommends the Phantom app/extension. The
+   SDK also exposes `usePhantom().errors.spendingLimit`.
+4. **Portal settings:** allowed origins (localhost, Vercel preview, production) and the
+   redirect URL `/auth/callback`. Domain verification isn't required in development.
+   **Phantom Portal is not accepting new applications** (warning on the React SDK docs);
+   without an App ID the app runs in extension-only mode (`providers: ["injected"]`).
+   Phantom injects its provider only on https or localhost.
+
+**Other decisions:**
+
+- The wallet SDK is mounted lazily _beside_ the app (it reports state through a context),
+  not around it, so every page still server-renders.
+- **Localnet-only test wallet** (keypair in localStorage) exists so the full app can be
+  exercised by automated browser tests; it signs real transactions against a local
+  validator and is never enabled on devnet/mainnet (`config.burnerWallet`).
+- Every transaction is **simulated before the wallet prompt** so program errors come back as
+  friendly messages (SDK `friendlyError`) instead of a raw wallet failure.
+- Booking amounts come from `quoteBooking` in the SDK, which mirrors the program's
+  rounding exactly (unit-tested against the Rust numbers).
+- Evidence: the forwarder signs `manifest-evidence:<consignment>:<sha256 of fields and
+photo hashes>:<ts>`; the server verifies the signature against the onchain forwarder,
+  strips EXIF/resizes with sharp, builds the canonical manifest and returns its SHA-256,
+  which the client writes onchain with `record_receipt`. Storage: Pinata (public IPFS) when
+  `PINATA_JWT` + `PINATA_GATEWAY` are set, else `.data/` on local disk (dev only).
+  Pinata's latest manifest is found by file name (`manifest-<consignment>.json`); the
+  Pinata path is untested until a JWT is available.
+- Pickup proof: the holder signs `manifest-pickup:<consignment>:<nonce>:<ts>`; the QR
+  payload is verified client-side by the forwarder (signature, 10-minute freshness,
+  current ticket holder, container arrived, freight funded), with
+  `POST /api/pickup/verify` as a server fallback.
+- Plain `<img>` is used only for data-URL QR codes and evidence photos (IPFS/local URLs);
+  static illustrations use `next/image`.
+- Verified in Playwright (Chromium 1194 / `@playwright/test` 1.56.1): the full two-browser
+  lifecycle passes on a local validator (`app/e2e/`).
+
 ## Pending decisions (later phases)
 
 - Phantom embedded-wallet capabilities: `signAllTransactions`, sign-only, daily limits (Phase 3).

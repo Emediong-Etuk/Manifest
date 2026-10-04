@@ -10,12 +10,14 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
-| 3: Frontend core             | Oct 7–9   | 🔨 In progress                                         |
-| 4: Integrations              | Oct 9–10  | —                                                      |
+| 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
+| 4: Integrations              | Oct 9–10  | ⏳ Waiting for Greg's go-ahead                         |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
 
 ## Phase 3 plan (Oct 4–9): frontend core
+
+All 7 steps done ✅ (verified on a local validator; devnet pending the deploy).
 
 1. App foundations: env config, connection/program singletons, TanStack Query, design
    tokens + base components (Button, Card, Stamp, RouteLine, MoneyInput, AddressInput,
@@ -107,6 +109,26 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 3 (Oct 4)
+
+- Wallets: Phantom Connect (Google/Apple + extension with an App ID; extension-only
+  without), lazily mounted; localnet-only test wallet for automated tests.
+- Pages: `/`, `/containers`, `/c/[id]`, `/book/[id]`, `/me`, `/s/[id]`, `/forwarder`,
+  `/forwarder/c/[id]`, `/f/[id]`, `/verify`, `/auth/callback`, 404.
+- Shipment actions: approve (confirmation sheet), reject, refund, auto-approve, top-up,
+  ticket transfer (confirm-last-4), dispute, pickup QR (signed, refreshes every 5 min),
+  confirm pickup, claim freight.
+- Forwarder console: register, guarantee deposit/withdraw with coverage meter, open
+  container, evidence upload + receipt, close/load (ISO 6346 + B/L hash)/arrive/cancel,
+  pickup scanner (camera or paste), freight claims.
+- APIs: `POST /api/evidence`, `GET /api/evidence/[c]`, `GET /api/files/[name]`,
+  `POST /api/pickup/verify`.
+- **Playwright: the full two-browser lifecycle passes on a local validator** (forwarder
+  registers → trader books → receipt with photo → verified evidence → approval → load →
+  arrive → pickup code checked → pickup confirmed).
+- Phantom findings recorded in DECISIONS.md (no sign-only for embedded wallets, $1,000/day
+  limit, presign fee-payer option, Portal paused).
+
 ### Phase 2 (Oct 4)
 
 - 10 more instructions (26 total): `top_up_freight`, `mark_loaded` (ISO 6346 + check
@@ -161,16 +183,15 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 3, step 1 (app foundations).
+- Nothing. Waiting for Greg (devnet keys, Phantom App ID answer, go-ahead for Phase 4).
 
 ## Next
 
 1. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` (about 15 minutes).
-2. **Phase 3, frontend core:** Phantom Connect, design system, trader pages (`/`,
-   `/containers`, `/c/[id]`, `/book`, `/me`, `/s/[id]`), forwarder pages (dashboard,
-   receipt with evidence pipeline, load/arrive, pickup scanner, claim), `/f/[id]`,
-   `/verify`, `TxButton`. Until devnet is live, the app can be developed against
-   `solana-test-validator` with the e2e world.
+2. **Phase 4, integrations:** devnet faucet + gas tank (possibly as fee payer via Phantom's
+   `presignTransaction`), crank + Vercel cron, OG images (container previews for WhatsApp,
+   Cargo Ticket metadata + image), Solana Actions/Blinks, Squads scripts + `/admin`,
+   seed world.
 
 ## Blockers
 

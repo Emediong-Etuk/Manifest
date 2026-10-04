@@ -15,11 +15,12 @@ export function QrDisplay({ value, label }: { value: string; label: string }) {
       .then(setSrc)
       .catch(() => setSrc(null));
   }, [value]);
-  // Data-URL QR code: next/image adds nothing here.
-  // eslint-disable-next-line @next/next/no-img-element
-  return src ? (
+  if (!src) return null;
+  return (
+    // Data-URL QR code: next/image adds nothing here.
+    // eslint-disable-next-line @next/next/no-img-element
     <img src={src} alt={label} className="mx-auto w-full max-w-xs rounded-lg border-2 border-ink" />
-  ) : null;
+  );
 }
 
 /** Camera QR scanner (lazy-loads @zxing/browser only when opened). */

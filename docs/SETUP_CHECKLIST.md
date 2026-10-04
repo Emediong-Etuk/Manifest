@@ -27,7 +27,9 @@ variables) for cloud sessions.
 
 ## Before Phase 3 (frontend, ~Oct 7)
 
-- [ ] **Phantom Portal** (<https://phantom.com/portal>): create an app, copy the **App ID**
+- [ ] **Phantom Portal** (<https://phantom.com/portal>). Note: Phantom has paused new
+      Portal applications; if you already have a Portal app, use it. Without an App ID the
+      app works with the Phantom extension/app only (no Google/Apple sign-in). Copy the **App ID**
       → `NEXT_PUBLIC_PHANTOM_APP_ID`. Add allowed origins and redirect URLs for
       `http://localhost:3000`, the Vercel preview domain, and the production domain
       (redirect path `/auth/callback`).

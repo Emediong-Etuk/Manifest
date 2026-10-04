@@ -57,6 +57,8 @@ cargo test -p manifest-tests  # LiteSVM program tests (needs anchor build first)
 pnpm program:test             # all of the above (+ IDL sync into the SDK)
 pnpm idl:sync                 # copy target/idl + target/types into packages/sdk/src/idl
 pnpm --filter @manifest/scripts e2e:local   # full lifecycle via the SDK on solana-test-validator
+pnpm --filter @manifest/scripts seed:local  # local mint + config for UI work
+pnpm --filter @manifest/app e2e             # Playwright two-browser lifecycle (see app/e2e/README.md)
 pnpm program:lint             # cargo fmt --check + clippy -D warnings
 pnpm -r build                 # sdk, scripts (typecheck), app (next build)
 pnpm -r lint && pnpm -r typecheck && pnpm -r test

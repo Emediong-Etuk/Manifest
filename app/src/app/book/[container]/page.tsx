@@ -134,11 +134,11 @@ export default function BookPage() {
         }
         title={`Book ${decodeFixed(c.code)}`}
       >
-        <ol className="flex gap-2 text-sm" aria-label="Booking steps">
+        <ol className="flex flex-wrap gap-1.5 text-xs sm:text-sm" aria-label="Booking steps">
           {STEPS.map((s, i) => (
             <li
               key={s}
-              className={`rounded-full border px-3 py-1 ${i === step ? "border-accent font-semibold text-accent" : i < step ? "border-stamp text-stamp" : "border-rule text-ink-muted"}`}
+              className={`whitespace-nowrap rounded-full border px-2.5 py-1 ${i === step ? "border-accent font-semibold text-accent" : i < step ? "border-stamp text-stamp" : "border-rule text-ink-muted"}`}
             >
               {i + 1}. {s}
             </li>

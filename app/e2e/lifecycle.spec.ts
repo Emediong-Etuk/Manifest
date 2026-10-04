@@ -131,13 +131,11 @@ test("trader and forwarder complete a shipment end to end", async ({ browser }) 
   await fwd.getByRole("button", { name: "Close bookings" }).click();
   await expectToast(fwd, "Bookings closed");
   await fwd.getByLabel("Container number (ISO 6346)").fill("CSQU3054383");
-  await fwd
-    .getByLabel("Bill of lading (file)")
-    .setInputFiles({
-      name: "bl.pdf",
-      mimeType: "application/pdf",
-      buffer: Buffer.from("bill of lading"),
-    });
+  await fwd.getByLabel("Bill of lading (file)").setInputFiles({
+    name: "bl.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from("bill of lading"),
+  });
   await fwd.getByRole("button", { name: "Mark loaded" }).click();
   await expectToast(fwd, "Container loaded");
   await fwd.getByRole("button", { name: /Mark arrived/ }).click();
