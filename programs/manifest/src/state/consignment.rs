@@ -18,6 +18,19 @@ pub enum ConsignmentStatus {
     Compensated,
 }
 
+/// How the arbitrator settled a dispute.
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Copy, PartialEq, Eq, Debug)]
+pub enum Resolution {
+    /// Pre-approval: refund all escrow to the trader.
+    RefundEscrow,
+    /// Pre-approval: run the normal approval settlement.
+    ForceApprove,
+    /// Return to the status before the dispute.
+    Dismiss,
+    /// Post-approval: compensate the ticket holder from the forwarder's bond.
+    SlashBond,
+}
+
 #[account]
 #[derive(InitSpace)]
 pub struct Consignment {

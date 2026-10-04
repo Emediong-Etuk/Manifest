@@ -137,3 +137,69 @@ pub struct GoodsRejected {
     pub reason: u8,
     pub timestamp: i64,
 }
+
+#[event]
+pub struct FreightToppedUp {
+    pub consignment: Pubkey,
+    pub payer: Pubkey,
+    pub amount: u64,
+    pub freight_escrowed: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct ContainerLoaded {
+    pub container: Pubkey,
+    pub container_number: [u8; 11],
+    pub bl_hash: [u8; 32],
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct ContainerArrived {
+    pub container: Pubkey,
+    pub on_time: bool,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct ContainerCompleted {
+    pub container: Pubkey,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct PickupConfirmed {
+    pub consignment: Pubkey,
+    pub holder: Pubkey,
+    pub freight_paid: u64,
+    pub excess_refunded: u64,
+    pub on_time: bool,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct FreightClaimed {
+    pub consignment: Pubkey,
+    pub holder: Pubkey,
+    pub freight_paid: u64,
+    pub excess_refunded: u64,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct DisputeOpened {
+    pub consignment: Pubkey,
+    pub holder: Pubkey,
+    pub reason: u8,
+    pub timestamp: i64,
+}
+
+#[event]
+pub struct DisputeResolved {
+    pub consignment: Pubkey,
+    pub resolution: crate::state::Resolution,
+    /// Refunded (RefundEscrow) or slashed (SlashBond) amount; 0 otherwise.
+    pub amount: u64,
+    pub timestamp: i64,
+}

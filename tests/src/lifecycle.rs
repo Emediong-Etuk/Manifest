@@ -84,3 +84,81 @@ fn three_traders_book_receive_and_settle() {
     let treasury_ata = Svm::ata(&w.treasury.pubkey(), &w.usd, &spl_token_id());
     assert_eq!(w.s.balance(&treasury_ata), 2 * 18 * USD);
 }
+
+#[test]
+fn full_lifecycle_three_traders_to_completed_container() {
+    let mut w = World::new();
+    let f = w.forwarder("Eastline Cargo", 5_000 * USD);
+    let c = w.container(&f);
+    let traders: Vec<Trader> = (0..3).map(|_| w.trader(10_000 * USD)).collect();
+    let ks: Vec<_> = traders.iter().map(|t| w.book(t, c)).collect();
+
+    // Receipts: 1.000, 1.250 and 1.100 CBM measured.
+    for (k, measured) in ks.iter().zip([1_000u32, 1_250, 1_100]) {
+        w.record_receipt_tx(&f, *k, measured, 10).unwrap();
+        w.assert_vault_matches_state(k);
+    }
+
+    // Two manual approvals, one auto-approval by the crank.
+    for (t, k) in traders.iter().zip(&ks).take(2) {
+        let kp = t.kp.insecure_clone();
+        w.approve_tx(&kp, *k).unwrap();
+    }
+    w.s.warp(REVIEW_WINDOW + 1);
+    let crank = w.s.funded_keypair();
+    w.auto_approve_tx(&crank, ks[2]).unwrap();
+    for k in &ks {
+        assert_eq!(w.consignment_state(k).status, ConsignmentStatus::Approved);
+        w.assert_vault_matches_state(k);
+    }
+
+    // Voyage.
+    let fk = f.kp.insecure_clone();
+    w.close_booking_tx(&fk, &f, c).unwrap();
+    w.ship_tx(&f, c, true).unwrap();
+    assert_eq!(w.container_state(&c).status, ContainerStatus::Loaded);
+    w.s.warp(45 * DAY);
+    w.ship_tx(&f, c, false).unwrap();
+    assert_eq!(w.container_state(&c).status, ContainerStatus::Arrived);
+
+    // Pickups.
+    let freights = [380 * USD, 475 * USD, 418 * USD];
+    let fwd_ata = Svm::ata(&f.kp.pubkey(), &w.usd, &spl_token_id());
+    let mut paid = 0;
+    for (i, (t, k)) in traders.iter().zip(&ks).enumerate() {
+        let kp = t.kp.insecure_clone();
+        w.confirm_pickup_tx(&kp, *k).unwrap();
+        paid += freights[i];
+        assert_eq!(w.s.balance(&fwd_ata), paid);
+        assert_eq!(w.consignment_state(k).status, ConsignmentStatus::Delivered);
+        w.assert_vault_matches_state(k);
+        w.assert_bond_covers(&f);
+        let expected = if i == 2 {
+            ContainerStatus::Completed
+        } else {
+            ContainerStatus::Arrived
+        };
+        assert_eq!(w.container_state(&c).status, expected);
+    }
+
+    let cs = w.container_state(&c);
+    assert_eq!(cs.active_count, 3);
+    assert_eq!(cs.approved_count, 3);
+    assert_eq!(cs.settled_count, 3);
+    let fs = w.forwarder_state(&f);
+    assert_eq!(fs.stats_consignments_delivered, 3);
+    assert_eq!(fs.stats_on_time, 3);
+    assert_eq!(fs.stats_volume, 3 * GOODS);
+    assert_eq!(fs.locked_coverage, 0);
+    assert_eq!(fs.bond_balance, 5_000 * USD);
+
+    // Money conservation: each trader paid goods + fee + freight due; nothing stuck.
+    for (t, freight) in traders.iter().zip(freights) {
+        assert_eq!(
+            w.s.balance(&t.ata),
+            10_000 * USD - GOODS - 18 * USD - freight
+        );
+    }
+    let treasury_ata = Svm::ata(&w.treasury.pubkey(), &w.usd, &spl_token_id());
+    assert_eq!(w.s.balance(&treasury_ata), 3 * 18 * USD);
+}

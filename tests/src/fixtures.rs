@@ -607,3 +607,293 @@ pub fn compute_budget_program_id() -> Pubkey {
         .parse()
         .unwrap()
 }
+
+// ---------------------------------------------------------------- shipping, pickup, disputes
+
+pub const CONTAINER_NUMBER: [u8; 11] = *b"CSQU3054383";
+pub const BL_HASH: [u8; 32] = [9u8; 32];
+
+impl World {
+    pub fn ship_tx(&mut self, f: &Fwd, container: Pubkey, load: bool) -> TxResult {
+        let accounts = manifest::accounts::ShipContainer {
+            authority: f.kp.pubkey(),
+            config: config_pda(),
+            forwarder: f.pda,
+            container,
+        };
+        let ix = if load {
+            Svm::ix(
+                manifest::instruction::MarkLoaded {
+                    container_number: CONTAINER_NUMBER,
+                    bl_hash: BL_HASH,
+                },
+                accounts,
+            )
+        } else {
+            Svm::ix(manifest::instruction::MarkArrived {}, accounts)
+        };
+        self.s.send(&[ix], &f.kp, &[])
+    }
+
+    pub fn mark_loaded_with(
+        &mut self,
+        f: &Fwd,
+        container: Pubkey,
+        container_number: [u8; 11],
+        bl_hash: [u8; 32],
+    ) -> TxResult {
+        let ix = Svm::ix(
+            manifest::instruction::MarkLoaded {
+                container_number,
+                bl_hash,
+            },
+            manifest::accounts::ShipContainer {
+                authority: f.kp.pubkey(),
+                config: config_pda(),
+                forwarder: f.pda,
+                container,
+            },
+        );
+        self.s.send(&[ix], &f.kp, &[])
+    }
+
+    /// Close (forwarder), load and arrive.
+    pub fn sail(&mut self, f: &Fwd, container: Pubkey) {
+        let kp = f.kp.insecure_clone();
+        if self.container_state(&container).status == manifest::state::ContainerStatus::Open {
+            self.close_booking_tx(&kp, f, container).unwrap();
+        }
+        self.ship_tx(f, container, true).unwrap();
+        self.ship_tx(f, container, false).unwrap();
+    }
+
+    pub fn top_up_tx(
+        &mut self,
+        payer: &Keypair,
+        payer_ata: Pubkey,
+        consignment: Pubkey,
+        amount: u64,
+    ) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let ix = Svm::ix(
+            manifest::instruction::TopUpFreight { amount },
+            manifest::accounts::TopUpFreight {
+                payer: payer.pubkey(),
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                payer_token_account: payer_ata,
+                token_program: spl_token_id(),
+            },
+        );
+        self.s.send(&[ix], payer, &[])
+    }
+
+    pub fn confirm_pickup_tx(&mut self, holder: &Keypair, consignment: Pubkey) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let fwd: manifest::state::Forwarder = self.s.account(&cs.forwarder);
+        let ix = Svm::ix(
+            manifest::instruction::ConfirmPickup {},
+            manifest::accounts::ConfirmPickup {
+                holder: holder.pubkey(),
+                config: config_pda(),
+                forwarder: cs.forwarder,
+                authority: fwd.authority,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                forwarder_token_account: Svm::ata(&fwd.authority, &c.mint, &spl_token_id()),
+                holder_token_account: Svm::ata(&holder.pubkey(), &c.mint, &spl_token_id()),
+                cargo_ticket_mint: c.cargo_ticket_mint,
+                holder_ticket_account: Svm::ata(
+                    &holder.pubkey(),
+                    &c.cargo_ticket_mint,
+                    &token_2022_id(),
+                ),
+                token_program: spl_token_id(),
+                token_2022_program: token_2022_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&with_cu_limit(ix), holder, &[])
+    }
+
+    pub fn claim_freight_tx(&mut self, f: &Fwd, consignment: Pubkey, holder: Pubkey) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let ix = Svm::ix(
+            manifest::instruction::ClaimFreightAfterGrace {},
+            manifest::accounts::ClaimFreightAfterGrace {
+                authority: f.kp.pubkey(),
+                config: config_pda(),
+                forwarder: f.pda,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                forwarder_token_account: Svm::ata(&f.kp.pubkey(), &c.mint, &spl_token_id()),
+                holder,
+                holder_token_account: Svm::ata(&holder, &c.mint, &spl_token_id()),
+                cargo_ticket_mint: c.cargo_ticket_mint,
+                holder_ticket_account: Svm::ata(&holder, &c.cargo_ticket_mint, &token_2022_id()),
+                ticket_authority: ticket_authority_pda(),
+                token_program: spl_token_id(),
+                token_2022_program: token_2022_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&with_cu_limit(ix), &f.kp, &[])
+    }
+
+    pub fn open_dispute_tx(
+        &mut self,
+        holder: &Keypair,
+        consignment: Pubkey,
+        reason: u8,
+    ) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let ix = Svm::ix(
+            manifest::instruction::OpenDispute { reason },
+            manifest::accounts::OpenDispute {
+                holder: holder.pubkey(),
+                config: config_pda(),
+                forwarder: cs.forwarder,
+                container: c.container,
+                consignment,
+                cargo_ticket_mint: c.cargo_ticket_mint,
+                holder_ticket_account: Svm::ata(
+                    &holder.pubkey(),
+                    &c.cargo_ticket_mint,
+                    &token_2022_id(),
+                ),
+                token_2022_program: token_2022_id(),
+            },
+        );
+        self.s.send(&[ix], holder, &[])
+    }
+
+    pub fn resolve_refund_tx(&mut self, arbitrator: &Keypair, consignment: Pubkey) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let ix = Svm::ix(
+            manifest::instruction::ResolveRefundEscrow {},
+            manifest::accounts::ResolveRefundEscrow {
+                arbitrator: arbitrator.pubkey(),
+                config: config_pda(),
+                forwarder: cs.forwarder,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                trader: c.trader,
+                trader_token_account: Svm::ata(&c.trader, &c.mint, &spl_token_id()),
+                token_program: spl_token_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&[ix], arbitrator, &[])
+    }
+
+    pub fn resolve_force_approve_tx(
+        &mut self,
+        arbitrator: &Keypair,
+        consignment: Pubkey,
+    ) -> TxResult {
+        let accounts = self.settle_accounts(&arbitrator.pubkey(), consignment);
+        let ix = Svm::ix(manifest::instruction::ResolveForceApprove {}, accounts);
+        self.s.send(&with_cu_limit(ix), arbitrator, &[])
+    }
+
+    pub fn resolve_dismiss_tx(&mut self, arbitrator: &Keypair, consignment: Pubkey) -> TxResult {
+        let ix = Svm::ix(
+            manifest::instruction::ResolveDismiss {},
+            manifest::accounts::ResolveDismiss {
+                arbitrator: arbitrator.pubkey(),
+                config: config_pda(),
+                consignment,
+            },
+        );
+        self.s.send(&[ix], arbitrator, &[])
+    }
+
+    pub fn resolve_slash_tx(
+        &mut self,
+        arbitrator: &Keypair,
+        consignment: Pubkey,
+        holder: Pubkey,
+        amount: u64,
+    ) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let fwd: manifest::state::Forwarder = self.s.account(&cs.forwarder);
+        let ix = Svm::ix(
+            manifest::instruction::ResolveSlashBond { amount },
+            manifest::accounts::ResolveSlashBond {
+                arbitrator: arbitrator.pubkey(),
+                config: config_pda(),
+                forwarder: cs.forwarder,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                bond_mint: fwd.bond_mint,
+                bond_vault: fwd.bond_vault,
+                holder,
+                holder_token_account: Svm::ata(&holder, &c.mint, &spl_token_id()),
+                holder_bond_token_account: None,
+                cargo_ticket_mint: c.cargo_ticket_mint,
+                holder_ticket_account: Svm::ata(&holder, &c.cargo_ticket_mint, &token_2022_id()),
+                ticket_authority: ticket_authority_pda(),
+                token_program: spl_token_id(),
+                bond_token_program: spl_token_id(),
+                token_2022_program: token_2022_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&with_cu_limit(ix), arbitrator, &[])
+    }
+
+    /// Transfer the Cargo Ticket from `from` to `to` (creating `to`'s Token-2022 ATA).
+    pub fn transfer_ticket(
+        &mut self,
+        from: &Keypair,
+        to: &Pubkey,
+        consignment: Pubkey,
+    ) -> TxResult {
+        let ticket = self.consignment_state(&consignment).cargo_ticket_mint;
+        let program = token_2022_id();
+        let create = anchor_spl::associated_token::spl_associated_token_account::instruction::create_associated_token_account_idempotent(
+            &from.pubkey(),
+            to,
+            &ticket,
+            &program,
+        );
+        let transfer = anchor_spl::token_2022::spl_token_2022::instruction::transfer_checked(
+            &program,
+            &Svm::ata(&from.pubkey(), &ticket, &program),
+            &ticket,
+            &Svm::ata(to, &ticket, &program),
+            &from.pubkey(),
+            &[],
+            1,
+            0,
+        )
+        .unwrap();
+        self.s.send(&[create, transfer], from, &[])
+    }
+
+    /// Book, receive and approve one consignment; returns it.
+    pub fn approved(&mut self, f: &Fwd, container: Pubkey, t: &Trader, measured: u32) -> Pubkey {
+        let k = self.book(t, container);
+        self.record_receipt_tx(f, k, measured, 12).unwrap();
+        let kp = t.kp.insecure_clone();
+        self.approve_tx(&kp, k).unwrap();
+        k
+    }
+}

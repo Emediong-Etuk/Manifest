@@ -9,11 +9,32 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | ---------------------------- | --------- | ------------------------------------------------------ |
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
-| 2: Program complete + devnet | Oct 6–7   | ⏳ Waiting for Greg's go-ahead                         |
+| 2: Program complete + devnet | Oct 6–7   | 🔨 In progress                                         |
 | 3: Frontend core             | Oct 7–9   | —                                                      |
 | 4: Integrations              | Oct 9–10  | —                                                      |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
+
+## Phase 2 plan (Oct 4–7): program complete + devnet
+
+1. ISO 6346 validation (format + check digit) in program utils.
+2. `top_up_freight`, `mark_loaded`, `mark_arrived` + tests.
+3. `confirm_pickup` (holder proves ticket ownership, burns it), `claim_freight_after_grace`
+   (permanent-delegate burn) + forwarder stats + container completion + tests, including
+   Cargo Ticket transfer (buyer picks up, seller can't).
+4. `open_dispute` (post-arrival window or overdue past ETA) and dispute resolution:
+   RefundEscrow / ForceApprove / Dismiss / SlashBond + tests.
+5. Full lifecycle test (3 traders through pickup → Completed) and the rest of the 5.7 matrix.
+6. Security pass: autofixer, Blueshift checklist, `docs/SECURITY.md` threat model.
+7. `@manifest/sdk`: IDL copy script, PDAs, account fetchers (memcmp offsets from IDL),
+   instruction builders, `deriveStage` / `allowedActions`, formatting, ISO 6346, errors,
+   evidence hashing; Vitest.
+8. Scripts: `create-demo-mint`, `init-config`; verified against a local validator.
+9. CI: program build + LiteSVM tests job.
+10. Devnet deploy + `init-config` on devnet. ⛔ blocked on durable funded keypairs.
+
+Risks: account-count/CU of pickup and slash; holder detection via token accounts;
+devnet deploy blocked on keys and SOL.
 
 ## Phase 1 plan (Oct 4–6): program core
 
@@ -94,7 +115,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing. Waiting for Greg to confirm Phase 2.
+- Phase 2, step 1.
 
 ## Next (Phase 2: program complete + devnet)
 

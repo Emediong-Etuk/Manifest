@@ -72,4 +72,24 @@ pub enum ManifestError {
     CounterOverflow,
     #[msg("Token-2022 mint has an extension that is unsafe for escrow")]
     UnsupportedMintExtension,
+    #[msg("Container number must be a valid ISO 6346 code")]
+    InvalidContainerNumber,
+    #[msg("Every active consignment must be approved before loading")]
+    ConsignmentsNotApproved,
+    #[msg("Freight escrow does not cover the freight due; top up first")]
+    FreightShort,
+    #[msg("Top-up exceeds the freight shortfall")]
+    TopUpTooLarge,
+    #[msg("Signer does not hold this consignment's Cargo Ticket")]
+    NotTicketHolder,
+    #[msg("The pickup grace period has not ended")]
+    PickupGraceNotOver,
+    #[msg("Disputes can be opened after arrival within the dispute window, or once overdue")]
+    DisputeNotAllowed,
+    #[msg("This resolution does not apply to the dispute's stage")]
+    InvalidResolution,
+    #[msg("Signer is not the arbitrator")]
+    NotArbitrator,
+    #[msg("A bill-of-lading hash is required")]
+    MissingBillOfLading,
 }

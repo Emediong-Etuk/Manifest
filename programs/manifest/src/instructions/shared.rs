@@ -5,7 +5,8 @@ use anchor_lang::prelude::*;
 
 use crate::constants::CONSIGNMENT_SEED;
 use crate::errors::ManifestError;
-use crate::state::{Consignment, Container, Forwarder};
+use crate::events::ContainerCompleted;
+use crate::state::{Consignment, Container, ContainerStatus, Forwarder};
 use crate::utils::{math, token};
 
 /// Undo a booking's footprint: free its estimated volume in the container, decrement the
@@ -24,6 +25,32 @@ pub fn release_booking(
         .checked_sub(consignment.est_cbm_milli)
         .ok_or_else(|| error!(ManifestError::CounterOverflow))?;
     forwarder.locked_coverage = math::sub(forwarder.locked_coverage, consignment.coverage_locked)?;
+    Ok(())
+}
+
+/// Final bookkeeping for a consignment that leaves `Approved` for good (delivered,
+/// settled or compensated): unlock its bond coverage, count it as settled and, once every
+/// active consignment of an arrived container is settled, mark the container `Completed`.
+pub fn finish_consignment(
+    container: &mut Account<'_, Container>,
+    forwarder: &mut Forwarder,
+    consignment: &Consignment,
+    now: i64,
+) -> Result<()> {
+    forwarder.locked_coverage = math::sub(forwarder.locked_coverage, consignment.coverage_locked)?;
+    container.settled_count = container
+        .settled_count
+        .checked_add(1)
+        .ok_or_else(|| error!(ManifestError::CounterOverflow))?;
+    if container.status == ContainerStatus::Arrived
+        && container.settled_count == container.active_count
+    {
+        container.status = ContainerStatus::Completed;
+        emit!(ContainerCompleted {
+            container: container.key(),
+            timestamp: now,
+        });
+    }
     Ok(())
 }
 

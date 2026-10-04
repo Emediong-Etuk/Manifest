@@ -15,7 +15,9 @@
 use anchor_lang::prelude::*;
 use anchor_lang::system_program;
 use anchor_spl::token_2022::spl_token_2022::instruction::AuthorityType;
-use anchor_spl::token_interface::{self, MintTo, SetAuthority, TokenMetadataInitialize};
+use anchor_spl::token_interface::{
+    self, Burn, CloseAccount, MintTo, SetAuthority, TokenMetadataInitialize,
+};
 
 use crate::constants::{CARGO_TICKET_NAME_PREFIX, CARGO_TICKET_SYMBOL};
 
@@ -119,6 +121,46 @@ pub fn finish_cargo_ticket(
         AuthorityType::MintTokens,
         None,
     )
+}
+
+/// Burn the single ticket. `authority` is either the holder (who signs the transaction)
+/// or the `["ticket_authority"]` permanent delegate (pass its `signer_seeds`).
+pub fn burn_ticket<'info>(
+    token_2022_program: &AccountInfo<'info>,
+    mint: &AccountInfo<'info>,
+    holder_token_account: &AccountInfo<'info>,
+    authority: &AccountInfo<'info>,
+    signer_seeds: &[&[&[u8]]],
+) -> Result<()> {
+    token_interface::burn(
+        CpiContext::new_with_signer(
+            token_2022_program.key(),
+            Burn {
+                mint: mint.clone(),
+                from: holder_token_account.clone(),
+                authority: authority.clone(),
+            },
+            signer_seeds,
+        ),
+        1,
+    )
+}
+
+/// Close the holder's now-empty ticket token account and return its rent to them.
+/// Only possible when the holder signs.
+pub fn close_ticket_account<'info>(
+    token_2022_program: &AccountInfo<'info>,
+    holder_token_account: &AccountInfo<'info>,
+    holder: &AccountInfo<'info>,
+) -> Result<()> {
+    token_interface::close_account(CpiContext::new(
+        token_2022_program.key(),
+        CloseAccount {
+            account: holder_token_account.clone(),
+            destination: holder.clone(),
+            authority: holder.clone(),
+        },
+    ))
 }
 
 #[cfg(test)]

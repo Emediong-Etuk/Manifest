@@ -88,7 +88,23 @@ pub mod manifest {
         handle_record_receipt(ctx, evidence_hash, measured_cbm_milli, carton_count)
     }
 
-    // ---- Trader ----
+    pub fn mark_loaded(
+        ctx: Context<ShipContainer>,
+        container_number: [u8; constants::CONTAINER_NUMBER_LEN],
+        bl_hash: [u8; 32],
+    ) -> Result<()> {
+        handle_mark_loaded(ctx, container_number, bl_hash)
+    }
+
+    pub fn mark_arrived(ctx: Context<ShipContainer>) -> Result<()> {
+        handle_mark_arrived(ctx)
+    }
+
+    pub fn claim_freight_after_grace(ctx: Context<ClaimFreightAfterGrace>) -> Result<()> {
+        handle_claim_freight_after_grace(ctx)
+    }
+
+    // ---- Trader / ticket holder ----
 
     pub fn book_consignment(
         ctx: Context<BookConsignment>,
@@ -107,6 +123,36 @@ pub mod manifest {
 
     pub fn reject_goods(ctx: Context<RejectGoods>, reason: u8) -> Result<()> {
         handle_reject_goods(ctx, reason)
+    }
+
+    pub fn top_up_freight(ctx: Context<TopUpFreight>, amount: u64) -> Result<()> {
+        handle_top_up_freight(ctx, amount)
+    }
+
+    pub fn confirm_pickup(ctx: Context<ConfirmPickup>) -> Result<()> {
+        handle_confirm_pickup(ctx)
+    }
+
+    pub fn open_dispute(ctx: Context<OpenDispute>, reason: u8) -> Result<()> {
+        handle_open_dispute(ctx, reason)
+    }
+
+    // ---- Arbitrator ----
+
+    pub fn resolve_refund_escrow(ctx: Context<ResolveRefundEscrow>) -> Result<()> {
+        handle_resolve_refund_escrow(ctx)
+    }
+
+    pub fn resolve_force_approve(ctx: Context<SettleApproval>) -> Result<()> {
+        handle_resolve_force_approve(ctx)
+    }
+
+    pub fn resolve_dismiss(ctx: Context<ResolveDismiss>) -> Result<()> {
+        handle_resolve_dismiss(ctx)
+    }
+
+    pub fn resolve_slash_bond(ctx: Context<ResolveSlashBond>, amount: u64) -> Result<()> {
+        handle_resolve_slash_bond(ctx, amount)
     }
 
     // ---- Permissionless ----

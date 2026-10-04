@@ -32,4 +32,13 @@ mod approval;
 mod lifecycle;
 
 #[cfg(test)]
+mod shipping;
+
+#[cfg(test)]
+mod pickup;
+
+#[cfg(test)]
+mod disputes;
+
+#[cfg(test)]
 mod smoke;
