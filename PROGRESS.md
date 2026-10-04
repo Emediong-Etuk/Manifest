@@ -9,13 +9,15 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | ---------------------------- | --------- | ------------------------------------------------------ |
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
-| 2: Program complete + devnet | Oct 6–7   | 🔨 In progress                                         |
-| 3: Frontend core             | Oct 7–9   | —                                                      |
+| 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
+| 3: Frontend core             | Oct 7–9   | ⏳ Waiting for Greg's go-ahead                         |
 | 4: Integrations              | Oct 9–10  | —                                                      |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
 
 ## Phase 2 plan (Oct 4–7): program complete + devnet
+
+Steps 1–9 done ✅. Step 10 (devnet deploy) ⛔ blocked: needs durable funded keypairs.
 
 1. ISO 6346 validation (format + check digit) in program utils.
 2. `top_up_freight`, `mark_loaded`, `mark_arrived` + tests.
@@ -79,6 +81,24 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 2 (Oct 4)
+
+- 10 more instructions (26 total): `top_up_freight`, `mark_loaded` (ISO 6346 + check
+  digit), `mark_arrived`, `confirm_pickup`, `claim_freight_after_grace`, `open_dispute`,
+  `resolve_refund_escrow`, `resolve_force_approve`, `resolve_dismiss`, `resolve_slash_bond`.
+- Full spec 5.7 matrix: 95 LiteSVM tests + 12 unit tests green, including a 3-trader
+  lifecycle to `Completed` with money conservation, Cargo Ticket resale, slash caps,
+  overdue disputes and layout offsets.
+- Autofixer: 0 issues on every program file. `docs/SECURITY.md` (invariants, threat
+  model, checklist walk) and `docs/ARCHITECTURE.md` written.
+- `@manifest/sdk`: PDAs, fetchers (IDL-derived memcmp offsets), 26 instruction builders,
+  `deriveStage` / `allowedActions` / Manifest Score, formatting, ISO 6346, friendly
+  errors, evidence hashing; 28 Vitest tests.
+- Scripts: `create-demo-mint`, `init-config`, `e2e-local`; all verified on
+  `solana-test-validator` (the e2e drives the whole lifecycle through the SDK).
+- CI: program job (fmt, clippy, build, LiteSVM tests, IDL drift check).
+- `docs/DEPLOY.md`: exact devnet runbook.
+
 ### Phase 1 (Oct 4)
 
 - 16 instructions: `initialize_config` (upgrade-authority gated), `update_config`,
@@ -115,16 +135,16 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 2, step 1.
+- Nothing. Waiting for Greg (keys for the deploy; go-ahead for Phase 3).
 
-## Next (Phase 2: program complete + devnet)
+## Next
 
-`top_up_freight`, `mark_loaded` (ISO 6346), `mark_arrived`, `confirm_pickup` (ticket holder
-burns), `claim_freight_after_grace` (permanent-delegate burn), `open_dispute`,
-`resolve_dispute` (RefundEscrow / ForceApprove / Dismiss / SlashBond), forwarder stats; the
-full 5.7 matrix incl. full lifecycle and ticket transfer; Blueshift security pass +
-SECURITY.md; CI program job; SDK with IDL; devnet deploy (needs durable keypairs, see
-Blockers); demo mint + init-config scripts.
+1. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` (about 15 minutes).
+2. **Phase 3, frontend core:** Phantom Connect, design system, trader pages (`/`,
+   `/containers`, `/c/[id]`, `/book`, `/me`, `/s/[id]`), forwarder pages (dashboard,
+   receipt with evidence pipeline, load/arrive, pickup scanner, claim), `/f/[id]`,
+   `/verify`, `TxButton`. Until devnet is live, the app can be developed against
+   `solana-test-validator` with the e2e world.
 
 ## Blockers
 
@@ -135,9 +155,9 @@ Blockers); demo mint + init-config scripts.
    docs.phantom.com/recipes/quickstarts/nextjs, checked Oct 4). Google/Apple embedded
    wallets require a Portal App ID; the injected (extension/app) provider does not. If Greg
    has no existing Portal app, we need a decision before Phase 3 (see summary).
-3. **Durable keypairs before the Phase 2 deploy.** Cloud containers are ephemeral; the
-   program and deploy keypairs must come from Greg via environment secrets
-   (`docs/SETUP_CHECKLIST.md`). Not blocking Phase 1.
+3. **Devnet deploy (Phase 2, step 10).** Needs durable keypairs from Greg (environment
+   secrets) and ~12 devnet SOL on the deploy key + ~5 on the gas tank. The devnet faucet
+   rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
 
 ## Decisions
 

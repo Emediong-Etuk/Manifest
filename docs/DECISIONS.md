@@ -117,10 +117,58 @@ The variation comes from PDA bump searches and whether token accounts already ex
   freeze authority. The metadata TLV size is computed in `utils/cargo_ticket.rs`; if the
   rent top-up were short, the transaction would fail, so the tests cover it.
 
+## Program design (Phase 2)
+
+**Compute units:** `confirm_pickup` ~38,000 · `claim_freight_after_grace` ~53,000 ·
+`resolve_slash_bond` ~43,500. All post-approval paths fit easily in one transaction.
+
+- **Dispute resolution is four instructions**, not one `resolve_dispute(resolution)`:
+  `resolve_refund_escrow`, `resolve_force_approve`, `resolve_dismiss`,
+  `resolve_slash_bond`. Each resolution needs different accounts (ForceApprove needs the
+  whole approval settlement, SlashBond needs the bond vault and ticket accounts), and
+  separate instructions keep every account typed and checked. The SDK exposes one
+  `resolveDispute({ resolution })` builder that picks the right instruction. The
+  `DisputeResolved` event carries a `Resolution` enum.
+- `resolve_force_approve` reuses the `SettleApproval` accounts with `payer ==
+config.arbitrator` (the Squads vault pays the rent, so it needs a little SOL).
+- `resolve_slash_bond` takes the holder's bond-mint token account as an **optional**
+  account: `None` when the bond mint equals the payment mint (otherwise the two holder
+  accounts would alias), required and pre-created (idempotent ATA instruction in the same
+  transaction) when they differ.
+- Excess freight (from top-ups beyond what's due) goes to the **current ticket holder** in
+  both `confirm_pickup` and `claim_freight_after_grace` (the spec says "trader" for the
+  claim path; the holder is who paid the top-up in practice and holds the rights).
+- `claim_freight_after_grace` does not count as a delivery in forwarder stats; only a
+  holder-confirmed pickup does. Neither changes `stats_volume`.
+- `confirm_pickup` also closes the holder's empty ticket token account, returning its rent.
+- `top_up_freight` is open to any signer (it can only add money, capped at the shortfall).
+- `mark_arrived` marks the container `Completed` immediately if every consignment was
+  already compensated while it was overdue.
+- `resolve_refund_escrow` also frees the consignment's measured volume from
+  `received_cbm_milli`.
+- ISO 6346 is validated onchain, including the check digit (`utils/validation.rs`); the
+  SDK runs the same algorithm client-side.
+
+## SDK and scripts (Phase 2)
+
+- The SDK commits the generated IDL (`packages/sdk/src/idl/`, synced by `pnpm idl:sync`)
+  so the app builds on Vercel without the Rust toolchain. CI fails if it drifts.
+- Instruction builders use `accountsStrict` (no implicit account resolution) and add a
+  400k compute-unit limit to approval, pickup, claim and slash transactions.
+- memcmp offsets are computed from the IDL and pinned by tests in both Rust
+  (`tests/src/layout.rs`) and TypeScript (`packages/sdk/test/core.test.ts`).
+- `deriveStage` shows "Loaded" for 2 days after loading, then "Sailing". There is no
+  onchain departure event; this is display only.
+- Manifest Score = `100 x on-time rate x (1 - disputes lost / (delivered + disputes lost))`,
+  "New forwarder" under 3 deliveries.
+- `scripts/src/e2e-local.ts` drives the whole lifecycle through the SDK against
+  `solana-test-validator`; it passes.
+- Circle devnet USDC `4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU` verified against
+  Circle's docs and onchain (SPL Token, 6 decimals).
+- **sBPF v3:** Solana is making v3 the only format accepted for new deployments
+  (SIMD-0500, mainnet Nov 2026), so the Anchor 1.2 default is the right target.
+
 ## Pending decisions (later phases)
 
-- `resolve_dispute` → `ForceApprove` needs the settlement accounts. Options for Phase 2: a
-  dedicated arbitrator instruction that reuses `SettleApproval`, or one instruction with
-  optional accounts.
 - Phantom embedded-wallet capabilities: `signAllTransactions`, sign-only, daily limits (Phase 3).
 - Reflect devnet availability (Phase 4 stretch).

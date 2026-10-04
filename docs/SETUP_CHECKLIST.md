@@ -17,8 +17,10 @@ variables) for cloud sessions.
       SessionStart hook writes them into place in every new session, and Claude Code will
       run `anchor keys sync` to switch the program ID to yours. Tell Claude Code the two
       public keys (`solana address -k <file>`); public keys are fine to share.
-- [ ] **Fund the dev keypair** with ~5 devnet SOL at <https://faucet.solana.com> (sign in
-      with GitHub for higher limits).
+- [ ] **Fund the dev keypair** with ~12 devnet SOL at <https://faucet.solana.com> (sign in
+      with GitHub for higher limits). The program is ~760 KB: ~5.3 SOL stays locked as
+      rent and the same again is needed temporarily for the deploy buffer. Full runbook:
+      `docs/DEPLOY.md`.
 - [ ] **Gas-tank keypair** (devnet faucet + demo mint authority): create a third keypair,
       fund it with ~5 devnet SOL, and add it as `GAS_TANK_SECRET_KEY`.
 - [ ] **Devnet USDC** for testing from <https://faucet.circle.com> (Solana devnet).
