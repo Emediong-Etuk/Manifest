@@ -10,10 +10,36 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
-| 3: Frontend core             | Oct 7–9   | ⏳ Waiting for Greg's go-ahead                         |
+| 3: Frontend core             | Oct 7–9   | 🔨 In progress                                         |
 | 4: Integrations              | Oct 9–10  | —                                                      |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
+
+## Phase 3 plan (Oct 4–9): frontend core
+
+1. App foundations: env config, connection/program singletons, TanStack Query, design
+   tokens + base components (Button, Card, Stamp, RouteLine, MoneyInput, AddressInput,
+   CbmCalculator, CountdownChip, TimelineStepper, CargoTicketCard, CoverageMeter, EmptyState,
+   DevnetBanner, Toasts).
+2. Wallet layer: Phantom Connect React SDK (`google`/`apple`/`injected` when an App ID is
+   set, `injected` only otherwise) behind one `useWallet()` interface; `/auth/callback`.
+   A localnet-only burner wallet for automated browser tests (real transactions, local
+   validator only; never enabled on devnet).
+3. `TxButton`: build via SDK → sign & send → confirm → toast with explorer link →
+   refetch; friendly errors with a details disclosure; confirmation sheets.
+4. Trader pages: `/`, `/containers`, `/c/[id]`, `/book/[id]`, `/me`, `/s/[id]`
+   (approve/reject, top-up, transfer, dispute, pickup QR).
+5. Forwarder pages: `/forwarder` (register, bond, coverage meter, open container),
+   `/forwarder/c/[id]` (record receipt with evidence upload, load, arrive, pickup
+   scanner, claim). Evidence API: `POST/GET /api/evidence` (signed by the forwarder,
+   EXIF-stripped, hashed; Pinata or local storage).
+6. `/f/[id]` forwarder profile + Manifest Score, `/verify`.
+7. Verification: Playwright run of the full trader + forwarder lifecycle in two browser
+   contexts against `solana-test-validator` (burner wallets).
+
+Risks: Phantom Portal App ID unavailable (injected-only fallback); devnet not deployed
+(develop and test against a local validator); Phantom embedded wallets' $1,000/day limit
+(notice on large bookings).
 
 ## Phase 2 plan (Oct 4–7): program complete + devnet
 
@@ -135,7 +161,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing. Waiting for Greg (keys for the deploy; go-ahead for Phase 3).
+- Phase 3, step 1 (app foundations).
 
 ## Next
 

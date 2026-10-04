@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Illustration placeholder: empty-shipments">
+  <!-- Placeholder: replace with Greg's illustration (480 x 360). See README.md in this folder. -->
+  <rect width="480" height="360" fill="#f6f1e7"/>
+  <rect x="12" y="12" width="456" height="336" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="16 12" rx="16"/>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="20" fill="#4a5470">illustration: empty-shipments</text>
+</svg>

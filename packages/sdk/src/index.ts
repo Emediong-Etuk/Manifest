@@ -17,6 +17,7 @@ export {
 } from "./instructions.js";
 export * from "./layout.js";
 export * from "./pdas.js";
+export * from "./quote.js";
 export * from "./status.js";
 export * from "./types.js";
 export { IDL } from "./idl/idl.js";
