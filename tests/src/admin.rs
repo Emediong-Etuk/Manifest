@@ -101,6 +101,18 @@ fn initialize_config_accepts_token_2022_mints() {
 }
 
 #[test]
+fn initialize_config_rejects_token_2022_mint_with_permanent_delegate() {
+    let mut w = World::bare();
+    let admin = w.admin.insecure_clone();
+    let outsider = Keypair::new().pubkey();
+    let risky = w.s.create_mint_with_permanent_delegate(&admin, &outsider);
+    let mut params = w.default_params();
+    params.payment_mints[1] = risky;
+    let res = w.initialize_config(&params, &[w.usd, risky]);
+    assert_manifest_err(res, ManifestError::UnsupportedMintExtension);
+}
+
+#[test]
 fn update_config_changes_fields_and_can_pause() {
     let mut w = World::new();
     let admin = w.admin.insecure_clone();

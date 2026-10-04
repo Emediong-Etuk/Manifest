@@ -69,9 +69,58 @@ not load it (`InvalidAccountData`). That is what led to the LiteSVM upgrade and 
   deploy keypairs must be stored durably (see `docs/SETUP_CHECKLIST.md`), and from then on the
   program ID is fixed.
 
+## Program design (Phase 1)
+
+**Compute units (measured in LiteSVM, `tests/src/lifecycle.rs` and `approval.rs`):**
+
+| Instruction        | CU               | Notes                                                                                   |
+| ------------------ | ---------------- | --------------------------------------------------------------------------------------- |
+| `book_consignment` | ~28,500          | Creates consignment + vault, one transfer                                               |
+| `approve_goods`    | ~130,000–140,000 | 3 transfers, up to 3 ATA creations, Token-2022 ticket mint with metadata, mint + revoke |
+| `auto_approve`     | ~135,000–140,000 | Same settlement                                                                         |
+
+Approval fits comfortably in one transaction (clients add a 400k CU limit for headroom), so
+Cargo Ticket minting is **not** split into a separate `mint_cargo_ticket` instruction.
+The variation comes from PDA bump searches and whether token accounts already exist.
+
+**Decisions and small deviations from the spec, with reasons:**
+
+- `initialize_config` is gated on the program's **upgrade authority** (checked through the
+  ProgramData account), so nobody can front-run the real config right after deployment.
+- Instructions with many arguments take a params struct (`ConfigParams`,
+  `OpenContainerParams`, `BookConsignmentParams`) instead of long positional lists. Same
+  fields as the spec.
+- `register_forwarder` takes the bond mint as an account (it is needed to create the bond
+  vault) rather than as a pubkey argument.
+- `approve_goods` and `auto_approve` share one accounts struct, `SettleApproval`, and one
+  settlement function. `approve_goods` additionally requires `payer == consignment.trader`
+  and `now <= review_deadline`; `auto_approve` requires `now > review_deadline`.
+- Refunds (reject, refund after cut-off, freight excess) go to the trader's **associated
+  token account**, created on demand, so the destination is deterministic.
+- At booking, the payee must differ from the trader, the treasury owner, the vault and the
+  consignment, and the trader must differ from the treasury owner. Anchor 1.x rejects
+  duplicate mutable accounts, so if these coincided the approval transaction could never
+  succeed and funds would be stuck until arbitration.
+- `refund_after_cutoff` frees the booked volume as well as the coverage (the spec lists
+  only coverage; freeing volume keeps the container counters consistent).
+- `record_receipt` has no time check, as in the spec: a forwarder may still record goods
+  that arrive after the cut-off, as long as the trader hasn't refunded yet. Whichever
+  transaction lands first wins.
+- Token-2022 payment/bond mints are rejected if they carry transfer fees, transfer hooks,
+  a permanent delegate, non-transferable, default account state, confidential transfers,
+  pausable or scaled-UI-amount extensions. Those would break the "vault == state"
+  invariant or let a third party move escrowed tokens.
+- New fields beyond the spec tables: `Config.ticket_authority_bump`,
+  `Forwarder.bond_vault_bump`, `Consignment.vault_bump` (cached PDA bumps).
+- Cargo Ticket: the `["ticket_authority"]` PDA is mint authority (revoked after minting
+  1), metadata update authority, metadata-pointer authority and permanent delegate. No
+  freeze authority. The metadata TLV size is computed in `utils/cargo_ticket.rs`; if the
+  rent top-up were short, the transaction would fail, so the tests cover it.
+
 ## Pending decisions (later phases)
 
-- Compute units of `approve_goods` / `book_consignment` (Phase 1), and whether Cargo Ticket
-  minting splits into its own instruction.
+- `resolve_dispute` → `ForceApprove` needs the settlement accounts. Options for Phase 2: a
+  dedicated arbitrator instruction that reuses `SettleApproval`, or one instruction with
+  optional accounts.
 - Phantom embedded-wallet capabilities: `signAllTransactions`, sign-only, daily limits (Phase 3).
 - Reflect devnet availability (Phase 4 stretch).

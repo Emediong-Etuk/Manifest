@@ -173,6 +173,46 @@ impl Svm {
         mint.pubkey()
     }
 
+    /// A 6-decimal Token-2022 mint whose permanent delegate is `delegate`.
+    pub fn create_mint_with_permanent_delegate(
+        &mut self,
+        authority: &Keypair,
+        delegate: &Pubkey,
+    ) -> Pubkey {
+        use spl_token_2022::extension::ExtensionType;
+        let mint = Keypair::new();
+        let len = ExtensionType::try_calculate_account_len::<spl_token_2022::state::Mint>(&[
+            ExtensionType::PermanentDelegate,
+        ])
+        .unwrap();
+        let rent = self.svm.minimum_balance_for_rent_exemption(len);
+        let program = spl_token_2022::ID;
+        let create = anchor_lang::solana_program::system_instruction::create_account(
+            &authority.pubkey(),
+            &mint.pubkey(),
+            rent,
+            len as u64,
+            &program,
+        );
+        let delegate_ix = spl_token_2022::instruction::initialize_permanent_delegate(
+            &program,
+            &mint.pubkey(),
+            delegate,
+        )
+        .unwrap();
+        let init = spl_token_2022::instruction::initialize_mint2(
+            &program,
+            &mint.pubkey(),
+            &authority.pubkey(),
+            None,
+            DECIMALS,
+        )
+        .unwrap();
+        self.send(&[create, delegate_ix, init], authority, &[&mint])
+            .unwrap();
+        mint.pubkey()
+    }
+
     pub fn ata(owner: &Pubkey, mint: &Pubkey, token_program: &Pubkey) -> Pubkey {
         get_associated_token_address_with_program_id(owner, mint, token_program)
     }

@@ -74,4 +74,44 @@ pub mod manifest {
     pub fn cancel_container(ctx: Context<CancelContainer>) -> Result<()> {
         handle_cancel_container(ctx)
     }
+
+    pub fn reject_booking(ctx: Context<RejectBooking>) -> Result<()> {
+        handle_reject_booking(ctx)
+    }
+
+    pub fn record_receipt(
+        ctx: Context<RecordReceipt>,
+        evidence_hash: [u8; 32],
+        measured_cbm_milli: u32,
+        carton_count: u16,
+    ) -> Result<()> {
+        handle_record_receipt(ctx, evidence_hash, measured_cbm_milli, carton_count)
+    }
+
+    // ---- Trader ----
+
+    pub fn book_consignment(
+        ctx: Context<BookConsignment>,
+        params: BookConsignmentParams,
+    ) -> Result<()> {
+        handle_book_consignment(ctx, params)
+    }
+
+    pub fn refund_after_cutoff(ctx: Context<RefundAfterCutoff>) -> Result<()> {
+        handle_refund_after_cutoff(ctx)
+    }
+
+    pub fn approve_goods(ctx: Context<SettleApproval>) -> Result<()> {
+        handle_approve_goods(ctx)
+    }
+
+    pub fn reject_goods(ctx: Context<RejectGoods>, reason: u8) -> Result<()> {
+        handle_reject_goods(ctx, reason)
+    }
+
+    // ---- Permissionless ----
+
+    pub fn auto_approve(ctx: Context<SettleApproval>) -> Result<()> {
+        handle_auto_approve(ctx)
+    }
 }

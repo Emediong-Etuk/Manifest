@@ -70,4 +70,6 @@ pub enum ManifestError {
     InvalidReceipt,
     #[msg("Counter overflow or underflow")]
     CounterOverflow,
+    #[msg("Token-2022 mint has an extension that is unsafe for escrow")]
+    UnsupportedMintExtension,
 }

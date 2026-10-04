@@ -15,7 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "program:build": "anchor build",
-    "program:test": "anchor build && cargo test -p manifest-tests",
+    "program:test": "anchor build && cargo test -p manifest && cargo test -p manifest-tests",
     "program:lint": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings",
     "check-env": "pnpm --filter @manifest/scripts check-env"
   },

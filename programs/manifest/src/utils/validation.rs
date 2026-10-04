@@ -20,6 +20,12 @@ pub fn validate_padded_utf8(bytes: &[u8]) -> Result<()> {
     Ok(())
 }
 
+/// The text part of a validated zero-padded field (empty if it is not valid UTF-8).
+pub fn padded_str(bytes: &[u8]) -> &str {
+    let len = bytes.iter().position(|b| *b == 0).unwrap_or(bytes.len());
+    core::str::from_utf8(&bytes[..len]).unwrap_or("")
+}
+
 /// UN/LOCODE: 2-letter ISO 3166 country code + 3 characters from A-Z and 2-9
 /// (e.g. `CNCAN`, `NGAPP`).
 pub fn validate_locode(code: &[u8; 5]) -> Result<()> {
@@ -42,6 +48,12 @@ mod tests {
         assert!(validate_padded_utf8(b"\0\0\0\0").is_err());
         assert!(validate_padded_utf8(b"AB\0C").is_err());
         assert!(validate_padded_utf8(&[0xff, 0xfe, 0, 0]).is_err());
+    }
+
+    #[test]
+    fn padded_str_trims_padding() {
+        assert_eq!(padded_str(b"LAG-1014\0\0\0\0"), "LAG-1014");
+        assert_eq!(padded_str(b"full"), "full");
     }
 
     #[test]

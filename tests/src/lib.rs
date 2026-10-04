@@ -23,4 +23,13 @@ mod forwarder;
 mod container;
 
 #[cfg(test)]
+mod booking;
+
+#[cfg(test)]
+mod approval;
+
+#[cfg(test)]
+mod lifecycle;
+
+#[cfg(test)]
 mod smoke;

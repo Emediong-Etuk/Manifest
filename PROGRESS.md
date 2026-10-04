@@ -8,8 +8,8 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | Phase                        | Dates     | Status                                                 |
 | ---------------------------- | --------- | ------------------------------------------------------ |
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
-| 1: Program core              | Oct 4–6   | 🔨 In progress                                         |
-| 2: Program complete + devnet | Oct 6–7   | —                                                      |
+| 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
+| 2: Program complete + devnet | Oct 6–7   | ⏳ Waiting for Greg's go-ahead                         |
 | 3: Frontend core             | Oct 7–9   | —                                                      |
 | 4: Integrations              | Oct 9–10  | —                                                      |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
@@ -18,6 +18,8 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 ## Phase 1 plan (Oct 4–6): program core
 
 Order (each step: code → LiteSVM tests → green → commit):
+
+All nine steps done ✅ (65 LiteSVM tests + 10 unit tests green).
 
 1. Foundations: constants (seeds, defaults), `ManifestError`, events, account structs
    (Config, Forwarder, Container, Consignment), utils (checked math, fixed-string and
@@ -56,6 +58,24 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 1 (Oct 4)
+
+- 16 instructions: `initialize_config` (upgrade-authority gated), `update_config`,
+  `transfer_admin`, `register_forwarder`, `deposit_bond`, `withdraw_bond`, `open_container`,
+  `close_booking`, `cancel_container`, `book_consignment`, `reject_booking`,
+  `refund_after_cutoff`, `record_receipt`, `approve_goods`, `auto_approve`, `reject_goods`.
+- Approval settlement in one transaction: payee payout, treasury fee, freight re-pricing
+  refund, Token-2022 Cargo Ticket (MetadataPointer + TokenMetadata + PermanentDelegate,
+  supply 1, mint authority revoked).
+- Tests: 65 LiteSVM integration tests (happy paths, every Phase 1 must-fail case from spec
+  5.7, account-substitution attempts, invariants 2/3/6 asserted) + 10 unit tests.
+- CU: book ~28.5k, approve ~130–140k (DECISIONS.md). No need to split ticket minting.
+- Solana MCP `program_autofixer`: 0 issues on every program file (after making two u128
+  multiplications explicit `checked_mul`).
+- Hardening: Token-2022 payment/bond mints with unsafe extensions are rejected.
+
+### Phase 0 (Oct 4)
+
 - Toolchain: Anchor 1.2.0, Solana CLI 4.1.2, host Rust 1.97.0, LiteSVM 0.16.0, Node 22,
   pnpm 10.28 (versions and reasons in `docs/DECISIONS.md`).
 - Solana MCP verified over HTTP and registered in `.mcp.json`.
@@ -74,13 +94,16 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 1, step 1 (foundations).
+- Nothing. Waiting for Greg to confirm Phase 2.
 
-## Next (Phase 1: program core)
+## Next (Phase 2: program complete + devnet)
 
-Config, Forwarder + bond, Container (open/close/cancel), Consignment (book, reject, refund,
-record_receipt, approve, auto_approve, reject_goods), approval settlement incl. Cargo Ticket,
-events, errors; happy-path + must-fail LiteSVM tests; measure CU.
+`top_up_freight`, `mark_loaded` (ISO 6346), `mark_arrived`, `confirm_pickup` (ticket holder
+burns), `claim_freight_after_grace` (permanent-delegate burn), `open_dispute`,
+`resolve_dispute` (RefundEscrow / ForceApprove / Dismiss / SlashBond), forwarder stats; the
+full 5.7 matrix incl. full lifecycle and ticket transfer; Blueshift security pass +
+SECURITY.md; CI program job; SDK with IDL; devnet deploy (needs durable keypairs, see
+Blockers); demo mint + init-config scripts.
 
 ## Blockers
 

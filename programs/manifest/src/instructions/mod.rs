@@ -4,7 +4,10 @@ pub mod admin;
 pub mod arbitrator;
 pub mod forwarder;
 pub mod permissionless;
+pub mod shared;
 pub mod trader;
 
 pub use admin::*;
 pub use forwarder::*;
+pub use permissionless::*;
+pub use trader::*;

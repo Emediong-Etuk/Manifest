@@ -326,3 +326,284 @@ impl World {
         self.s.account(container)
     }
 }
+
+// ---------------------------------------------------------------- consignments
+
+pub fn consignment_pda(container: &Pubkey, index: u16) -> Pubkey {
+    Pubkey::find_program_address(
+        &[
+            manifest::constants::CONSIGNMENT_SEED,
+            container.as_ref(),
+            &index.to_le_bytes(),
+        ],
+        &manifest::ID,
+    )
+    .0
+}
+
+pub fn vault_pda(consignment: &Pubkey) -> Pubkey {
+    Pubkey::find_program_address(
+        &[manifest::constants::VAULT_SEED, consignment.as_ref()],
+        &manifest::ID,
+    )
+    .0
+}
+
+pub fn cargo_ticket_pda(consignment: &Pubkey) -> Pubkey {
+    Pubkey::find_program_address(
+        &[manifest::constants::CARGO_TICKET_SEED, consignment.as_ref()],
+        &manifest::ID,
+    )
+    .0
+}
+
+pub fn ticket_authority_pda() -> Pubkey {
+    Pubkey::find_program_address(&[manifest::constants::TICKET_AUTHORITY_SEED], &manifest::ID).0
+}
+
+/// A trader wallet with a funded USD token account.
+pub struct Trader {
+    pub kp: Keypair,
+    pub ata: Pubkey,
+}
+
+/// $2,400.00 of goods, 1.250 CBM estimated.
+pub const GOODS: u64 = 2_400 * USD;
+pub const EST_CBM: u32 = 1_250;
+pub const EVIDENCE: [u8; 32] = [7u8; 32];
+
+impl World {
+    pub fn trader(&mut self, usd: u64) -> Trader {
+        let kp = self.s.funded_keypair();
+        let ata = self.fund_usd(&kp.pubkey(), usd);
+        Trader { kp, ata }
+    }
+
+    pub fn book_params(&self, payee: Pubkey) -> manifest::instructions::BookConsignmentParams {
+        manifest::instructions::BookConsignmentParams {
+            goods_amount: GOODS,
+            est_cbm_milli: EST_CBM,
+            payee,
+            description: fixed("Phone cases, 12 cartons"),
+        }
+    }
+
+    pub fn book_tx(
+        &mut self,
+        t: &Trader,
+        container: Pubkey,
+        params: manifest::instructions::BookConsignmentParams,
+    ) -> TxResult {
+        let cs = self.container_state(&container);
+        let consignment = consignment_pda(&container, cs.consignment_count);
+        let ix = Svm::ix(
+            manifest::instruction::BookConsignment { params },
+            manifest::accounts::BookConsignment {
+                trader: t.kp.pubkey(),
+                config: config_pda(),
+                forwarder: cs.forwarder,
+                container,
+                consignment,
+                vault: vault_pda(&consignment),
+                mint: cs.mint,
+                trader_token_account: t.ata,
+                token_program: spl_token_id(),
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&[ix], &t.kp, &[])
+    }
+
+    /// Book the standard consignment with a fresh payee; returns the consignment.
+    pub fn book(&mut self, t: &Trader, container: Pubkey) -> Pubkey {
+        let payee = Keypair::new().pubkey();
+        let params = self.book_params(payee);
+        self.book_with(t, container, params)
+    }
+
+    pub fn book_with(
+        &mut self,
+        t: &Trader,
+        container: Pubkey,
+        params: manifest::instructions::BookConsignmentParams,
+    ) -> Pubkey {
+        let index = self.container_state(&container).consignment_count;
+        self.book_tx(t, container, params).unwrap();
+        consignment_pda(&container, index)
+    }
+
+    pub fn record_receipt_tx(
+        &mut self,
+        f: &Fwd,
+        consignment: Pubkey,
+        measured_cbm_milli: u32,
+        carton_count: u16,
+    ) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let ix = Svm::ix(
+            manifest::instruction::RecordReceipt {
+                evidence_hash: EVIDENCE,
+                measured_cbm_milli,
+                carton_count,
+            },
+            manifest::accounts::RecordReceipt {
+                authority: f.kp.pubkey(),
+                config: config_pda(),
+                forwarder: f.pda,
+                container: c.container,
+                consignment,
+            },
+        );
+        self.s.send(&[ix], &f.kp, &[])
+    }
+
+    pub fn settle_accounts(
+        &self,
+        payer: &Pubkey,
+        consignment: Pubkey,
+    ) -> manifest::accounts::SettleApproval {
+        let c = self.consignment_state(&consignment);
+        let treasury = self.treasury.pubkey();
+        let ticket = cargo_ticket_pda(&consignment);
+        manifest::accounts::SettleApproval {
+            payer: *payer,
+            config: config_pda(),
+            container: c.container,
+            consignment,
+            vault: c.vault,
+            mint: c.mint,
+            trader: c.trader,
+            trader_token_account: Svm::ata(&c.trader, &c.mint, &spl_token_id()),
+            payee: c.payee,
+            payee_token_account: Svm::ata(&c.payee, &c.mint, &spl_token_id()),
+            treasury_owner: treasury,
+            treasury_token_account: Svm::ata(&treasury, &c.mint, &spl_token_id()),
+            ticket_authority: ticket_authority_pda(),
+            cargo_ticket_mint: ticket,
+            trader_ticket_account: Svm::ata(&c.trader, &ticket, &token_2022_id()),
+            token_program: spl_token_id(),
+            token_2022_program: token_2022_id(),
+            associated_token_program: anchor_spl::associated_token::ID,
+            system_program: anchor_lang::system_program::ID,
+        }
+    }
+
+    pub fn approve_tx(&mut self, payer: &Keypair, consignment: Pubkey) -> TxResult {
+        let accounts = self.settle_accounts(&payer.pubkey(), consignment);
+        let ix = Svm::ix(manifest::instruction::ApproveGoods {}, accounts);
+        self.s.send(&with_cu_limit(ix), payer, &[])
+    }
+
+    pub fn auto_approve_tx(&mut self, payer: &Keypair, consignment: Pubkey) -> TxResult {
+        let accounts = self.settle_accounts(&payer.pubkey(), consignment);
+        let ix = Svm::ix(manifest::instruction::AutoApprove {}, accounts);
+        self.s.send(&with_cu_limit(ix), payer, &[])
+    }
+
+    pub fn reject_goods_tx(
+        &mut self,
+        signer: &Keypair,
+        consignment: Pubkey,
+        reason: u8,
+    ) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let ix = Svm::ix(
+            manifest::instruction::RejectGoods { reason },
+            manifest::accounts::RejectGoods {
+                trader: signer.pubkey(),
+                forwarder: cs.forwarder,
+                container: c.container,
+                consignment,
+            },
+        );
+        self.s.send(&[ix], signer, &[])
+    }
+
+    pub fn refund_tx(&mut self, signer: &Keypair, consignment: Pubkey) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let cs = self.container_state(&c.container);
+        let ix = Svm::ix(
+            manifest::instruction::RefundAfterCutoff {},
+            manifest::accounts::RefundAfterCutoff {
+                trader: signer.pubkey(),
+                forwarder: cs.forwarder,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                trader_token_account: Svm::ata(&signer.pubkey(), &c.mint, &spl_token_id()),
+                token_program: spl_token_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&[ix], signer, &[])
+    }
+
+    pub fn reject_booking_tx(&mut self, f: &Fwd, consignment: Pubkey) -> TxResult {
+        let c = self.consignment_state(&consignment);
+        let ix = Svm::ix(
+            manifest::instruction::RejectBooking {},
+            manifest::accounts::RejectBooking {
+                authority: f.kp.pubkey(),
+                forwarder: f.pda,
+                container: c.container,
+                consignment,
+                vault: c.vault,
+                mint: c.mint,
+                trader: c.trader,
+                trader_token_account: Svm::ata(&c.trader, &c.mint, &spl_token_id()),
+                token_program: spl_token_id(),
+                associated_token_program: anchor_spl::associated_token::ID,
+                system_program: anchor_lang::system_program::ID,
+            },
+        );
+        self.s.send(&[ix], &f.kp, &[])
+    }
+
+    pub fn consignment_state(&self, consignment: &Pubkey) -> manifest::state::Consignment {
+        self.s.account(consignment)
+    }
+
+    /// Invariant 2: the vault holds exactly what the state says it should.
+    #[track_caller]
+    pub fn assert_vault_matches_state(&self, consignment: &Pubkey) {
+        let c = self.consignment_state(consignment);
+        assert_eq!(
+            self.s.balance(&c.vault),
+            c.escrow_held().unwrap(),
+            "vault balance != state for {:?}",
+            c.status
+        );
+    }
+
+    /// Invariant 3: the bond always covers locked coverage.
+    #[track_caller]
+    pub fn assert_bond_covers(&self, f: &Fwd) {
+        let state = self.forwarder_state(f);
+        assert!(state.bond_balance >= state.locked_coverage);
+        assert_eq!(self.s.balance(&f.vault), state.bond_balance);
+    }
+}
+
+/// Prepend a 400k compute-unit limit (approval mints a Token-2022 NFT with metadata).
+pub fn with_cu_limit(
+    ix: anchor_lang::solana_program::instruction::Instruction,
+) -> Vec<anchor_lang::solana_program::instruction::Instruction> {
+    // ComputeBudgetInstruction::SetComputeUnitLimit = discriminator 2 + u32 LE.
+    let mut data = vec![2u8];
+    data.extend_from_slice(&400_000u32.to_le_bytes());
+    let budget = anchor_lang::solana_program::instruction::Instruction::new_with_bytes(
+        compute_budget_program_id(),
+        &data,
+        vec![],
+    );
+    vec![budget, ix]
+}
+
+pub fn compute_budget_program_id() -> Pubkey {
+    "ComputeBudget111111111111111111111111111111"
+        .parse()
+        .unwrap()
+}

@@ -52,8 +52,9 @@ PATH needs `~/.local/bin` (anchor) and `~/.local/share/solana/install/active_rel
 ```bash
 pnpm install                  # JS deps
 anchor build                  # program -> target/deploy/manifest.so + target/idl + target/types
+cargo test -p manifest        # program unit tests (math, validation)
 cargo test -p manifest-tests  # LiteSVM program tests (needs anchor build first)
-pnpm program:test             # both of the above
+pnpm program:test             # all of the above
 pnpm program:lint             # cargo fmt --check + clippy -D warnings
 pnpm -r build                 # sdk, scripts (typecheck), app (next build)
 pnpm -r lint && pnpm -r typecheck && pnpm -r test

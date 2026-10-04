@@ -12,22 +12,28 @@ fn to_u64(value: u128) -> Result<u64> {
     u64::try_from(value).map_err(|_| error!(ManifestError::MathOverflow))
 }
 
+fn mul(a: u128, b: u128) -> Result<u128> {
+    a.checked_mul(b)
+        .ok_or_else(|| error!(ManifestError::MathOverflow))
+}
+
+/// `ceil(numerator / denominator)` for a non-zero constant denominator.
 fn div_ceil(numerator: u128, denominator: u128) -> Result<u128> {
     numerator
-        .checked_add(denominator - 1)
-        .map(|n| n / denominator)
+        .checked_add(denominator.saturating_sub(1))
+        .and_then(|n| n.checked_div(denominator))
         .ok_or_else(|| error!(ManifestError::MathOverflow))
 }
 
 /// `amount * bps / 10_000`, rounded down (used for the protocol fee, in the user's favor).
 pub fn bps_floor(amount: u64, bps: u16) -> Result<u64> {
-    to_u64(u128::from(amount) * u128::from(bps) / u128::from(BPS_DENOMINATOR))
+    to_u64(mul(u128::from(amount), u128::from(bps))? / u128::from(BPS_DENOMINATOR))
 }
 
 /// `amount * bps / 10_000`, rounded up (used for bond coverage, in the trader's favor).
 pub fn bps_ceil(amount: u64, bps: u16) -> Result<u64> {
     to_u64(div_ceil(
-        u128::from(amount) * u128::from(bps),
+        mul(u128::from(amount), u128::from(bps))?,
         u128::from(BPS_DENOMINATOR),
     )?)
 }
@@ -35,7 +41,7 @@ pub fn bps_ceil(amount: u64, bps: u16) -> Result<u64> {
 /// Freight for a volume: `ceil(cbm_milli * rate_per_cbm / 1_000)`.
 pub fn freight_for(cbm_milli: u32, rate_per_cbm: u64) -> Result<u64> {
     to_u64(div_ceil(
-        u128::from(cbm_milli) * u128::from(rate_per_cbm),
+        mul(u128::from(cbm_milli), u128::from(rate_per_cbm))?,
         u128::from(MILLI_PER_UNIT),
     )?)
 }
@@ -44,7 +50,7 @@ pub fn freight_for(cbm_milli: u32, rate_per_cbm: u64) -> Result<u64> {
 pub fn buffered_freight(freight: u64, buffer_bps: u16) -> Result<u64> {
     let factor = u128::from(BPS_DENOMINATOR) + u128::from(buffer_bps);
     to_u64(div_ceil(
-        u128::from(freight) * factor,
+        mul(u128::from(freight), factor)?,
         u128::from(BPS_DENOMINATOR),
     )?)
 }
