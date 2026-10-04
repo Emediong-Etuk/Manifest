@@ -1,0 +1,35 @@
+# Rust / Anchor
+target/
+.anchor/
+**/*.rs.bk
+test-ledger/
+.surfpool/
+
+# Node
+node_modules/
+.pnpm-store/
+dist/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+.vercel/
+coverage/
+
+# Secrets: never commit keys or env files
+.env
+.env.*
+!.env.example
+.keys/
+*keypair*.json
+id.json
+
+# Local evidence storage fallback
+.data/
+
+# OS / editors
+.DS_Store
+*.log
+.idea/
+.vscode/*
+!.vscode/extensions.json

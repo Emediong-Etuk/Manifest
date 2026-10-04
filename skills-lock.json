@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "colosseum-copilot": {
+      "source": "ColosseumOrg/colosseum-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/colosseum-copilot/SKILL.md",
+      "computedHash": "76a88fd18ef527fc89b10e6f51ea5ac219aabd15774d4c782e543885c978ea08"
+    },
+    "colosseum-resources": {
+      "source": "ColosseumOrg/colosseum-resources",
+      "sourceType": "github",
+      "skillPath": "skills/colosseum-resources/SKILL.md",
+      "computedHash": "ab84c86c14e8bb8824e6dcf57e21ee54b56fcda9f48575518fa1df00464f827f"
+    },
+    "solana-dev": {
+      "source": "solana-foundation/solana-dev-skill",
+      "sourceType": "github",
+      "skillPath": "skills/solana-dev/SKILL.md",
+      "computedHash": "fc278aba173b0596f43c6db6e6c3a2875c96d62281e243e168f8fdebe07609ea"
+    }
+  }
+}

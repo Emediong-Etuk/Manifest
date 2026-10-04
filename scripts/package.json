@@ -1,0 +1,23 @@
+{
+  "name": "@manifest/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Devnet operator scripts: init config, demo mint, seed data, crank, Squads, faucet",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "echo \"scripts: no unit tests (exercised against devnet)\"",
+    "check-env": "tsx src/check-env.ts"
+  },
+  "dependencies": {
+    "@manifest/sdk": "workspace:*",
+    "dotenv": "18.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "tsx": "4.23.15"
+  }
+}

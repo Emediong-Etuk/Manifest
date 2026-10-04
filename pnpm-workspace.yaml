@@ -1,0 +1,10 @@
+packages:
+  - packages/*
+  - app
+  - scripts
+
+# pnpm 10 blocks dependency install scripts by default; allow only the ones we need.
+onlyBuiltDependencies:
+  - esbuild
+  - sharp
+  - unrs-resolver

@@ -1,0 +1,30 @@
+{
+  "name": "manifest-monorepo",
+  "private": true,
+  "description": "Manifest: pay-on-proof escrow for traders who ship in shared containers",
+  "license": "MIT",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "program:build": "anchor build",
+    "program:test": "anchor build && cargo test -p manifest-tests",
+    "program:lint": "cargo fmt --all -- --check && cargo clippy --workspace --all-targets -- -D warnings",
+    "check-env": "pnpm --filter @manifest/scripts check-env"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "eslint": "9.39.5",
+    "globals": "17.13.0",
+    "prettier": "3.9.9",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.71.0"
+  }
+}
