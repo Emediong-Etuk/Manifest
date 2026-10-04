@@ -8,12 +8,39 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | Phase                        | Dates     | Status                                                 |
 | ---------------------------- | --------- | ------------------------------------------------------ |
 | 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
-| 1: Program core              | Oct 4–6   | ⏳ Waiting for Greg's go-ahead                         |
+| 1: Program core              | Oct 4–6   | 🔨 In progress                                         |
 | 2: Program complete + devnet | Oct 6–7   | —                                                      |
 | 3: Frontend core             | Oct 7–9   | —                                                      |
 | 4: Integrations              | Oct 9–10  | —                                                      |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
+
+## Phase 1 plan (Oct 4–6): program core
+
+Order (each step: code → LiteSVM tests → green → commit):
+
+1. Foundations: constants (seeds, defaults), `ManifestError`, events, account structs
+   (Config, Forwarder, Container, Consignment), utils (checked math, fixed-string and
+   UN/LOCODE validation, `transfer_checked` with PDA signer).
+2. Test harness: LiteSVM with SPL Token / Token-2022 / ATA, 6-decimal test mint, funded
+   wallets, clock warp, account decoding, error-code assertions.
+3. Admin: `initialize_config` (mint decimals == 6 via remaining accounts, bps ≤ 10_000,
+   windows > 0), `update_config`, `transfer_admin`.
+4. Forwarder: `register_forwarder` (+ bond vault PDA), `deposit_bond`, `withdraw_bond`.
+5. Container: `open_container`, `close_booking` (forwarder, or anyone after cut-off),
+   `cancel_container`.
+6. Consignment: `book_consignment` (coverage + capacity + fee + buffered freight),
+   `reject_booking`, `refund_after_cutoff`, `record_receipt`, `reject_goods`.
+7. Approval settlement shared by `approve_goods` and `auto_approve`: payee payout, fee to
+   treasury ATA, freight re-pricing refund, Cargo Ticket (Token-2022 mint PDA with
+   MetadataPointer + TokenMetadata + PermanentDelegate, mint 1, revoke mint authority).
+8. Measure CU for `book_consignment` and `approve_goods`; record in DECISIONS.md.
+9. Solana MCP `program_autofixer` pass on every program file; clippy/fmt; tag `phase-1`.
+
+Risks: Token-2022 metadata sizing/rent inside one approval tx; transaction size and CU of
+approval (fallback: split `mint_cargo_ticket`); Anchor 1.x duplicate-mutable-account rule
+when payee/trader/treasury coincide (guarded at booking); LiteSVM vs Anchor crate-version
+friction in tests.
 
 ## Phase 0 plan (Sun Oct 4)
 
@@ -47,7 +74,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing. Waiting for Greg to confirm Phase 1.
+- Phase 1, step 1 (foundations).
 
 ## Next (Phase 1: program core)
 
