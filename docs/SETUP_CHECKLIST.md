@@ -9,6 +9,9 @@ variables) for cloud sessions.
 ## Before Phase 2 (devnet deploy, ~Oct 6)
 
 - [ ] **Durable keypairs.** Cloud containers are ephemeral, so keys made there disappear.
+      **No Solana CLI (e.g. Windows)?** Run `node scripts/standalone/new-keypairs.mjs`
+      (Node 18+, no install): it writes `manifest-dev.json`, `manifest-program.json` and
+      `manifest-gas-tank.json` in `solana-keygen` format and prints only the addresses.
       On your own machine (Solana CLI installed), create a deploy/upgrade-authority key with
       `solana-keygen new -o ~/.config/solana/manifest-dev.json` and a program-ID key with
       `solana-keygen new -o ~/.config/solana/manifest-program.json`.
