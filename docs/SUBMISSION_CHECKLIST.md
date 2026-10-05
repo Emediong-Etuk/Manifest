@@ -3,6 +3,24 @@
 Deadline: **Mon Oct 12, 2026, 11:59 PM PT = Tue Oct 13, 7:59 AM WAT**. Aim to submit by
 **Mon Oct 12, 11:00 PM WAT**. Code freeze: **Mon Oct 12, 6:00 PM WAT**.
 
+## Schedule (WAT)
+
+| When                     | What                                                                                                    | Who           |
+| ------------------------ | ------------------------------------------------------------------------------------------------------- | ------------- |
+| As soon as possible      | Durable keypairs as environment secrets, ~12 devnet SOL on the deploy key, ~5 on the gas tank           | Greg          |
+| Same session             | `preflight` → deploy → create-demo-mint → init-config → squads-setup (`docs/DEPLOY.md` 1–4)             | Claude Code   |
+| Same day                 | Vercel import + env vars + Pinata; `seed-demo` against production; preflight all green                  | Greg + Claude |
+| Next day                 | Real-phone judge path, WhatsApp preview, Blink on dial.to; devnet screenshots in the README             | Greg + Claude |
+| Thu Oct 8 – Sat Oct 10   | Field interviews and LOIs (`docs/INTERVIEW_QUESTIONS.md`); fill the pitch's validation line             | Greg          |
+| Sat Oct 10 – Sun Oct 11  | `demo-reset`, rehearse both scripts once, record pitch and demo, upload unlisted                        | Greg          |
+| Sun Oct 11               | Fill README links, `docs/ARENA_SUBMISSION.md` → Arena form (save as draft)                              | Greg + Claude |
+| **Mon Oct 12, 6:00 PM**  | **Code freeze**: CI green on `main`, tag `submission`, re-run the secret check                          | Claude Code   |
+| **Mon Oct 12, 11:00 PM** | **Submit** on Arena (hard deadline Tue Oct 13, 7:59 AM WAT); then the X thread (`docs/LAUNCH_POSTS.md`) | Greg          |
+
+If the deploy is still blocked on Sat Oct 10, decide then: record on a local validator as a
+last resort (the spec lists the devnet program as "never cut", so this is a fallback, and
+the submission must say so).
+
 ## Repository
 
 - [x] Public GitHub repo: <https://github.com/Emediong-Etuk/Manifest>, MIT license
@@ -40,6 +58,7 @@ Deadline: **Mon Oct 12, 2026, 11:59 PM PT = Tue Oct 13, 7:59 AM WAT**. Aim to su
 
 ## Arena (Greg, as team leader)
 
+- [ ] Drafts for every field: `docs/ARENA_SUBMISSION.md`
 - [ ] Project page: name, one-liner ("Pay-on-proof escrow for traders who ship in shared
       containers"), description, track (Solana), repo, live app, videos, technical demo link
 - [ ] Team members and X / Telegram handles
@@ -48,5 +67,6 @@ Deadline: **Mon Oct 12, 2026, 11:59 PM PT = Tue Oct 13, 7:59 AM WAT**. Aim to su
 
 ## Launch
 
-- [ ] Post on X: what Manifest does, the Blink (a live container), both videos, the repo
+- [ ] Post on X (draft thread in `docs/LAUNCH_POSTS.md`): what Manifest does, the Blink (a
+      live container), both videos, the repo
 - [ ] Share in West African crypto communities and with the forwarders interviewed

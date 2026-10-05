@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/Emediong-Etuk/Manifest/actions/workflows/ci.yml/badge.svg)](https://github.com/Emediong-Etuk/Manifest/actions/workflows/ci.yml)
 ![Solana devnet](https://img.shields.io/badge/Solana-devnet-9945FF)
-![Tests](https://img.shields.io/badge/tests-142%20passing-2f7d4f)
+![Tests](https://img.shields.io/badge/tests-143%20passing-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 <!-- Hero illustration slot: replace app/public/illustrations/hero.svg with Greg's artwork. -->
@@ -220,10 +220,11 @@ embedded wallets cap spending at $1,000/day. Full threat model:
 | Program integration (LiteSVM, Rust)   | 95    | `cargo test -p manifest-tests`     |
 | Program unit (math, validation)       | 12    | `cargo test -p manifest`           |
 | SDK (Vitest)                          | 32    | `pnpm --filter @manifest/sdk test` |
-| Browser (Playwright, local validator) | 3     | `pnpm --filter @manifest/app e2e`  |
+| Browser (Playwright, local validator) | 4     | `pnpm --filter @manifest/app e2e`  |
 
 The browser suite runs a full two-browser trader + forwarder lifecycle, the judge path on a
-360 px phone (landing → booked), and a smoke test with axe WCAG 2.1 AA and overflow checks.
+360 px phone (landing → booked), a smoke test with axe WCAG 2.1 AA and overflow checks, and
+a click-for-click rehearsal of the technical demo script.
 
 ## Run locally
 

@@ -17,6 +17,9 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 
 ## Phase 6 plan (Oct 5–12): videos and submission
 
+Steps 1–4 done ✅ (Oct 5). Remaining Phase 6 work is Greg's or waits on the deploys:
+deploy → seed → record → Arena → post (schedule in `docs/SUBMISSION_CHECKLIST.md`).
+
 Blocked on Greg: durable keypairs + devnet SOL, Vercel, Pinata. Recording needs the devnet
 deploy, so the work here makes deploy day and recording day fast and safe:
 
@@ -186,6 +189,19 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 6, prep (Oct 5)
+
+- `preflight`: deploy- and recording-day readiness in one command (RPC, durable key,
+  program ID consistency, balances, upgrade authority, config, mint + gas tank, metadata
+  URL, Squads, demo world, app endpoints, HTTPS, Pinata), with the next step for each
+  failure. All green on the local rehearsal; on devnet it lists exactly the 9 missing items.
+- `docs/DEMO_SCRIPT.md` rehearsed click for click as `app/e2e/rehearsal.spec.ts` (passed
+  in 24 s); the script gained the last-4 confirmation on ticket transfer.
+- `docs/ARENA_SUBMISSION.md` (every Arena field, verified facts only, placeholders for
+  Greg's) and `docs/LAUNCH_POSTS.md` (X thread, WhatsApp, LinkedIn).
+- Day-by-day schedule to the deadline in `docs/SUBMISSION_CHECKLIST.md`.
+- PR Emediong-Etuk/Manifest#1 merged by Greg; CI green on `main` (program + TypeScript jobs).
+
 ### Phase 5 (Oct 5)
 
 - **Mobile QA at 360 px**: every page (24 page states as visitor, trader and forwarder)
@@ -313,7 +329,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 6, step 1 (preflight).
+- Waiting on Greg: devnet keys + SOL, Vercel, Pinata (see Blockers).
 
 ## Next
 
