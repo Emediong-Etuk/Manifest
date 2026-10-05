@@ -14,6 +14,7 @@ import {
   manifestScore,
   shortAddress,
   type Stage,
+  STAGE_LABEL,
   TIMELINE,
   timelineIndex,
 } from "@manifest/sdk";
@@ -215,26 +216,22 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-const STAGE_STAMPS: Record<
-  Stage,
-  { text: string; tone: "accent" | "stamp" | "ink" | "danger" | "muted" }
-> = {
-  AWAITING_GOODS: { text: "Booked", tone: "ink" },
-  REVIEW_PHOTOS: { text: "At warehouse", tone: "accent" },
-  PAID_SUPPLIER: { text: "Paid supplier", tone: "stamp" },
-  LOADED: { text: "Loaded", tone: "stamp" },
-  SAILING: { text: "Sailing", tone: "stamp" },
-  ARRIVED_READY_FOR_PICKUP: { text: "Ready for pickup", tone: "accent" },
-  COLLECTED: { text: "Collected", tone: "stamp" },
-  REFUNDED: { text: "Refunded", tone: "muted" },
-  IN_DISPUTE: { text: "In dispute", tone: "danger" },
-  COMPENSATED: { text: "Compensated", tone: "ink" },
-  SETTLED: { text: "Settled", tone: "muted" },
+const STAGE_TONES: Record<Stage, "accent" | "stamp" | "ink" | "danger" | "muted"> = {
+  AWAITING_GOODS: "ink",
+  REVIEW_PHOTOS: "accent",
+  PAID_SUPPLIER: "stamp",
+  LOADED: "stamp",
+  SAILING: "stamp",
+  ARRIVED_READY_FOR_PICKUP: "accent",
+  COLLECTED: "stamp",
+  REFUNDED: "muted",
+  IN_DISPUTE: "danger",
+  COMPENSATED: "ink",
+  SETTLED: "muted",
 };
 
 export function StageStamp({ stage }: { stage: Stage }) {
-  const s = STAGE_STAMPS[stage];
-  return <Stamp tone={s.tone}>{s.text}</Stamp>;
+  return <Stamp tone={STAGE_TONES[stage]}>{STAGE_LABEL[stage]}</Stamp>;
 }
 
 export function TimelineStepper({ stage }: { stage: Stage }) {

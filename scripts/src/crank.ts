@@ -6,7 +6,7 @@
  * (falls back to the dev key), which pays fees and the Cargo Ticket rent on auto-approval.
  *
  *   pnpm --filter @manifest/scripts crank            # one pass
- *   pnpm --filter @manifest/scripts crank --watch    # every 60 s (CRANK_INTERVAL_SECS)
+ *   pnpm --filter @manifest/scripts crank --watch    # every 30 s (CRANK_INTERVAL_SECS)
  * In production the same pass runs from Vercel Cron: GET /api/cron/crank (app/vercel.json).
  */
 import { crankInstructions, findCrankJobs } from "@manifest/sdk";
@@ -47,7 +47,7 @@ async function main() {
     process.exitCode = failed > 0 ? 1 : 0;
     return;
   }
-  const interval = Number(process.env.CRANK_INTERVAL_SECS ?? 60) * 1000;
+  const interval = Number(process.env.CRANK_INTERVAL_SECS ?? 30) * 1000;
   for (;;) {
     await pass(c, payer).catch((err: unknown) => console.error("crank pass failed:", err));
     await new Promise((r) => setTimeout(r, interval));

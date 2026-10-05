@@ -115,6 +115,24 @@ export function deriveStage(c: ConsignmentView, k: ContainerView, now: number): 
   }
 }
 
+/** Plain-language label for each stage (app badges, Cargo Ticket image and metadata). */
+export const STAGE_LABEL: Record<Stage, string> = {
+  AWAITING_GOODS: "Booked",
+  REVIEW_PHOTOS: "At warehouse",
+  PAID_SUPPLIER: "Paid supplier",
+  LOADED: "Loaded",
+  SAILING: "Sailing",
+  ARRIVED_READY_FOR_PICKUP: "Ready for pickup",
+  COLLECTED: "Collected",
+  REFUNDED: "Refunded",
+  IN_DISPUTE: "In dispute",
+  COMPENSATED: "Compensated",
+  SETTLED: "Settled",
+};
+
+/** Final stages: the Cargo Ticket is burned or void. */
+export const FINAL_STAGES: readonly Stage[] = ["COLLECTED", "REFUNDED", "COMPENSATED", "SETTLED"];
+
 /** Timeline shown on shipment cards, in order. */
 export const TIMELINE: readonly { stage: Stage; label: string }[] = [
   { stage: "AWAITING_GOODS", label: "Booked" },
