@@ -1,11 +1,14 @@
 "use client";
 
 import { shortAddress } from "@manifest/sdk";
+import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useState } from "react";
 
 import { config } from "@/lib/config";
 import { useWallet } from "@/lib/wallet/context";
 
+import { useToast } from "./toasts";
 import { Button } from "./ui";
 
 export function WalletButton() {

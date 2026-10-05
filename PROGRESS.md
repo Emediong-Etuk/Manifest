@@ -11,9 +11,34 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
 | 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
-| 4: Integrations              | Oct 9–10  | ⏳ Waiting for Greg's go-ahead                         |
+| 4: Integrations              | Oct 9–10  | 🔨 In progress                                         |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
+
+## Phase 4 plan (Oct 5–10): integrations
+
+1. Faucet / gas tank: `POST /api/faucet` (devnet/localnet only): SOL top-up below 0.02 +
+   500 test dollars; per-address 24h limit + global daily cap (Upstash/Vercel KV when
+   configured, in-memory otherwise); DevnetBanner button.
+2. Crank: `scripts/crank.ts` (`--watch`) + `GET /api/cron/crank` (CRON_SECRET) +
+   `vercel.json` cron: `auto_approve` past review deadline, `close_booking` past cut-off.
+3. Share previews: server `generateMetadata` for `/c/[id]` and `/s/[id]`; `next/og`
+   images `/api/og/container/[id]`; Cargo Ticket metadata `/api/tickets/[c]` and image
+   `/api/tickets/[c]/image` (boarding-pass design, VOID stamp when settled).
+4. Solana Actions / Blinks: `/actions.json`, `GET/POST /api/actions/book/[container]`
+   with `@solana/actions` headers + CORS; "Share as Blink" button.
+5. Squads v4: `scripts/squads-setup.ts` (2-of-3 multisig, vault PDA → config arbitrator +
+   treasury), `scripts/resolve-dispute.ts` (vault transaction → proposal → 2 approvals →
+   execute); `/admin` dispute queue that prepares the resolution. Verified on a local
+   validator with the Squads program cloned from devnet.
+6. Demo data: `seed-demo.ts` (Eastline Cargo, Harbour Link, LAG-1014/2207/0930, resale,
+   dispute), `fund-wallet.ts`, `demo-reset.ts`.
+7. Stretch (only if ahead): fee sponsorship via Phantom `presignTransaction`; Reflect and
+   Kora notes for the roadmap.
+
+Risks: Squads SDK on web3.js v1 versions; Actions spec details (verify against docs);
+devnet still blocked (everything verified on localnet); fonts for `next/og` (bundle OFL
+TTFs).
 
 ## Phase 3 plan (Oct 4–9): frontend core
 
@@ -183,7 +208,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing. Waiting for Greg (devnet keys, Phantom App ID answer, go-ahead for Phase 4).
+- Phase 4, step 1 (faucet).
 
 ## Next
 
