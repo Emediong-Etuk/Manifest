@@ -1,6 +1,7 @@
 export * from "./accounts.js";
 export * from "./client.js";
 export * from "./constants.js";
+export * from "./crank.js";
 export * from "./errors.js";
 export * from "./evidence.js";
 export * from "./explorer.js";

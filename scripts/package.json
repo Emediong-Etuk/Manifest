@@ -14,7 +14,8 @@
     "create-demo-mint": "tsx src/create-demo-mint.ts",
     "init-config": "tsx src/init-config.ts",
     "e2e:local": "tsx src/e2e-local.ts",
-    "seed:local": "tsx src/seed-local.ts"
+    "seed:local": "tsx src/seed-local.ts",
+    "crank": "tsx src/crank.ts"
   },
   "dependencies": {
     "@manifest/sdk": "workspace:*",

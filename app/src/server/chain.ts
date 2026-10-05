@@ -7,7 +7,13 @@ import {
   resolveProgramId,
   type ManifestProgram,
 } from "@manifest/sdk";
-import { Connection } from "@solana/web3.js";
+import {
+  Connection,
+  type Keypair,
+  type TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+} from "@solana/web3.js";
 
 let program: ManifestProgram | undefined;
 
@@ -22,4 +28,25 @@ export function serverProgram(): ManifestProgram {
     );
   }
   return program;
+}
+
+/** Sign with a server key (fee payer), send, and wait for confirmation. Throws on failure. */
+export async function sendServerTx(
+  instructions: TransactionInstruction[],
+  payer: Keypair,
+): Promise<string> {
+  const connection = serverProgram().provider.connection;
+  const latest = await connection.getLatestBlockhash("confirmed");
+  const tx = new VersionedTransaction(
+    new TransactionMessage({
+      payerKey: payer.publicKey,
+      recentBlockhash: latest.blockhash,
+      instructions,
+    }).compileToV0Message(),
+  );
+  tx.sign([payer]);
+  const signature = await connection.sendTransaction(tx, { maxRetries: 3 });
+  const result = await connection.confirmTransaction({ signature, ...latest }, "confirmed");
+  if (result.value.err) throw new Error(`Transaction failed: ${JSON.stringify(result.value.err)}`);
+  return signature;
 }

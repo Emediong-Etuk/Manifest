@@ -11,16 +11,10 @@ import {
   getAssociatedTokenAddressSync,
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
-import {
-  LAMPORTS_PER_SOL,
-  PublicKey,
-  SystemProgram,
-  TransactionMessage,
-  VersionedTransaction,
-} from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey, SystemProgram } from "@solana/web3.js";
 import { z } from "zod";
 
-import { serverProgram } from "@/server/chain";
+import { sendServerTx, serverProgram } from "@/server/chain";
 import { keypairFromEnv } from "@/server/keys";
 import { claimOnce, increment, release } from "@/server/ratelimit";
 
@@ -91,18 +85,7 @@ export async function POST(request: Request) {
         TOKEN_PROGRAM_ID,
       ),
     ];
-    const latest = await connection.getLatestBlockhash("confirmed");
-    const tx = new VersionedTransaction(
-      new TransactionMessage({
-        payerKey: gasTank.publicKey,
-        recentBlockhash: latest.blockhash,
-        instructions,
-      }).compileToV0Message(),
-    );
-    tx.sign([gasTank]);
-    const signature = await connection.sendTransaction(tx, { maxRetries: 3 });
-    const result = await connection.confirmTransaction({ signature, ...latest }, "confirmed");
-    if (result.value.err) throw new Error(JSON.stringify(result.value.err));
+    const signature = await sendServerTx(instructions, gasTank);
     return Response.json({
       signature,
       explorer: explorerUrl("tx", signature, cluster),
