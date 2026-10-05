@@ -12,10 +12,13 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
 | 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
 | 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)     |
-| 5: Polish + docs + deploy    | Oct 10–11 | 🔨 In progress (Oct 5)                                 |
+| 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)       |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
 
 ## Phase 5 plan (Oct 5–11): polish, docs, deploy
+
+Steps 1–8 done ✅. Step 9: deploy readiness done; the Vercel and devnet deploys are blocked
+on Greg (accounts and keys).
 
 1. Local demo environment: validator with Squads, seed world, production build.
 2. Mobile QA at 360 px: Playwright screenshots of every page with seeded data and an
@@ -163,6 +166,31 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 5 (Oct 5)
+
+- **Mobile QA at 360 px**: every page (24 page states as visitor, trader and forwarder)
+  audited in Playwright for horizontal overflow, axe WCAG 2.1 AA violations and console
+  errors, in light and dark mode: all clean. Fixes: mobile nav row, wallet button
+  nowrap, photos before the approve button, large photo picker with thumbnails, stamp
+  green contrast 4.47 → 5.19:1, tap-to-open explanations instead of hover tooltips,
+  one date format, honest landing stat.
+- **Judge path**: "Try it in 2 minutes" card (sign in → 500 test dollars → book the
+  soonest open container), "Use a test supplier address", faucet button on the booking
+  summary. Playwright at 360 px: landing → booked in 3–5 s of app time.
+- **States**: `NetworkError` + retry on every page when the RPC fails (verified with the
+  RPC blocked), `app/error.tsx`, skip-to-content link, plain-language messages for every
+  user-reachable program error, copy pass ("guarantee", "shipment").
+- **Tests**: Playwright suite is now lifecycle + judge + smoke (axe + overflow); 142
+  tests in total (95 + 12 Rust, 32 SDK, 3 browser).
+- **Docs**: README (verified market sources, diagrams, tables, screenshots), BUSINESS,
+  FORWARDER_ONEPAGER, LOI_TEMPLATE, INTERVIEW_QUESTIONS, PITCH_SCRIPT, DEMO_SCRIPT,
+  SUBMISSION_CHECKLIST, full-system ARCHITECTURE (and a broken Mermaid diagram fixed; all
+  diagrams validated by rendering), Vercel runbook in DEPLOY.
+- **Deploy readiness**: `app/vercel.json` builds the SDK first; a clean devnet-config build
+  verified. `export-wallet` prepares demo keys for Phantom import without printing them.
+- **Secret scan**: all 19 commits scanned locally (keypair arrays, base58 private keys,
+  secret env values, key files): clean. GitHub secret scanning isn't enabled on the repo.
+
 ### Phase 4 (Oct 5)
 
 - **Faucet / gas tank:** `POST /api/faucet` (0.05 SOL if below 0.02 + 500 test dollars;
@@ -265,14 +293,17 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 5, step 1 (local demo environment).
+- Nothing; waiting for Greg (merge to `main`, keys, Vercel) and "Execute Phase 6".
 
 ## Next
 
-1. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` (deploy, demo mint, config,
-   Squads, seed: about 30 minutes).
-2. **Vercel deploy** (Phase 5) and a real Blink test on dial.to (needs a public HTTPS URL).
-3. **Phase 5:** polish, README, full architecture diagram, docs, Lighthouse/a11y pass.
+1. **Merge this branch into `main`** (Greg): GitHub shows `main`, which still has only the
+   initial commit, and CI only runs on `main` and pull requests.
+2. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` steps 1–6 (about 30 minutes).
+3. **Vercel deploy** (`docs/DEPLOY.md` step 7), then the real-world checks: Blink on
+   dial.to, WhatsApp preview, judge path on a real phone, README links and screenshots
+   retaken on devnet.
+4. **Phase 6:** demo-reset, rehearse the scripts, Greg records, Arena form, X post.
 
 ## Blockers
 
@@ -288,6 +319,8 @@ not accepting new apps (see Blockers).
    rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
 4. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
    seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
+5. **`main` is behind.** All work is on `claude/magical-ritchie-kux8x2`; Greg needs to merge
+   it (or ask for a pull request) so the public repo and CI show it.
 
 ## Decisions
 
@@ -297,4 +330,8 @@ not accepting new apps (see Blockers).
 - Crank every 5 min via GitHub Actions (Vercel Hobby crons are daily only).
 - Arbitration resolutions run from scripts (Squads proposals); `/admin` shows the queue
   and the exact commands rather than a one-wallet button.
+- Faucet stays at 500 test dollars (spec 7.5); the landing card suggests a booking that
+  fits ($300 of goods, 0.25 CBM).
+- Market numbers: Afreximbank's African Trade Report 2025 (primary source, ~$100B a year)
+  instead of the $80–120B range, which only secondary coverage of the 2026 report states.
 - Full list: `docs/DECISIONS.md`.

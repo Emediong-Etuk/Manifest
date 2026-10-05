@@ -83,7 +83,34 @@ pnpm --filter @manifest/scripts fund-wallet --address <pubkey>
   `.github/workflows/crank.yml`.
 - Locally: `pnpm --filter @manifest/scripts crank --watch`.
 
-## 7. Record and verify
+## 7. Vercel
+
+1. Import `github.com/Emediong-Etuk/Manifest` in Vercel. **Root Directory: `app`**
+   (keep "Include files outside the root directory" on; the app uses the workspace SDK).
+   Framework: Next.js. Node.js: 22.x.
+2. Build command comes from `app/vercel.json`:
+   `pnpm --filter @manifest/sdk build && pnpm run build` (the SDK's `dist/` isn't committed).
+   Install command: the default (`pnpm install`, detected from `pnpm-lock.yaml`).
+3. Environment variables (Production and Preview), from `.env.example`:
+   `NEXT_PUBLIC_CLUSTER=devnet`, `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_RPC_URL`,
+   `NEXT_PUBLIC_PROGRAM_ID`, `NEXT_PUBLIC_DEMO_MINT`, `NEXT_PUBLIC_USDC_MINT`,
+   `NEXT_PUBLIC_SQUADS_MULTISIG`, `NEXT_PUBLIC_SQUADS_VAULT`, `NEXT_PUBLIC_PHANTOM_APP_ID`
+   (optional); secrets `GAS_TANK_SECRET_KEY`, `CRON_SECRET`, `PINATA_JWT`,
+   `PINATA_GATEWAY`, optional `CRANK_SECRET_KEY`, `RPC_URL`, `KV_REST_API_URL`,
+   `KV_REST_API_TOKEN`. `NEXT_PUBLIC_*` values are baked in at build time: redeploy after
+   changing them.
+4. Deploy, then set `NEXT_PUBLIC_APP_URL` to the production URL and redeploy (OG images,
+   ticket metadata and Blink links use it). Re-run `init-config --update` if the
+   `metadata_base_uri` should point at the production domain.
+5. Phantom Portal (if an App ID is used): add the production origin and
+   `<url>/auth/callback` as a redirect URL.
+6. Check: `/actions.json` returns rules; `<url>/c/<LAG-1014>` link preview in WhatsApp;
+   the Blink on `https://dial.to/?action=solana-action:<url>/api/actions/book/<container>&cluster=devnet`.
+
+Verified locally (Oct 5): a clean build with only `NEXT_PUBLIC_CLUSTER=devnet` succeeds
+and falls back to the public devnet RPC.
+
+## 8. Record and verify
 
 - Put the program ID in `.env.example`, the README and `docs/SUBMISSION_CHECKLIST.md`.
 - Check the program and config accounts on Solana Explorer (`?cluster=devnet`).

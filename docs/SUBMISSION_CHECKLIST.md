@@ -10,8 +10,9 @@ Deadline: **Mon Oct 12, 2026, 11:59 PM PT = Tue Oct 13, 7:59 AM WAT**. Aim to su
       security, run locally, business model)
 - [ ] README links filled in: live app, devnet program ID + Explorer link, pitch and demo
       videos, Greg's handles, hero illustration
-- [ ] No secrets in history: GitHub secret scanning clean (run on Oct 5 for Phase 5; re-run
-      at code freeze)
+- [ ] No secrets in history. Oct 5: local scan of all commits found no keypairs, private
+      keys or secret values. Also enable GitHub secret scanning (free for public repos:
+      Settings → Code security) and re-check at code freeze.
 - [ ] CI green on the final commit; tag `phase-6` / `submission`
 
 ## Devnet
