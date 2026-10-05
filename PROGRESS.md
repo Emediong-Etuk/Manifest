@@ -13,7 +13,30 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
 | 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)     |
 | 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)       |
-| 6: Videos + submission       | Oct 11–12 | —                                                      |
+| 6: Videos + submission       | Oct 11–12 | 🔨 In progress (Oct 5); recording blocked on deploys   |
+
+## Phase 6 plan (Oct 5–12): videos and submission
+
+Steps 1–4 done ✅ (Oct 5). Remaining Phase 6 work is Greg's or waits on the deploys:
+deploy → seed → record → Arena → post (schedule in `docs/SUBMISSION_CHECKLIST.md`).
+
+Blocked on Greg: durable keypairs + devnet SOL, Vercel, Pinata. Recording needs the devnet
+deploy, so the work here makes deploy day and recording day fast and safe:
+
+1. `pnpm --filter @manifest/scripts preflight`: one command that checks everything the
+   deploy and the demo need (keys, balances, program ID match, env vars, config, Squads,
+   demo world, app endpoints) and prints exactly what's missing.
+2. Rehearse `docs/DEMO_SCRIPT.md` end to end in Playwright on a local validator (Blink POST,
+   receipt with photo, VERIFIED, approve, ticket transfer, pickup code paste, confirm,
+   Squads slash, `/admin`); fix any label or step the script gets wrong. Keep it as an
+   e2e test so the demo path can't silently break before code freeze.
+3. Arena submission draft (`docs/ARENA_SUBMISSION.md`) and launch posts
+   (`docs/LAUNCH_POSTS.md`), with placeholders only where Greg's facts are needed.
+4. Day-by-day schedule to the deadline; code-freeze checklist.
+
+Risks: the deploy keeps slipping (recording window shrinks; fallback is the scripted local
+recording, which the spec allows only as a last resort since the devnet program is
+"never cut"); Phantom on devnet untested; Arena form fields may differ from the guide.
 
 ## Phase 5 plan (Oct 5–11): polish, docs, deploy
 
@@ -166,6 +189,19 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 6, prep (Oct 5)
+
+- `preflight`: deploy- and recording-day readiness in one command (RPC, durable key,
+  program ID consistency, balances, upgrade authority, config, mint + gas tank, metadata
+  URL, Squads, demo world, app endpoints, HTTPS, Pinata), with the next step for each
+  failure. All green on the local rehearsal; on devnet it lists exactly the 9 missing items.
+- `docs/DEMO_SCRIPT.md` rehearsed click for click as `app/e2e/rehearsal.spec.ts` (passed
+  in 24 s); the script gained the last-4 confirmation on ticket transfer.
+- `docs/ARENA_SUBMISSION.md` (every Arena field, verified facts only, placeholders for
+  Greg's) and `docs/LAUNCH_POSTS.md` (X thread, WhatsApp, LinkedIn).
+- Day-by-day schedule to the deadline in `docs/SUBMISSION_CHECKLIST.md`.
+- PR Emediong-Etuk/Manifest#1 merged by Greg; CI green on `main` (program + TypeScript jobs).
+
 ### Phase 5 (Oct 5)
 
 - **Mobile QA at 360 px**: every page (24 page states as visitor, trader and forwarder)
@@ -293,12 +329,10 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing; waiting for Greg (merge to `main`, keys, Vercel) and "Execute Phase 6".
+- Waiting on Greg: devnet keys + SOL, Vercel, Pinata (see Blockers).
 
 ## Next
 
-1. **Merge this branch into `main`** (Greg): GitHub shows `main`, which still has only the
-   initial commit, and CI only runs on `main` and pull requests.
 2. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` steps 1–6 (about 30 minutes).
 3. **Vercel deploy** (`docs/DEPLOY.md` step 7), then the real-world checks: Blink on
    dial.to, WhatsApp preview, judge path on a real phone, README links and screenshots
@@ -319,8 +353,6 @@ not accepting new apps (see Blockers).
    rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
 4. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
    seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
-5. **`main` is behind.** All work is on `claude/magical-ritchie-kux8x2`; Greg needs to merge
-   it (or ask for a pull request) so the public repo and CI show it.
 
 ## Decisions
 

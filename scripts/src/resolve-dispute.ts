@@ -56,7 +56,7 @@ const resolution: Resolution = (() => {
 })();
 
 const c = chain();
-const squads = loadSquads();
+const squads = loadSquads(c.cluster);
 if (!squads) throw new Error("No Squads multisig recorded. Run squads-setup first.");
 const config = await getConfig(c.program);
 if (!config?.arbitrator.equals(squads.vault)) {

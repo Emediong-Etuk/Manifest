@@ -8,6 +8,17 @@ decisions behind them, focused on how the product uses Solana
 Everything below is on **devnet**, with real transactions. Click paths use the exact
 button labels in the app.
 
+## Rehearsed
+
+The whole script runs as a Playwright test on a local validator, click for click
+(`app/e2e/rehearsal.spec.ts`; Phantom replaced by the local test wallet, dial.to by the
+same Actions GET/POST). If you change a label in the app, run it again:
+`E2E_MINT=<mint> pnpm --filter @manifest/app exec playwright test e2e/rehearsal.spec.ts`.
+Last run: Oct 5, passed in 24 s.
+
+Dele's address for the transfer (public key only, nothing written):
+`pnpm --filter @manifest/scripts export-wallet --name demo-buyer-dele --public`.
+
 ## Before you record (20 minutes, once)
 
 1. **Fresh demo state** (repo root, `.env.local` pointing at devnet and the deployed app):
@@ -46,7 +57,7 @@ button labels in the app.
 | 0:45–1:05 | **Window A**: `dial.to/?action=solana-action:<app>/api/actions/book/<LAG-NEW>&cluster=devnet` → fill goods `300`, CBM `0.25`, supplier = Dele's address, description → **Book space** → approve in Phantom                                                                                                                        | "A Blink. The Action builds and simulates `book_consignment`; my $406.75 is now in an escrow vault owned by the shipment's PDA." (If the wallet is empty, first **Get test dollars** in the app banner.) |
 | 1:05–1:30 | **Window B** (Eastline): refresh → new shipment → **Goods arrived at the warehouse: record receipt** → pick the photo, measured `0.22`, cartons `3`, packing list → **Upload evidence and record receipt** → approve                                                                                                              | "At the warehouse the forwarder signs the upload. The server strips EXIF and returns the SHA-256 of the canonical manifest; that hash goes onchain."                                                     |
 | 1:30–1:50 | **Window A**: **My shipments** → the new shipment → **VERIFIED · Matches the record on Solana** → **Approve goods** → **Yes, pay $300.00** → approve. (Approve within 2 minutes or the crank auto-approves.)                                                                                                                      | "My browser re-hashes the manifest and compares it with the chain. Approving pays the supplier, refunds unused freight and mints my Cargo Ticket."                                                       |
-| 1:50–2:05 | Phantom → Collectibles: the **Manifest Cargo Ticket**; then on the shipment page **Sell goods in transit (transfer Cargo Ticket)** → Dele's address → **Transfer ticket**                                                                                                                                                         | "A Token-2022 NFT: metadata in the mint, a permanent delegate that only the program can sign for, used to burn it at settlement. Transferable, so goods at sea can be sold."                             |
+| 1:50–2:05 | Phantom → Collectibles: the **Manifest Cargo Ticket**; then on the shipment page **Sell goods in transit (transfer Cargo Ticket)** → Dele's address → type its last 4 characters → **Transfer ticket**                                                                                                                            | "A Token-2022 NFT: metadata in the mint, a permanent delegate that only the program can sign for, used to burn it at settlement. Transferable, so goods at sea can be sold."                             |
 | 2:05–2:30 | Phantom A → account **Ada** → `<app>/s/<LAG-0930 hair extensions>` → **Show pickup code** → **Can't scan? Copy the code**. **Window B** → `<app>/forwarder/c/<LAG-0930>` → **Pickup scanner** → **Paste a code instead** → paste → **Check code** → **Valid ticket**. Window A → **I've collected my goods** → **Confirm pickup** | "At Lagos the holder signs a pickup code; the forwarder checks it against the chain. Confirming burns the ticket and releases the freight to the forwarder in the same transaction."                     |
 | 2:30–2:50 | Terminal: `pnpm --filter @manifest/scripts resolve-dispute --consignment <dispute> --resolution slash --amount 500` (four links print) → `<app>/admin` → **Paid from guarantees**                                                                                                                                                 | "Disputes go to a 2-of-3 Squads multisig. The vault is the program's arbitrator: proposal, two approvals, execute. $500 moved from Eastline's guarantee to the ticket holder."                           |
 | 2:50–3:00 | Click any **View on Solana Explorer** link                                                                                                                                                                                                                                                                                        | "Every step you saw is a devnet transaction. Code, tests and docs are open source."                                                                                                                      |
