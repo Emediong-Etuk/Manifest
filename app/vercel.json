@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm --filter @manifest/sdk build && pnpm run build",
+  "crons": [
+    {
+      "path": "/api/cron/crank",
+      "schedule": "17 6 * * *"
+    }
+  ]
+}

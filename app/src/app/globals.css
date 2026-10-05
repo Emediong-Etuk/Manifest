@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+ * Manifest design tokens: "the shipping manifest".
+ * Paper background, ink-navy text, container orange as the single accent,
+ * stamp green for verified / paid states. Light theme by default for
+ * sunlight readability; dark theme via prefers-color-scheme or data-theme.
+ */
+:root {
+  --paper: #f6f1e7;
+  --paper-raised: #fffdf8;
+  --ink: #14213d;
+  --ink-muted: #4a5470;
+  --rule: #d9cfbd;
+  --accent: #c2410c; /* container orange, AA on paper */
+  --accent-ink: #ffffff;
+  --stamp: #28724a; /* stamp green */
+  --danger: #b42318;
+  --focus: #c2410c;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f1626;
+    --paper-raised: #172036;
+    --ink: #f1ebdd;
+    --ink-muted: #b4b9c8;
+    --rule: #2c3651;
+    --accent: #f97316;
+    --accent-ink: #1a1206;
+    --stamp: #4ade80;
+    --danger: #f87171;
+    --focus: #fb923c;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0f1626;
+  --paper-raised: #172036;
+  --ink: #f1ebdd;
+  --ink-muted: #b4b9c8;
+  --rule: #2c3651;
+  --accent: #f97316;
+  --accent-ink: #1a1206;
+  --stamp: #4ade80;
+  --danger: #f87171;
+  --focus: #fb923c;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-rule: var(--rule);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-stamp: var(--stamp);
+  --color-danger: var(--danger);
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-stencil: var(--font-stencil-face), "Arial Narrow", Impact, sans-serif;
+}
+
+html {
+  font-size: 100%; /* 16px body minimum */
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

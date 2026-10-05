@@ -1,0 +1,27 @@
+[package]
+name = "manifest-tests"
+version = "0.1.0"
+description = "LiteSVM integration tests for the Manifest program"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+# All tests live in tests/src and load the compiled program from
+# target/deploy/manifest.so, so run `anchor build` before `cargo test`.
+[lib]
+path = "src/lib.rs"
+test = true
+doctest = false
+
+[dependencies]
+manifest = { path = "../programs/manifest", features = ["no-entrypoint"] }
+anchor-lang = "1.2.0"
+anchor-spl = { version = "1.2.0", default-features = false, features = ["token", "token_2022", "token_2022_extensions", "associated_token"] }
+litesvm = "0.16.0"
+solana-keypair = "3"
+solana-message = "4"
+solana-signer = "3"
+solana-transaction = "4"
+solana-transaction-error = "3.3"
+solana-instruction-error = "2.4"

@@ -1,0 +1,10 @@
+target
+node_modules
+dist
+.next
+.anchor
+pnpm-lock.yaml
+Cargo.lock
+.claude/skills
+skills-lock.json
+packages/sdk/src/idl

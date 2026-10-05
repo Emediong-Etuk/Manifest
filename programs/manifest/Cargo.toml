@@ -1,0 +1,29 @@
+[package]
+name = "manifest"
+version = "0.1.0"
+description = "Manifest: pay-on-proof escrow for traders who ship in shared containers"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "manifest"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+anchor-lang = { version = "1.2.0", features = ["init-if-needed"] }
+anchor-spl = { version = "1.2.0", default-features = false, features = ["token", "token_2022", "token_2022_extensions", "associated_token"] }
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

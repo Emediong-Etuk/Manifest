@@ -1,0 +1,28 @@
+# Calls the app's crank endpoint every 5 minutes (Vercel Hobby crons run only once a day).
+# Needs repository secrets APP_URL (e.g. https://manifest.example.vercel.app) and
+# CRON_SECRET (same value as in Vercel). Does nothing until both are set.
+name: crank
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  crank:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run one crank pass
+        env:
+          APP_URL: ${{ secrets.APP_URL }}
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$APP_URL" ] || [ -z "$CRON_SECRET" ]; then
+            echo "APP_URL / CRON_SECRET not set; skipping."
+            exit 0
+          fi
+          curl --fail-with-body -sS --max-time 90 \
+            -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/crank"

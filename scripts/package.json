@@ -1,0 +1,41 @@
+{
+  "name": "@manifest/scripts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Devnet operator scripts: init config, demo mint, seed data, crank, Squads, faucet",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "echo \"scripts: no unit tests (exercised against devnet)\"",
+    "check-env": "tsx src/check-env.ts",
+    "create-demo-mint": "tsx src/create-demo-mint.ts",
+    "init-config": "tsx src/init-config.ts",
+    "e2e:local": "tsx src/e2e-local.ts",
+    "seed:local": "tsx src/seed-local.ts",
+    "crank": "tsx src/crank.ts",
+    "squads-setup": "tsx src/squads-setup.ts",
+    "resolve-dispute": "tsx src/resolve-dispute.ts",
+    "seed-demo": "tsx src/seed-demo.ts",
+    "fund-wallet": "tsx src/fund-wallet.ts",
+    "demo-reset": "tsx src/demo-reset.ts",
+    "export-wallet": "tsx src/export-wallet.ts"
+  },
+  "dependencies": {
+    "@manifest/sdk": "workspace:*",
+    "@solana/spl-token": "0.4.15",
+    "@solana/web3.js": "1.99.0",
+    "@sqds/multisig": "2.1.4",
+    "bn.js": "5.2.2",
+    "bs58": "6.0.0",
+    "dotenv": "18.0.5",
+    "tweetnacl": "1.0.3"
+  },
+  "devDependencies": {
+    "@types/bn.js": "^5.2.0",
+    "@types/node": "22.20.5",
+    "tsx": "4.23.15"
+  }
+}

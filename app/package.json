@@ -1,0 +1,50 @@
+{
+  "name": "@manifest/app",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"app: no unit tests yet (Playwright smoke test planned for Phase 5)\"",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@manifest/sdk": "workspace:*",
+    "@phantom/browser-sdk": "2.0.3",
+    "@phantom/react-sdk": "2.0.3",
+    "@solana/actions": "1.6.6",
+    "@solana/spl-token": "0.4.15",
+    "@solana/web3.js": "1.99.0",
+    "@tanstack/react-query": "5.104.1",
+    "@zxing/browser": "0.2.1",
+    "bn.js": "5.2.2",
+    "browser-image-compression": "2.0.2",
+    "bs58": "6.0.0",
+    "next": "16.3.8",
+    "qrcode": "1.5.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "0.0.1",
+    "sharp": "0.35.5",
+    "tweetnacl": "1.0.3",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.56.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/bn.js": "5.2.0",
+    "@types/node": "22.20.5",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.8",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3"
+  }
+}
