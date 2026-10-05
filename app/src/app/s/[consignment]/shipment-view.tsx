@@ -307,7 +307,7 @@ function ActionPanel({
         {visible.includes("approve") && me && (
           <div className="flex flex-col gap-2">
             <p>
-              Check the photos below. If the goods are right, approve to pay your supplier.
+              Check the photos above. If the goods are right, approve to pay your supplier.
               Auto-approves in <strong>{formatCountdown(reviewDeadline - now)}</strong> if you do
               nothing.
             </p>

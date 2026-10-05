@@ -20,7 +20,8 @@
     "resolve-dispute": "tsx src/resolve-dispute.ts",
     "seed-demo": "tsx src/seed-demo.ts",
     "fund-wallet": "tsx src/fund-wallet.ts",
-    "demo-reset": "tsx src/demo-reset.ts"
+    "demo-reset": "tsx src/demo-reset.ts",
+    "export-wallet": "tsx src/export-wallet.ts"
   },
   "dependencies": {
     "@manifest/sdk": "workspace:*",

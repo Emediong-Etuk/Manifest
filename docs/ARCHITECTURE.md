@@ -1,7 +1,52 @@
 # Architecture
 
-Program side (Phase 2). The full-system diagram (app, evidence storage, Blinks, crank,
-Squads) is added in Phase 5.
+The whole system first, then the program in detail.
+
+## System
+
+```mermaid
+flowchart LR
+    subgraph users["People"]
+        Trader([Trader, phone])
+        Fwd([Forwarder, warehouse])
+        Arb([Arbitrators])
+    end
+    subgraph app["Next.js app (Vercel)"]
+        UI[Pages + Phantom Connect]
+        API[Route handlers]
+    end
+    subgraph chain["Solana"]
+        Prog[[Manifest program]]
+        Vaults[(Escrow + bond vaults)]
+        Ticket[(Cargo Tickets, Token-2022)]
+        Squads[[Squads v4 multisig]]
+    end
+    Store[(Evidence: IPFS via Pinata)]
+    Blink([Blink clients])
+    Cron([Crank: Vercel / GitHub cron])
+
+    Trader --> UI
+    Fwd --> UI
+    UI -- signed transactions --> Prog
+    UI -- signed evidence upload --> API
+    API -- photos + manifest --> Store
+    API -- reads for OG images, ticket metadata, faucet --> Prog
+    Blink -- Actions GET/POST --> API
+    Cron -- auto_approve, close_booking --> Prog
+    Prog --> Vaults
+    Prog --> Ticket
+    Arb --> Squads
+    Squads -- resolve_* via vault transaction --> Prog
+```
+
+| Off-chain piece               | What it does                                                                                                                  | Trust                                                                              |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| `POST /api/evidence`          | Verifies the forwarder's signature, strips EXIF, stores photos + canonical manifest, returns its SHA-256 for `record_receipt` | The hash is onchain; the browser re-hashes the manifest and shows VERIFIED or not. |
+| `/api/tickets/*`, `/api/og/*` | Cargo Ticket metadata + artwork and link previews, read live from the chain                                                   | Display only; never includes goods value.                                          |
+| `/api/actions/book/*`         | Solana Action: builds an unsigned `book_consignment` for the requesting wallet                                                | The wallet shows and signs it; only the user's signature is required.              |
+| `POST /api/faucet`            | Devnet gas tank: SOL for fees + test dollars                                                                                  | Devnet only; rate-limited.                                                         |
+| `GET /api/cron/crank`         | Permissionless upkeep (`auto_approve`, `close_booking`)                                                                       | The program re-checks every condition.                                             |
+| `scripts/`                    | Config, demo mint, Squads setup and dispute resolution, seed data                                                             | Operator tools; keys stay local.                                                   |
 
 ## Program at a glance
 
@@ -11,13 +56,13 @@ program's own instructions can move them.
 
 ```mermaid
 flowchart LR
-    subgraph Program-owned state
+    subgraph state["Program-owned state"]
         Config["Config<br/>['config']"]
         Forwarder["Forwarder<br/>['forwarder', wallet]"]
         Container["Container<br/>['container', forwarder, u32]"]
         Consignment["Consignment<br/>['consignment', container, u16]"]
     end
-    subgraph Token accounts (owned by PDAs)
+    subgraph tokens["Token accounts (owned by PDAs)"]
         BondVault["Bond vault<br/>['bond_vault', forwarder]"]
         Vault["Escrow vault<br/>['vault', consignment]"]
     end
