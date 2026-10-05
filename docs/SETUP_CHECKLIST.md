@@ -58,7 +58,7 @@ variables) for cloud sessions.
 
 ## Hackathon and research
 
-- [ ] **Colosseum Copilot sign-in.** Copilot v2 no longer uses a PAT (`COLOSSEUM_COPILOT_PAT`
+- [x] **Colosseum Copilot sign-in.** Done Oct 5 (novelty check in `docs/COMPETITIVE_LANDSCAPE.md`). Copilot v2 no longer uses a PAT (`COLOSSEUM_COPILOT_PAT`
       is a v1 leftover; v1 tokens stop working Oct 28). Claude Code starts
       `npx @colosseum-org/copilot-connect login --device` and shows you a link and a code;
       open the link while signed in to Colosseum, enter the code, approve. Codes expire

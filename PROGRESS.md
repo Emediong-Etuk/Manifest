@@ -5,15 +5,15 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 
 ## Phase status
 
-| Phase                        | Dates     | Status                                                 |
-| ---------------------------- | --------- | ------------------------------------------------------ |
-| 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check pending Greg's sign-in) |
-| 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
-| 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
-| 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
-| 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)     |
-| 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)       |
-| 6: Videos + submission       | Oct 11–12 | 🔨 In progress (Oct 5); recording blocked on deploys   |
+| Phase                        | Dates     | Status                                               |
+| ---------------------------- | --------- | ---------------------------------------------------- |
+| 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check done Oct 5)           |
+| 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                      |
+| 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)   |
+| 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)          |
+| 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)   |
+| 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)     |
+| 6: Videos + submission       | Oct 11–12 | 🔨 In progress (Oct 5); recording blocked on deploys |
 
 ## Phase 6 plan (Oct 5–12): videos and submission
 
@@ -201,6 +201,11 @@ not accepting new apps (see Blockers).
   Greg's) and `docs/LAUNCH_POSTS.md` (X thread, WhatsApp, LinkedIn).
 - Day-by-day schedule to the deadline in `docs/SUBMISSION_CHECKLIST.md`.
 - PR Emediong-Etuk/Manifest#1 merged by Greg; CI green on `main` (program + TypeScript jobs).
+- Colosseum Copilot novelty check (Greg signed in): ~30 related past projects; closest is
+  Tradeos (Frontier, West Africa ↔ UAE milestone escrow). Not near-identical: none combines
+  forwarder-verified warehouse evidence with a bond, a transferable Cargo Ticket and freight
+  escrowed to pickup. Written up in `docs/COMPETITIVE_LANDSCAPE.md`; Arena competition field
+  updated. Pitch must not claim "first trade escrow".
 
 ### Phase 5 (Oct 5)
 
@@ -341,17 +346,14 @@ not accepting new apps (see Blockers).
 
 ## Blockers
 
-1. **Colosseum Copilot sign-in (novelty check).** Copilot v2 uses a device login, not a PAT.
-   Greg needs to approve a device code while a session is active. Until then
-   `docs/COMPETITIVE_LANDSCAPE.md` has the off-chain section only.
-2. **Phantom Portal is not accepting new applications** (warning on
+1. **Phantom Portal is not accepting new applications** (warning on
    docs.phantom.com/recipes/quickstarts/nextjs, checked Oct 4). Google/Apple embedded
    wallets require a Portal App ID; the injected (extension/app) provider does not. If Greg
    has no existing Portal app, we need a decision before Phase 3 (see summary).
-3. **Devnet deploy (Phase 2, step 10).** Needs durable keypairs from Greg (environment
+2. **Devnet deploy (Phase 2, step 10).** Needs durable keypairs from Greg (environment
    secrets) and ~12 devnet SOL on the deploy key + ~5 on the gas tank. The devnet faucet
    rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
-4. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
+3. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
    seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
 
 ## Decisions
