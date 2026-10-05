@@ -38,7 +38,7 @@ console.log(`         ${arb2.publicKey.toBase58()} (demo arbitrator 2, .keys/arb
 console.log("Threshold: 2 of 3\n");
 
 // 1. Multisig.
-let squads = loadSquads();
+let squads = loadSquads(c.cluster);
 const existing = squads ? await c.connection.getAccountInfo(squads.multisig) : null;
 if (squads && existing) {
   console.log(`Multisig already exists: ${squads.multisig.toBase58()}`);

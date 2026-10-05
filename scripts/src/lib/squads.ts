@@ -50,12 +50,19 @@ export function vaultOf(multisigPda: PublicKey): PublicKey {
   return multisig.getVaultPda({ multisigPda, index: 0 })[0];
 }
 
-/** From NEXT_PUBLIC_SQUADS_MULTISIG, else .keys/squads.json written by squads-setup. */
-export function loadSquads(): SquadsInfo | null {
+/**
+ * From NEXT_PUBLIC_SQUADS_MULTISIG, else .keys/squads.json written by squads-setup for the
+ * same cluster (a localnet multisig is ignored on devnet and vice versa).
+ */
+export function loadSquads(cluster: string): SquadsInfo | null {
   const env = process.env.NEXT_PUBLIC_SQUADS_MULTISIG;
   let address: string | undefined = env;
   if (!address && existsSync(STATE_FILE)) {
-    address = (JSON.parse(readFileSync(STATE_FILE, "utf8")) as { multisig: string }).multisig;
+    const saved = JSON.parse(readFileSync(STATE_FILE, "utf8")) as {
+      multisig: string;
+      cluster?: string;
+    };
+    if (saved.cluster === cluster) address = saved.multisig;
   }
   if (!address) return null;
   const pda = new PublicKey(address);

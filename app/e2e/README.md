@@ -9,6 +9,10 @@ Against a local validator, with the localnet-only test wallet (keypair in localS
 - `smoke.spec.ts`: landing → containers → container detail, plus no horizontal scroll at
   360 px and no axe WCAG 2.1 AA violations on the public pages. Needs at least one
   container (run `seed-demo`, or the lifecycle test first).
+- `rehearsal.spec.ts`: `docs/DEMO_SCRIPT.md` click for click (demo-reset, Blink booking,
+  receipt, approve, ticket transfer, pickup, Squads slash, `/admin`). Needs the `seed-demo`
+  world and its `.keys/`; skipped without them. Each run uses up Ada's LAG-0930 pickup and
+  the dispute, so re-seed on a fresh validator before running it again in full.
 
 ```bash
 # 1. Validator with the program (admin = upgrade authority)
