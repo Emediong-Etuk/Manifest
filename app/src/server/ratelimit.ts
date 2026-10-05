@@ -23,7 +23,7 @@ async function redis(command: (string | number)[]): Promise<unknown> {
   return ((await res.json()) as { result: unknown }).result;
 }
 
-const useKv = () => Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
+const kvConfigured = () => Boolean(process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN);
 
 function warnOnce() {
   if (!warned) {
@@ -34,7 +34,7 @@ function warnOnce() {
 
 /** Claim `key` for `ttlSecs`. Returns false if it was already claimed. */
 export async function claimOnce(key: string, ttlSecs: number): Promise<boolean> {
-  if (useKv()) return (await redis(["SET", key, 1, "NX", "EX", ttlSecs])) === "OK";
+  if (kvConfigured()) return (await redis(["SET", key, 1, "NX", "EX", ttlSecs])) === "OK";
   warnOnce();
   const now = Date.now();
   const hit = memory.get(key);
@@ -45,7 +45,7 @@ export async function claimOnce(key: string, ttlSecs: number): Promise<boolean> 
 
 /** Undo a claim (e.g. when the faucet transaction failed). */
 export async function release(key: string): Promise<void> {
-  if (useKv()) {
+  if (kvConfigured()) {
     await redis(["DEL", key]);
     return;
   }
@@ -54,7 +54,7 @@ export async function release(key: string): Promise<void> {
 
 /** Increment a counter that expires after `ttlSecs`; returns the new value. */
 export async function increment(key: string, ttlSecs: number): Promise<number> {
-  if (useKv()) {
+  if (kvConfigured()) {
     const value = Number(await redis(["INCR", key]));
     if (value === 1) await redis(["EXPIRE", key, ttlSecs]);
     return value;
