@@ -47,6 +47,7 @@ import {
   PageTitle,
   Sheet,
   Skeleton,
+  NetworkError,
 } from "@/components/ui";
 import {
   useConfigAccount,
@@ -83,6 +84,18 @@ export function ShipmentView() {
     return (
       <PageShell>
         <Skeleton className="h-96" />
+      </PageShell>
+    );
+  if (consignment.isError || container.isError)
+    return (
+      <PageShell>
+        <NetworkError
+          what="this shipment"
+          onRetry={() => {
+            void consignment.refetch();
+            void container.refetch();
+          }}
+        />
       </PageShell>
     );
   const c = consignment.data;

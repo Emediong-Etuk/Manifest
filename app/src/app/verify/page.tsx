@@ -75,7 +75,7 @@ export default function VerifyPage() {
           }}
         >
           <Field
-            label="Shipment address, Cargo Ticket mint, or container number"
+            label="Shipment address, Cargo Ticket address, or container number"
             hint="e.g. CSQU3054383"
           >
             {(id) => (

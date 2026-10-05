@@ -49,10 +49,18 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en" className={`${stencil.variable} ${plexSans.variable} ${plexMono.variable}`}>
       <body className="flex min-h-dvh flex-col">
+        <a
+          href="#content"
+          className="sr-only z-50 rounded-lg bg-ink px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        >
+          Skip to content
+        </a>
         <Providers>
           <DevnetBanner />
           <SiteHeader />
-          <div className="flex-1">{children}</div>
+          <div id="content" className="flex-1">
+            {children}
+          </div>
           <footer className="border-t-2 border-rule">
             <p className="mx-auto max-w-5xl px-4 py-4 text-sm text-ink-muted">
               Manifest is open source (MIT). Every status here is read from the Solana program.

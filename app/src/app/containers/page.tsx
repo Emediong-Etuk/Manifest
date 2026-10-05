@@ -4,7 +4,7 @@ import { decodeFixed, locodeCity } from "@manifest/sdk";
 import { useMemo, useState } from "react";
 
 import { ContainerCard, EmptyState } from "@/components/manifest";
-import { Field, inputClass, PageShell, PageTitle, Skeleton } from "@/components/ui";
+import { Field, inputClass, PageShell, PageTitle, Skeleton, NetworkError } from "@/components/ui";
 import { useContainers, useForwarders, useNow } from "@/hooks/queries";
 
 export default function ContainersPage() {
@@ -59,9 +59,7 @@ export default function ContainersPage() {
           <Skeleton className="h-56" />
         </div>
       ) : containers.isError ? (
-        <EmptyState title="Couldn't load containers">
-          Check your connection and try again.
-        </EmptyState>
+        <NetworkError what="containers" onRetry={() => void containers.refetch()} />
       ) : shown.length === 0 ? (
         <EmptyState title="No open containers right now" illustration="empty-containers">
           New containers open every week. Check back soon.

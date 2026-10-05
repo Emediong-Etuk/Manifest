@@ -72,7 +72,7 @@ describe("errors", () => {
     expect(extractErrorCode({ logs: ["Program failed: custom program error: 0x1786"] })).toBe(6022);
     expect(extractErrorCode({ error: { errorCode: { number: 6024 } } })).toBe(6024);
     expect(friendlyError({ InstructionError: [0, { Custom: 6022 }] }).message).toMatch(
-      /bond is fully used/,
+      /guarantee is fully used/,
     );
     expect(friendlyError(new Error("User rejected the request")).message).toMatch(/cancelled/);
     expect(friendlyError(new Error("boom")).message).toMatch(/Something went wrong/);

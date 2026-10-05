@@ -201,3 +201,21 @@ export function ErrorNote({ title, children }: { title: string; children?: React
     </div>
   );
 }
+
+/** A chain read failed (RPC down or rate-limited): say so and offer a retry. */
+export function NetworkError({
+  onRetry,
+  what = "this page",
+}: {
+  onRetry: () => void;
+  what?: string;
+}) {
+  return (
+    <ErrorNote title={`Couldn't load ${what}`}>
+      <p>The Solana network didn&apos;t answer. Check your connection and try again.</p>
+      <Button variant="secondary" className="mt-3 min-h-10 px-4 text-sm" onClick={onRetry}>
+        Try again
+      </Button>
+    </ErrorNote>
+  );
+}

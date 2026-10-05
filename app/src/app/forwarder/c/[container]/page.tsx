@@ -47,6 +47,7 @@ import {
   PageTitle,
   Skeleton,
   Stamp,
+  NetworkError,
 } from "@/components/ui";
 import {
   useConfigAccount,
@@ -83,6 +84,18 @@ export default function ForwarderContainerPage() {
     return (
       <PageShell>
         <Skeleton className="h-96" />
+      </PageShell>
+    );
+  if (container.isError || forwarder.isError)
+    return (
+      <PageShell>
+        <NetworkError
+          what="this container"
+          onRetry={() => {
+            void container.refetch();
+            void forwarder.refetch();
+          }}
+        />
       </PageShell>
     );
   const k = container.data;

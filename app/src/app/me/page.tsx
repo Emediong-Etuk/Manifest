@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import { EmptyState, RouteLine, StageStamp } from "@/components/manifest";
-import { Button, Card, PageShell, PageTitle, Skeleton } from "@/components/ui";
+import { Button, Card, PageShell, PageTitle, Skeleton, NetworkError } from "@/components/ui";
 import {
   useConfigAccount,
   useConsignments,
@@ -138,6 +138,14 @@ export default function MePage() {
 
       {mine.isLoading || containers.isLoading ? (
         <Skeleton className="h-40" />
+      ) : mine.isError || containers.isError ? (
+        <NetworkError
+          what="your shipments"
+          onRetry={() => {
+            void mine.refetch();
+            void containers.refetch();
+          }}
+        />
       ) : myShipments.length === 0 ? (
         <EmptyState title="No shipments yet" illustration="empty-shipments">
           <Link className="font-semibold text-accent underline" href="/containers">

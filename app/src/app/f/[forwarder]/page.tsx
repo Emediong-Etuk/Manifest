@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 
 import { EmptyState, SCORE_FORMULA, scoreLabel } from "@/components/manifest";
-import { Card, PageShell, PageTitle, Skeleton, Stamp } from "@/components/ui";
+import { Card, PageShell, PageTitle, Skeleton, Stamp, NetworkError } from "@/components/ui";
 import { useContainers, useForwarder, usePubkeyParam } from "@/hooks/queries";
 import { config } from "@/lib/config";
 import { formatDate } from "@/lib/display";
@@ -26,6 +26,17 @@ export default function ForwarderProfile() {
     return (
       <PageShell>
         <Skeleton className="h-96" />
+      </PageShell>
+    );
+  if (forwarder.isError)
+    return (
+      <PageShell>
+        <NetworkError
+          what="this forwarder"
+          onRetry={() => {
+            void forwarder.refetch();
+          }}
+        />
       </PageShell>
     );
   const f = forwarder.data;

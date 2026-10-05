@@ -15,7 +15,7 @@ import { useWallet } from "@/lib/wallet/context";
 const STEPS = [
   {
     title: "Book space, lock your money",
-    body: "Pick a bonded forwarder's shared container. Your goods payment and freight are locked safely in Manifest, not sent to an agent.",
+    body: "Pick a shared container from a forwarder who has put up a guarantee. Your goods payment and freight are locked safely in Manifest, not sent to an agent.",
   },
   {
     title: "See your goods before you pay",
@@ -38,10 +38,11 @@ function LiveStats() {
     .reduce((sum, c) => sum + BigInt(c.account.goodsAmount.toString()), 0n);
   const delivered = all.filter((c) => consignmentStatus(c.account) === "delivered").length;
   const loading = containers.isLoading || consignments.isLoading;
+  const failed = containers.isError || consignments.isError;
   const stats: [string, string][] = [
-    ["Containers", loading ? "…" : String(containers.data?.length ?? 0)],
-    ["Goods in active shipments", loading ? "…" : formatUsdShort(secured)],
-    ["Shipments delivered", loading ? "…" : String(delivered)],
+    ["Containers", loading ? "…" : failed ? "—" : String(containers.data?.length ?? 0)],
+    ["Goods in active shipments", loading ? "…" : failed ? "—" : formatUsdShort(secured)],
+    ["Shipments delivered", loading ? "…" : failed ? "—" : String(delivered)],
   ];
   return (
     <dl className="grid grid-cols-3 gap-2 sm:gap-3">

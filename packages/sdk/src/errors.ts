@@ -14,7 +14,7 @@ const FRIENDLY: Partial<Record<ManifestErrorName, string>> = {
   BookingClosed: "Bookings for this container have closed.",
   CapacityExceeded: "There isn't enough space left in this container.",
   CoverageExceeded:
-    "This forwarder's bond is fully used. Try another container or ask them to top up their bond.",
+    "This forwarder's guarantee is fully used. Try another container or ask them to add to it.",
   InvalidPayee:
     "That supplier payout address can't be used. It must be a different wallet from yours.",
   NotTrader: "Only the trader who booked this shipment can do that.",
@@ -35,6 +35,21 @@ const FRIENDLY: Partial<Record<ManifestErrorName, string>> = {
   CutoffNotReached: "This is only possible after the booking cut-off.",
   ContainerHasActiveConsignments: "This container still has active bookings.",
   ZeroAmount: "Enter an amount greater than zero.",
+  InvalidContainerStatus:
+    "This container's status changed. Refresh the page to see where it is now.",
+  InvalidConsignmentStatus:
+    "This shipment's status changed. Refresh the page to see where it is now.",
+  InvalidString: "Fill in the text fields (letters and numbers, not too long).",
+  InvalidLocode: "Choose a port from the list.",
+  SamePorts: "The origin and destination ports must be different.",
+  ZeroCapacity: "Enter the container's space in CBM.",
+  ZeroRate: "Enter a freight rate per CBM.",
+  InvalidDisputeReason: "Choose a reason for the dispute.",
+  AccountMismatch: "Something doesn't match this shipment. Refresh the page and try again.",
+  MathOverflow: "That amount is too large.",
+  MissingBillOfLading: "Attach the bill of lading before marking the container loaded.",
+  InvalidResolution: "That resolution doesn't apply at this stage of the dispute.",
+  UnsupportedMintExtension: "This currency can't be used for escrow on Manifest.",
 };
 
 const BY_CODE = new Map<number, { name: ManifestErrorName; msg: string }>(

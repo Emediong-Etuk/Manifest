@@ -19,7 +19,15 @@ import {
   RouteLine,
 } from "@/components/manifest";
 import { ShareContainer } from "@/components/share";
-import { Card, KeyValue, PageShell, PageTitle, Skeleton, Stamp } from "@/components/ui";
+import {
+  Card,
+  KeyValue,
+  PageShell,
+  PageTitle,
+  Skeleton,
+  Stamp,
+  NetworkError,
+} from "@/components/ui";
 import { useContainer, useForwarder, useNow, usePubkeyParam } from "@/hooks/queries";
 import { config } from "@/lib/config";
 import { formatDate, formatDateTime, mintSymbol, shareText } from "@/lib/display";
@@ -41,6 +49,17 @@ export function ContainerView() {
     return (
       <PageShell>
         <Skeleton className="h-96" />
+      </PageShell>
+    );
+  if (container.isError)
+    return (
+      <PageShell>
+        <NetworkError
+          what="this container"
+          onRetry={() => {
+            void container.refetch();
+          }}
+        />
       </PageShell>
     );
   const c = container.data;

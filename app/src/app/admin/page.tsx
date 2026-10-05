@@ -22,7 +22,16 @@ import Link from "next/link";
 import { type ReactNode, useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/manifest";
-import { Button, Card, KeyValue, PageShell, PageTitle, Skeleton, Stamp } from "@/components/ui";
+import {
+  Button,
+  Card,
+  KeyValue,
+  PageShell,
+  PageTitle,
+  Skeleton,
+  Stamp,
+  NetworkError,
+} from "@/components/ui";
 import {
   useConfigAccount,
   useConsignments,
@@ -233,6 +242,9 @@ export default function AdminPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-2xl font-semibold">Open disputes ({disputes.data?.length ?? 0})</h2>
         {disputes.isLoading && <Skeleton className="h-48" />}
+        {disputes.isError && (
+          <NetworkError what="disputes" onRetry={() => void disputes.refetch()} />
+        )}
         {disputes.data?.length === 0 && (
           <EmptyState title="No open disputes" illustration="empty-shipments" />
         )}

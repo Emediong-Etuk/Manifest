@@ -36,6 +36,7 @@ import {
   PageShell,
   PageTitle,
   Skeleton,
+  NetworkError,
 } from "@/components/ui";
 import {
   useConfigAccount,
@@ -84,6 +85,18 @@ export default function BookPage() {
     return (
       <PageShell>
         <Skeleton className="h-96" />
+      </PageShell>
+    );
+  if (container.isError || configAccount.isError)
+    return (
+      <PageShell>
+        <NetworkError
+          what="this container"
+          onRetry={() => {
+            void container.refetch();
+            void configAccount.refetch();
+          }}
+        />
       </PageShell>
     );
   const c = container.data;
