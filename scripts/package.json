@@ -15,15 +15,22 @@
     "init-config": "tsx src/init-config.ts",
     "e2e:local": "tsx src/e2e-local.ts",
     "seed:local": "tsx src/seed-local.ts",
-    "crank": "tsx src/crank.ts"
+    "crank": "tsx src/crank.ts",
+    "squads-setup": "tsx src/squads-setup.ts",
+    "resolve-dispute": "tsx src/resolve-dispute.ts",
+    "seed-demo": "tsx src/seed-demo.ts",
+    "fund-wallet": "tsx src/fund-wallet.ts",
+    "demo-reset": "tsx src/demo-reset.ts"
   },
   "dependencies": {
     "@manifest/sdk": "workspace:*",
     "@solana/spl-token": "0.4.15",
     "@solana/web3.js": "1.99.0",
+    "@sqds/multisig": "2.1.4",
     "bn.js": "5.2.2",
     "bs58": "6.0.0",
-    "dotenv": "18.0.5"
+    "dotenv": "18.0.5",
+    "tweetnacl": "1.0.3"
   },
   "devDependencies": {
     "@types/bn.js": "^5.2.0",

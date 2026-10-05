@@ -64,3 +64,22 @@ export async function verifyEvidence(
   const hash = await sha256(canonicalJson(value));
   return toHex(hash) === toHex(onchainHash);
 }
+
+/** Fields a forwarder signs when uploading receipt evidence (plus each photo's SHA-256). */
+export interface EvidenceFields {
+  consignment: string;
+  measuredCbmMilli: number;
+  cartonCount: number;
+  packingList: { item: string; qty: number }[];
+  notes: string;
+  photoHashes: string[];
+}
+
+export async function evidenceFieldsHash(fields: EvidenceFields): Promise<string> {
+  return toHex(await sha256(canonicalJson(fields)));
+}
+
+/** `manifest-evidence:<consignment>:<sha256 of the fields>:<unix ts>`, signed by the forwarder. */
+export function evidenceMessage(consignment: string, fieldsHash: string, ts: number): Uint8Array {
+  return new TextEncoder().encode(`manifest-evidence:${consignment}:${fieldsHash}:${ts}`);
+}

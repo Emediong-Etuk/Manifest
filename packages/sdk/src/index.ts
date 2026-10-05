@@ -11,10 +11,13 @@ export {
   ata,
   buildTransaction,
   computeBudget,
+  configParamsFrom,
+  configuredMints,
   loadConsignment,
   mintTokenProgram,
   nextConsignmentAddressFor,
   nextContainerAddress,
+  type Resolution,
 } from "./instructions.js";
 export * from "./layout.js";
 export * from "./pdas.js";

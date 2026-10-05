@@ -24,6 +24,9 @@ export const config = {
   phantomAppId: process.env.NEXT_PUBLIC_PHANTOM_APP_ID || "",
   demoMint: optionalKey(process.env.NEXT_PUBLIC_DEMO_MINT),
   usdcMint: optionalKey(process.env.NEXT_PUBLIC_USDC_MINT),
+  /** Squads v4 arbitration multisig and its vault (index 0), from scripts/squads-setup. */
+  squadsMultisig: optionalKey(process.env.NEXT_PUBLIC_SQUADS_MULTISIG),
+  squadsVault: optionalKey(process.env.NEXT_PUBLIC_SQUADS_VAULT),
   /**
    * Local test wallet (keypair in this browser). Only on localnet, for development and
    * automated browser tests; devnet and mainnet always use Phantom.

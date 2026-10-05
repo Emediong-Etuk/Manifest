@@ -156,6 +156,41 @@ export async function initializeConfig(
   return [ix];
 }
 
+/** Current config as `update_config` params, with `overrides` applied. */
+export function configParamsFrom(
+  config: ConfigAccount,
+  overrides: Partial<ConfigParams> = {},
+): ConfigParams {
+  return {
+    arbitrator: config.arbitrator,
+    treasuryOwner: config.treasuryOwner,
+    paymentMints: config.paymentMints,
+    bondMints: config.bondMints,
+    feeBps: config.feeBps,
+    coverageBps: config.coverageBps,
+    freightBufferBps: config.freightBufferBps,
+    reviewWindowSecs: config.reviewWindowSecs,
+    pickupGraceSecs: config.pickupGraceSecs,
+    disputeWindowSecs: config.disputeWindowSecs,
+    overdueGraceSecs: config.overdueGraceSecs,
+    onTimeGraceSecs: config.onTimeGraceSecs,
+    metadataBaseUri: config.metadataBaseUri,
+    paused: config.paused,
+    ...overrides,
+  };
+}
+
+/** Distinct configured mints (payment + bond), which update_config needs as remaining accounts. */
+export function configuredMints(
+  params: Pick<ConfigParams, "paymentMints" | "bondMints">,
+): PublicKey[] {
+  const seen = new Map<string, PublicKey>();
+  for (const m of [...params.paymentMints, ...params.bondMints]) {
+    if (!m.equals(PublicKey.default)) seen.set(m.toBase58(), m);
+  }
+  return [...seen.values()];
+}
+
 export async function updateConfig(
   program: ManifestProgram,
   args: { admin: PublicKey; params: ConfigParams; mints: PublicKey[] },
