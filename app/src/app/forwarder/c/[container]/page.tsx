@@ -14,6 +14,7 @@ import {
   formatUsd,
   fromHex,
   isValidIso6346,
+  locodeCity,
   ix,
   parseCbm,
   sha256,
@@ -33,6 +34,7 @@ import { useCallback, useState } from "react";
 
 import { EmptyState, RouteLine, StageStamp } from "@/components/manifest";
 import { QrScanner } from "@/components/qr";
+import { ShareContainer } from "@/components/share";
 import { useToast } from "@/components/toasts";
 import { TxButton } from "@/components/tx-button";
 import {
@@ -55,6 +57,8 @@ import {
   usePubkeyParam,
 } from "@/hooks/queries";
 import { getManifestProgram } from "@/lib/chain";
+import { config } from "@/lib/config";
+import { shareText } from "@/lib/display";
 import { evidenceFieldsHash, evidenceMessage, MAX_PHOTOS } from "@/lib/evidence-auth";
 import { type PickupCheck, verifyPickupPayload } from "@/lib/pickup";
 import { useWallet } from "@/lib/wallet/context";
@@ -134,6 +138,19 @@ export default function ForwarderContainerPage() {
       )}
 
       {isOwner && me && <ContainerActions address={address} container={k} me={me} />}
+
+      {isOwner && status === "open" && (
+        <ShareContainer
+          container={address.toBase58()}
+          title="Find traders for this container"
+          text={shareText(
+            decodeFixed(k.code),
+            locodeCity(decodeFixed(k.origin)),
+            locodeCity(decodeFixed(k.destination)),
+            `${config.appUrl}/c/${address.toBase58()}`,
+          )}
+        />
+      )}
 
       {isOwner && me && status === "arrived" && <PickupScanner />}
 

@@ -16,6 +16,7 @@
     "@manifest/sdk": "workspace:*",
     "@phantom/browser-sdk": "2.0.3",
     "@phantom/react-sdk": "2.0.3",
+    "@solana/actions": "1.6.6",
     "@solana/spl-token": "0.4.15",
     "@solana/web3.js": "1.99.0",
     "@tanstack/react-query": "5.104.1",
