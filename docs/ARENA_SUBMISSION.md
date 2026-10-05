@@ -112,7 +112,14 @@ full-container importers: minimums, collateral, weeks), Alibaba.com Trade Assura
 orders placed through Alibaba.com, not the shared-container leg), FX fintechs (move money,
 don't verify goods), forwarders' informal promises (unenforceable). Manifest combines pay
 on proof, a slashable forwarder guarantee and transferable Cargo Tickets for the
-shared-container leg. More: `docs/COMPETITIVE_LANDSCAPE.md`.
+shared-container leg.
+
+Onchain, past Colosseum projects have built trade escrow (Tradeos: milestone escrow for West
+Africa ↔ UAE; Blocq Finance: digital LCs; ShipChain, Trade:see), freight payments
+(CargoBill) and freight-invoice factoring (Janus). None combines verification by a bonded
+forwarder at the origin warehouse, a transferable Cargo Ticket for goods in transit, and
+freight escrowed until pickup, which is what makes escrow work for shared containers. More:
+`docs/COMPETITIVE_LANDSCAPE.md`.
 
 ## Monetization
 

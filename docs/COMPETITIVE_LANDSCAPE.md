@@ -1,19 +1,37 @@
 # Competitive landscape
 
-> **Status (Phase 0, Oct 4):** the off-chain section is drafted. The **past Colosseum
-> projects** section is pending a Colosseum Copilot search, which needs Greg's Copilot
-> sign-in (see `docs/SETUP_CHECKLIST.md`). If Copilot turns up a near-identical project,
-> we stop and sharpen the wedge before Phase 1 goes further.
+> **Status (Oct 5):** both sections complete. Past Colosseum projects come from a Colosseum
+> Copilot search (v2 API, all submissions, not only winners) run on Oct 5, 2026 with ten
+> queries: letter of credit / trade finance for importers, trade finance escrow, escrow for
+> importers paying suppliers in China, freight forwarder container booking, tokenized bill
+> of lading, cargo / supply-chain escrow, Nigeria importers and Africa trade payments,
+> Africa stablecoin trade payments, pay-on-delivery escrow with inspection, and supply
+> chain / goods-in-transit financing. About 30 related projects came back; the closest
+> are below. Descriptions are Copilot's summaries of each project's record.
 
 ## Past Colosseum hackathon projects
 
-_Pending Copilot._ Queries to run: "letter of credit", "trade finance", "escrow import",
-"freight", "shipping", "bill of lading", "cargo", "Nigeria import", "Africa trade",
-"supply chain escrow".
+| Project                                                               | Hackathon                                             | What it does                                                                                                                                                                  | How Manifest differs                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Tradeos](https://colosseum.com/projects/explore/tradeos)             | Frontier (Apr 2026), no award                         | Milestone-based USDC escrow for cross-border orders on West Africa ↔ UAE corridors; proof submission, AI document checks, reputation signals, arbitration. **Closest match.** | Built for the **shared-container leg**: a bonded forwarder verifies the cartons at the origin warehouse (photos + measured CBM hashed onchain), freight is escrowed and released at pickup, and the trader gets a **transferable Cargo Ticket** with pickup and dispute rights. Forwarders post a slashable guarantee; arbitration is a Squads multisig that can only pay the parties. |
+| [Blocq Finance](https://colosseum.com/projects/explore/blocq-finance) | Cypherpunk (Sep 2025), no award                       | Digitized letters of credit: USDC escrow released to exporters on verified shipping documents. Record shows Solidity contracts on Ethereum Sepolia despite a Solana pitch.    | Same "programmable LC" idea, but for importers far below LC size, with physical inspection of the goods instead of documents, and a working Solana program.                                                                                                                                                                                                                            |
+| [CargoBill](https://colosseum.com/projects/explore/cargobill)         | Breakout (Apr 2025), **1st Place, Stablecoins**       | Stablecoin payments for logistics companies: multisig business wallets, invoice and B/L metadata in transactions, on/off-ramps, yield on idle cash.                           | CargoBill pays freight companies' invoices; Manifest protects the **trader's** goods payment until the goods are verified. Complementary (a forwarder could settle with CargoBill).                                                                                                                                                                                                    |
+| [Janus](https://colosseum.com/projects/explore/janus)                 | Cypherpunk (Sep 2025), Honorable Mention, Stablecoins | Tokenizes freight invoices for factoring; depositors fund forwarders' receivables.                                                                                            | Financing forwarders vs. protecting traders. Manifest's roadmap item (financing goods in transit against Cargo Tickets) is the trader-side mirror.                                                                                                                                                                                                                                     |
+| [CargoEscrow](https://colosseum.com/projects/explore/cargoescrow)     | Cypherpunk (Sep 2025), no award                       | Concept for shipper ↔ carrier escrow keyed to Incoterms and delivery verification; slides only, no public code per the record.                                                | Implemented and tested end to end; trader ↔ supplier payment with forwarder verification rather than shipper ↔ carrier.                                                                                                                                                                                                                                                                |
+| [Trade:see](https://colosseum.com/projects/explore/trade%3Asee)       | Cypherpunk (Sep 2025), no award                       | SME export escrow proof of concept: USDC escrow and proforma-invoice hash anchoring; oracles and trust scores on the roadmap.                                                 | Full lifecycle (receipt evidence, approval, loading, pickup, disputes, slashing) rather than funding + document hash.                                                                                                                                                                                                                                                                  |
+| [ShipChain](https://colosseum.com/projects/explore/shipchain)         | Frontier (Apr 2026), no award                         | PDA escrow releasing USDC across five shipping milestones to up to 64 recipients, triggered by an oracle or the shipper.                                                      | Milestones are driven by the people who see the goods (forwarder evidence, trader approval, holder pickup), with a bonded forwarder and a transferable ticket.                                                                                                                                                                                                                         |
+| [AETHER-LOGOS](https://colosseum.com/projects/explore/aether-logos)   | Frontier (Apr 2026), no award                         | B2B procurement escrow with carrier-API tracking and zkTLS proofs of delivery, plus a hedging market; demos use simulated proofs.                                             | Doesn't depend on carrier APIs, which shared-container micro-shipments don't have; the forwarder's signed, hashed warehouse evidence is the proof.                                                                                                                                                                                                                                     |
 
-| Project                             | Hackathon | One-line summary | How Manifest differs |
-| ----------------------------------- | --------- | ---------------- | -------------------- |
-| _to be filled from Copilot results_ |           |                  |                      |
+Also related, further away: African B2B and cross-border stablecoin payments (Globachain,
+Tsara, FossaPay, LINK Business), generic escrow (Solcart, Xescrow, Trustless Work), freight
+factoring (CargoFi, Vade Finance, InvoFi) and B/L digitization (SmartLading, Logerchain).
+
+**Conclusion:** escrow for cross-border trade has been tried several times, so Manifest
+shouldn't claim to be the first trade escrow on Solana. None of the projects found combines
+the three things that make Manifest work for shared containers: verification by a **bonded
+forwarder at the origin warehouse**, a **transferable Cargo Ticket** for goods in transit,
+and **freight held in escrow until pickup**. Lead with that wedge, and with the working
+end-to-end implementation (several related projects are concepts or partial demos).
 
 ## Off-chain alternatives today
 
