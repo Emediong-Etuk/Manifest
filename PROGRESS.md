@@ -11,11 +11,14 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                        |
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
 | 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
-| 4: Integrations              | Oct 9–10  | 🔨 In progress                                         |
+| 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)     |
 | 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
 
 ## Phase 4 plan (Oct 5–10): integrations
+
+Steps 1–6 done ✅ (verified on a local validator). Step 7: Reflect/Kora roadmap notes
+done; Phantom fee sponsorship deferred (untestable here without the Phantom extension).
 
 1. Faucet / gas tank: `POST /api/faucet` (devnet/localnet only): SOL top-up below 0.02 +
    500 test dollars; per-address 24h limit + global daily cap (Upstash/Vercel KV when
@@ -134,6 +137,34 @@ not accepting new apps (see Blockers).
 
 ## Done
 
+### Phase 4 (Oct 5)
+
+- **Faucet / gas tank:** `POST /api/faucet` (0.05 SOL if below 0.02 + 500 test dollars;
+  once per address per day + global daily cap via Vercel KV, in-memory fallback) and a
+  "Get test dollars" button in the demo banner.
+- **Crank:** shared planner in the SDK (`findCrankJobs`, mirrors the program's checks, uses
+  the cluster clock), `pnpm --filter @manifest/scripts crank [--watch]`, and
+  `GET /api/cron/crank` (Bearer `CRON_SECRET`). Vercel Hobby only allows daily crons, so
+  `app/vercel.json` runs daily and `.github/workflows/crank.yml` calls the endpoint every
+  5 minutes once the `APP_URL` + `CRON_SECRET` repo secrets exist.
+- **Share previews:** `/api/og/container/[id]` (route, space left, rate, cut-off countdown,
+  forwarder score, guarantee) and server `generateMetadata` on `/c/[id]` and `/s/[id]`.
+- **Cargo Ticket metadata + artwork:** `/api/tickets/[c]` (Metaplex JSON at the URI the
+  program writes; no goods value) and `/api/tickets/[c]/image` (printed ticket, QR to the
+  shipment page, VOID stamp when final). OFL fonts bundled and traced for Vercel.
+- **Blinks:** `/actions.json`, `GET/POST /api/actions/book/[container]` (zod, pre-checks,
+  SDK-built `book_consignment`, simulated before returning, inline "completed" next
+  action), `createActionHeaders` on every response incl. OPTIONS; "Share as Blink"
+  (dial.to) on container pages. A booking made through the Blink POST landed onchain.
+- **Squads v4:** `squads-setup` (2-of-3, vault float, config arbitrator + treasury → vault)
+  and `resolve-dispute` (vault tx → proposal → 2 approvals → execute). Slash,
+  force-approve and refund all executed through the multisig on a local validator with
+  the Squads program cloned from devnet. `/admin` dispute queue.
+- **Demo world:** `seed-demo` (64 transactions, evidence through the real upload API,
+  idempotent), `demo-reset`, `fund-wallet`; placeholder photos in `scripts/demo-assets/`.
+- Gate: 95 LiteSVM + 12 unit tests, fmt/clippy, `pnpm -r lint/typecheck/test/build`,
+  Playwright lifecycle on the production build: all green.
+
 ### Phase 3 (Oct 4)
 
 - Wallets: Phantom Connect (Google/Apple + extension with an App ID; extension-only
@@ -208,15 +239,14 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Phase 4, step 1 (faucet).
+- Nothing; waiting for "Execute Phase 5".
 
 ## Next
 
-1. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` (about 15 minutes).
-2. **Phase 4, integrations:** devnet faucet + gas tank (possibly as fee payer via Phantom's
-   `presignTransaction`), crank + Vercel cron, OG images (container previews for WhatsApp,
-   Cargo Ticket metadata + image), Solana Actions/Blinks, Squads scripts + `/admin`,
-   seed world.
+1. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` (deploy, demo mint, config,
+   Squads, seed: about 30 minutes).
+2. **Vercel deploy** (Phase 5) and a real Blink test on dial.to (needs a public HTTPS URL).
+3. **Phase 5:** polish, README, full architecture diagram, docs, Lighthouse/a11y pass.
 
 ## Blockers
 
@@ -230,10 +260,15 @@ not accepting new apps (see Blockers).
 3. **Devnet deploy (Phase 2, step 10).** Needs durable keypairs from Greg (environment
    secrets) and ~12 devnet SOL on the deploy key + ~5 on the gas tank. The devnet faucet
    rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
+4. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
+   seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
 
 ## Decisions
 
 - Rust LiteSVM tests in a separate `tests/` crate (not TS).
 - web3.js v1 + `@anchor-lang/core` client stack; Kit migration via Codama after the hackathon.
 - Copilot uses the v2 device sign-in; `COLOSSEUM_COPILOT_PAT` is a v1 leftover.
+- Crank every 5 min via GitHub Actions (Vercel Hobby crons are daily only).
+- Arbitration resolutions run from scripts (Squads proposals); `/admin` shows the queue
+  and the exact commands rather than a one-wallet button.
 - Full list: `docs/DECISIONS.md`.

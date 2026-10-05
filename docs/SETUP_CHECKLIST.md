@@ -40,7 +40,19 @@ variables) for cloud sessions.
 
 - [x] **Public GitHub repo**: <https://github.com/Emediong-Etuk/Manifest> (done).
 - [ ] **Vercel**: import the repo (root directory `app`), connect it, and share the
-      production URL. Claude Code lists the env vars to set.
+      production URL. Env vars (see `.env.example`): `NEXT_PUBLIC_CLUSTER=devnet`,
+      `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_RPC_URL`, `NEXT_PUBLIC_PROGRAM_ID`,
+      `NEXT_PUBLIC_DEMO_MINT`, `NEXT_PUBLIC_SQUADS_MULTISIG`, `NEXT_PUBLIC_SQUADS_VAULT`,
+      `NEXT_PUBLIC_PHANTOM_APP_ID` (if any), and the secrets `GAS_TANK_SECRET_KEY`,
+      `CRON_SECRET`, `PINATA_JWT`, `PINATA_GATEWAY`, `RPC_URL` (optional).
+- [ ] **Vercel KV / Upstash Redis** (free tier, from the Vercel Storage tab): adds
+      `KV_REST_API_URL` + `KV_REST_API_TOKEN` so faucet limits survive across serverless
+      instances.
+- [ ] **GitHub repository secrets** `APP_URL` and `CRON_SECRET` (same value as Vercel):
+      turns on the 5-minute crank in `.github/workflows/crank.yml` (Vercel Hobby crons
+      only run daily).
+- [ ] **Your Phantom wallet's public key** for the Squads multisig (third member), or we
+      use the admin key.
 - [ ] **Dialect** (optional): register the Blink domain for X unfurls
       (<https://docs.dialect.to/blinks>).
 

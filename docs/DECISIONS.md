@@ -216,7 +216,53 @@ photo hashes>:<ts>`; the server verifies the signature against the onchain forwa
 - Verified in Playwright (Chromium 1194 / `@playwright/test` 1.56.1): the full two-browser
   lifecycle passes on a local validator (`app/e2e/`).
 
+## Integrations (Phase 4)
+
+- **Faucet / gas tank:** `POST /api/faucet` signs with `GAS_TANK_SECRET_KEY`, which is also
+  the demo mint authority on devnet. Limits live in Vercel KV / Upstash Redis (REST
+  `SET NX EX`, `INCR` + `EXPIRE`) when `KV_REST_API_URL` + `KV_REST_API_TOKEN` are set,
+  else in process memory (dev only). Disabled on mainnet; enabled on devnet and localnet.
+- **Crank cadence:** Vercel Hobby crons run at most once a day and an expression that runs
+  more often fails the deploy (vercel.com/docs/cron-jobs/usage-and-pricing, checked Oct 5).
+  So `app/vercel.json` has one daily run and `.github/workflows/crank.yml` calls
+  `/api/cron/crank` every 5 minutes with the same `CRON_SECRET` (a no-op until the
+  `APP_URL` and `CRON_SECRET` repository secrets exist). The planner reads the cluster
+  clock (block time) and mirrors the program's conditions (`now > review_deadline`,
+  `now >= cutoff_ts`). Duplicate runs are harmless: the program rejects the second call.
+- **OG and ticket images:** `next/og` in the Node runtime with static OFL `.woff` fonts
+  from the Fontsource packages (Satori reads ttf/otf/woff, not woff2), included in the
+  serverless trace via `outputFileTracingIncludes`. Images are always light-theme.
+  Ticket art is square (1080²) for wallet galleries.
+- **Cargo Ticket metadata** follows the Metaplex JSON standard
+  (metaplex.com/docs/token-metadata/token-standard): attributes are strings, goods value
+  is never included, `external_url` is the public shipment page.
+- **Blinks:** `@solana/actions` 1.6.6 for types and `createActionHeaders` (devnet CAIP-2
+  id, action version 2.4). POST builds an unsigned v0 transaction with the requesting
+  account as fee payer (clients refresh the blockhash), simulates it with
+  `sigVerify: false` and returns a friendly `ActionError` instead of a doomed wallet
+  prompt. The trader's ATA is created idempotently. Testing on dial.to needs a public
+  HTTPS deploy (Phase 5).
+- **Squads v4** (`@sqds/multisig` 2.1.4; program `SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf`
+  from docs.squads.so quickstart, same id on devnet). 2-of-3, `configAuthority: null`,
+  time lock 0 for the demo (timelock is a roadmap item). The vault holds a 0.2 SOL float
+  because the arbitrator pays rent inside resolutions (force-approve spent ~0.006 SOL).
+  Compute-budget instructions are stripped from the vault transaction and set on the
+  outer execute transaction: they can't run via CPI. Local testing clones the program,
+  its program config (`BSTq9w3k…`) and the devnet treasury (`HM5y4mz3…`, read from the
+  program config) from devnet.
+- **Arbitration UI:** `/admin` lists disputes from the chain and shows the exact
+  `resolve-dispute` commands. A browser button would need one wallet to create, two to
+  approve and one to execute; the Squads app or the script does that better.
+- **Demo data:** stable demo keypairs in `.keys/` (gitignored), evidence uploaded through
+  the real `/api/evidence` with original placeholder photos (`scripts/demo-assets/`).
+  The disputed shipment belongs to Eastline, so its "disputes opened" stat is 1; a slash
+  makes it a lost dispute and lowers the score, which is the honest outcome.
+- Evidence signing helpers (`evidenceFieldsHash`, `evidenceMessage`) moved into the SDK so
+  the app and scripts can't drift.
+
 ## Pending decisions (later phases)
 
 - Phantom embedded-wallet capabilities: `signAllTransactions`, sign-only, daily limits (Phase 3).
-- Reflect devnet availability (Phase 4 stretch).
+- Reflect: no devnet deployment found (Oct 5); roadmap note in `docs/ROADMAP.md#reflect`.
+- Fee sponsorship with Phantom `presignTransaction`: deferred until it can be tested with
+  a real Phantom wallet (see `docs/ROADMAP.md#kora`).
