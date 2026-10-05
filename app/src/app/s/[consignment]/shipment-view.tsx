@@ -114,6 +114,17 @@ export function ShipmentView() {
     !["booked", "rejected", "refunded"].includes(status) || c.receivedAt.toNumber() > 0;
   const hasTicket = !c.cargoTicketMint.equals(PublicKey.default);
 
+  const reviewing = status === "received";
+  const evidence = received && c.evidenceHash.some((b) => b !== 0) && (
+    <Card>
+      <h2 className="mb-1 text-xl font-semibold">At the warehouse</h2>
+      <p className="mb-3 text-sm text-ink-muted">
+        {c.cartonCount} cartons · {formatCbm(c.measuredCbmMilli)} measured by the forwarder.
+      </p>
+      <EvidenceGallery consignment={address.toBase58()} onchainHash={c.evidenceHash} />
+    </Card>
+  );
+
   return (
     <PageShell>
       <PageTitle
@@ -131,6 +142,9 @@ export function ShipmentView() {
       <Card>
         <TimelineStepper stage={stage} />
       </Card>
+
+      {/* While the trader is reviewing, the photos come before the approve button. */}
+      {reviewing && evidence}
 
       <ActionPanel
         actions={actions}
@@ -173,15 +187,7 @@ export function ShipmentView() {
         />
       </Card>
 
-      {received && c.evidenceHash.some((b) => b !== 0) && (
-        <Card>
-          <h2 className="mb-1 text-xl font-semibold">At the warehouse</h2>
-          <p className="mb-3 text-sm text-ink-muted">
-            {c.cartonCount} cartons · {formatCbm(c.measuredCbmMilli)} measured by the forwarder.
-          </p>
-          <EvidenceGallery consignment={address.toBase58()} onchainHash={c.evidenceHash} />
-        </Card>
-      )}
+      {!reviewing && evidence}
 
       {hasTicket && (
         <section className="flex flex-col gap-2">
@@ -193,11 +199,16 @@ export function ShipmentView() {
             void={!holderKey}
           />
           <p className="text-sm text-ink-muted">
-            Whoever holds this ticket can collect the goods and open disputes.{" "}
-            <span title="The ticket's permanent delegate is a Manifest program address. It is used only to burn the ticket when the forwarder claims freight after the pickup period or when a dispute is settled from the bond.">
-              Why can Manifest burn it? ⓘ
-            </span>
+            Whoever holds this ticket can collect the goods and open disputes.
           </p>
+          <details className="text-sm text-ink-muted">
+            <summary className="cursor-pointer underline">Why can Manifest burn it?</summary>
+            <p className="mt-1">
+              The ticket&apos;s permanent delegate is a Manifest program address. The program uses
+              it only to burn the ticket when the forwarder claims freight after the pickup period,
+              or when a dispute is settled from the forwarder&apos;s guarantee.
+            </p>
+          </details>
         </section>
       )}
 

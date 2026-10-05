@@ -195,6 +195,10 @@ export function ForwarderTrustPanel({
         <Stat label="On time" value={onTimePct === null ? "—" : `${onTimePct}%`} />
         <Stat label="Disputes lost" value={String(forwarder.statsDisputesLost)} />
       </dl>
+      <details className="mt-2 text-sm text-ink-muted">
+        <summary className="cursor-pointer underline">How is the score worked out?</summary>
+        <p className="mt-1">{SCORE_FORMULA}</p>
+      </details>
       <div className="mt-4">
         <p className="mb-2 text-sm">
           <strong>Forwarder&apos;s guarantee:</strong> {formatUsd(forwarder.bondBalance)} locked

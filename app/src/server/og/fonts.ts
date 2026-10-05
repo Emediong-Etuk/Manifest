@@ -52,6 +52,6 @@ export const OG = {
   muted: "#4a5470",
   rule: "#d9cfbd",
   accent: "#c2410c",
-  stamp: "#2f7d4f",
+  stamp: "#28724a",
   danger: "#b42318",
 } as const;

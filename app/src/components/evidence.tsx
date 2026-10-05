@@ -3,6 +3,8 @@
 import { type EvidenceManifest, formatCbm, toHex, verifyEvidence } from "@manifest/sdk";
 import { useQuery } from "@tanstack/react-query";
 
+import { formatDateTime } from "@/lib/display";
+
 import { Skeleton, Stamp } from "./ui";
 
 interface EvidenceResponse {
@@ -69,7 +71,7 @@ export function EvidenceGallery({
         <dt className="text-ink-muted">Cartons</dt>
         <dd className="text-right font-medium">{manifest.cartonCount}</dd>
         <dt className="text-ink-muted">Recorded</dt>
-        <dd className="text-right font-medium">{new Date(manifest.recordedAt).toLocaleString()}</dd>
+        <dd className="text-right font-medium">{formatDateTime(manifest.recordedAt)}</dd>
       </dl>
       {manifest.packingList.length > 0 && (
         <table className="w-full text-sm">

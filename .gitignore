@@ -37,3 +37,4 @@ id.json
 # Playwright
 app/test-results/
 app/playwright-report/
+*.tmp.mjs

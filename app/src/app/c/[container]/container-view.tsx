@@ -22,7 +22,7 @@ import { ShareContainer } from "@/components/share";
 import { Card, KeyValue, PageShell, PageTitle, Skeleton, Stamp } from "@/components/ui";
 import { useContainer, useForwarder, useNow, usePubkeyParam } from "@/hooks/queries";
 import { config } from "@/lib/config";
-import { mintSymbol, shareText } from "@/lib/display";
+import { formatDate, formatDateTime, mintSymbol, shareText } from "@/lib/display";
 
 export function ContainerView() {
   const params = useParams<{ container: string }>();
@@ -101,19 +101,8 @@ export function ContainerView() {
                   <small className="text-ink-muted">{mintSymbol(c.mint)}</small>
                 </>,
               ],
-              [
-                "Booking cut-off",
-                new Date(c.cutoffTs.toNumber() * 1000).toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                }),
-              ],
-              [
-                "Expected arrival",
-                new Date(c.etaTs.toNumber() * 1000).toLocaleDateString(undefined, {
-                  dateStyle: "medium",
-                }),
-              ],
+              ["Booking cut-off", formatDateTime(c.cutoffTs)],
+              ["Expected arrival", formatDate(c.etaTs)],
               ["Bookings so far", String(c.activeCount)],
             ]}
           />

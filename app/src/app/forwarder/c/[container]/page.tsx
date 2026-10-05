@@ -30,7 +30,7 @@ import type { PublicKey } from "@solana/web3.js";
 import bs58 from "bs58";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { EmptyState, RouteLine, StageStamp } from "@/components/manifest";
 import { QrScanner } from "@/components/qr";
@@ -324,7 +324,7 @@ function ContainerActions({
                 <input
                   id={id}
                   type="file"
-                  className="text-sm"
+                  className="text-sm file:mr-3 file:min-h-12 file:cursor-pointer file:rounded-lg file:border-2 file:border-ink file:bg-paper-raised file:px-4 file:font-semibold file:text-ink"
                   onChange={async (e) => {
                     const file = e.target.files?.[0];
                     if (!file) return;
@@ -386,6 +386,26 @@ interface Row {
   qty: string;
 }
 
+/** Thumbnails of the photos picked for upload (object URLs, revoked on change). */
+function PhotoPreviews({ files }: { files: File[] }) {
+  const urls = useMemo(() => files.map((f) => URL.createObjectURL(f)), [files]);
+  useEffect(() => () => urls.forEach((u) => URL.revokeObjectURL(u)), [urls]);
+  return (
+    <ul className="grid grid-cols-4 gap-2" aria-label="Selected photos">
+      {urls.map((u, i) => (
+        <li key={u}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- local object URL preview */}
+          <img
+            src={u}
+            alt={`Selected photo ${i + 1}`}
+            className="aspect-square w-full rounded-md border border-rule object-cover"
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /** Record receipt: photos + measurements → signed upload → hash → record_receipt tx. */
 function ReceiptForm({
   consignment,
@@ -442,11 +462,12 @@ function ReceiptForm({
               accept="image/*"
               capture="environment"
               multiple
-              className="text-sm"
+              className="text-sm file:mr-3 file:min-h-12 file:cursor-pointer file:rounded-lg file:border-2 file:border-ink file:bg-paper-raised file:px-4 file:font-semibold file:text-ink"
               onChange={(e) => setPhotos(Array.from(e.target.files ?? []).slice(0, MAX_PHOTOS))}
             />
           )}
         </Field>
+        {photos.length > 0 && <PhotoPreviews files={photos} />}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Measured volume (CBM)">
             {(id) => (

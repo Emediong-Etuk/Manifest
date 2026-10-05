@@ -8,6 +8,7 @@ import { EmptyState, SCORE_FORMULA, scoreLabel } from "@/components/manifest";
 import { Card, PageShell, PageTitle, Skeleton, Stamp } from "@/components/ui";
 import { useContainers, useForwarder, usePubkeyParam } from "@/hooks/queries";
 import { config } from "@/lib/config";
+import { formatDate } from "@/lib/display";
 
 export default function ForwarderProfile() {
   const params = useParams<{ forwarder: string }>();
@@ -51,9 +52,7 @@ export default function ForwarderProfile() {
       <PageTitle title={decodeFixed(f.name)}>
         <div className="flex flex-wrap items-center gap-3">
           <Stamp tone={delivered >= 3 ? "stamp" : "muted"}>{scoreLabel(f)}</Stamp>
-          <span className="text-sm text-ink-muted">
-            Member since {new Date(f.createdAt.toNumber() * 1000).toLocaleDateString()}
-          </span>
+          <span className="text-sm text-ink-muted">Member since {formatDate(f.createdAt)}</span>
         </div>
         <p className="text-sm text-ink-muted">{SCORE_FORMULA}</p>
       </PageTitle>

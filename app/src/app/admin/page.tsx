@@ -38,7 +38,7 @@ function CopyCommand({ command }: { command: string }) {
   const [copied, setCopied] = useState(false);
   return (
     <div className="flex items-start gap-2">
-      <code className="block flex-1 overflow-x-auto rounded-lg bg-paper p-2 font-mono text-xs">
+      <code className="block flex-1 break-all rounded-lg bg-paper p-2 font-mono text-xs">
         {command}
       </code>
       <Button

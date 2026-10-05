@@ -28,7 +28,7 @@ const theme: PhantomTheme = {
   secondary: "#4a5470",
   brand: "#c2410c",
   error: "#b42318",
-  success: "#2f7d4f",
+  success: "#28724a",
   borderRadius: "12px",
   overlay: "rgba(20, 33, 61, 0.6)",
 };

@@ -14,6 +14,7 @@ import {
   nextConsignmentAddressFor,
   quoteBooking,
 } from "@manifest/sdk";
+import { Keypair } from "@solana/web3.js";
 import { useRouter, useParams } from "next/navigation";
 import { useRef, useState } from "react";
 
@@ -43,7 +44,9 @@ import {
   usePubkeyParam,
   useTokenBalance,
 } from "@/hooks/queries";
+import { useFaucet } from "@/hooks/use-faucet";
 import { getManifestProgram } from "@/lib/chain";
+import { config } from "@/lib/config";
 import { mintSymbol } from "@/lib/display";
 import { useWallet } from "@/lib/wallet/context";
 
@@ -57,6 +60,7 @@ export default function BookPage() {
   const configAccount = useConfigAccount();
   const wallet = useWallet();
   const balance = useTokenBalance(wallet.publicKey, container.data?.mint ?? null);
+  const faucet = useFaucet();
   const router = useRouter();
   const now = useNow();
 
@@ -199,6 +203,25 @@ export default function BookPage() {
             </>
           )}
 
+          {step === 2 && config.cluster !== "mainnet-beta" && !payeeRaw && (
+            <div className="rounded-lg border-2 border-dashed border-rule p-3 text-sm">
+              <p className="mb-2">
+                Just trying Manifest? Use a fresh test address as the supplier. Nobody holds its
+                key, so test dollars paid to it are simply gone.
+              </p>
+              <Button
+                variant="secondary"
+                className="min-h-10 px-4 text-sm"
+                onClick={() => {
+                  setPayeeRaw(Keypair.generate().publicKey.toBase58());
+                  setPayeeConfirmed(true);
+                }}
+              >
+                Use a test supplier address
+              </Button>
+            </div>
+          )}
+
           {step === 2 && (
             <AddressInput
               label="Supplier's payout address"
@@ -248,6 +271,16 @@ export default function BookPage() {
                   <span className="text-danger"> · not enough for this booking</span>
                 )}
               </p>
+              {(balance.data ?? 0n) < quote.total && faucet.available && (
+                <Button
+                  variant="secondary"
+                  className="self-start"
+                  disabled={faucet.busy}
+                  onClick={() => void faucet.request()}
+                >
+                  {faucet.busy ? "Sending…" : "Get 500 free test dollars"}
+                </Button>
+              )}
               {wallet.embedded && quote.total > EMBEDDED_DAILY_LIMIT && (
                 <p className="rounded-lg border-2 border-accent p-3 text-sm">
                   Wallets created with Google or Apple sign-in can send up to $1,000 a day through

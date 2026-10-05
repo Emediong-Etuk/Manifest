@@ -12,8 +12,34 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 | 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)     |
 | 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)            |
 | 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)     |
-| 5: Polish + docs + deploy    | Oct 10–11 | —                                                      |
+| 5: Polish + docs + deploy    | Oct 10–11 | 🔨 In progress (Oct 5)                                 |
 | 6: Videos + submission       | Oct 11–12 | —                                                      |
+
+## Phase 5 plan (Oct 5–11): polish, docs, deploy
+
+1. Local demo environment: validator with Squads, seed world, production build.
+2. Mobile QA at 360 px: Playwright screenshots of every page with seeded data and an
+   automatic horizontal-overflow check; fix what breaks.
+3. States: audit loading / empty / error on every page; app-level `error.tsx`; query
+   errors shown with a retry instead of an endless skeleton.
+4. Accessibility: axe-core on every page (Playwright), keyboard focus, labels, contrast;
+   fix violations.
+5. "Judge in 2 minutes" on mobile: landing → test dollars → book. Time it in Playwright
+   at 360 px and remove friction (faucet prompt on the booking page when the balance is
+   short).
+6. Copy pass: plain language, one name per concept.
+7. Tests: Playwright smoke (landing → containers → container detail), mobile overflow and
+   axe checks added to the e2e suite.
+8. Docs (spec section 12): README (verified market numbers with sources, Mermaid flow +
+   architecture, accounts and instructions tables, sponsor tech, security, run locally),
+   BUSINESS, FORWARDER_ONEPAGER, LOI_TEMPLATE, INTERVIEW_QUESTIONS, PITCH_SCRIPT,
+   DEMO_SCRIPT (exact click paths with seeded accounts), SUBMISSION_CHECKLIST, full-system
+   ARCHITECTURE diagram, README screenshots.
+9. Deploy readiness: Vercel monorepo settings documented and a devnet-config build checked;
+   secret scan of the repository. The actual deploy needs Greg's Vercel + devnet keys.
+
+Risks: market statistics must be verified from sources (never invented); Vercel and devnet
+deploys are blocked on Greg; Phantom flows can't be exercised in this container.
 
 ## Phase 4 plan (Oct 5–10): integrations
 
@@ -239,7 +265,7 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Nothing; waiting for "Execute Phase 5".
+- Phase 5, step 1 (local demo environment).
 
 ## Next
 

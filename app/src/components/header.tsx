@@ -1,14 +1,13 @@
 "use client";
 
 import { shortAddress } from "@manifest/sdk";
-import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 
+import { useFaucet } from "@/hooks/use-faucet";
 import { config } from "@/lib/config";
 import { useWallet } from "@/lib/wallet/context";
 
-import { useToast } from "./toasts";
 import { Button } from "./ui";
 
 export function WalletButton() {
@@ -16,7 +15,11 @@ export function WalletButton() {
   if (!wallet.ready) return <span className="text-sm text-ink-muted">…</span>;
   if (!wallet.publicKey) {
     return (
-      <Button variant="secondary" onClick={wallet.connect} className="min-h-10 px-3 text-sm">
+      <Button
+        variant="secondary"
+        onClick={wallet.connect}
+        className="min-h-10 whitespace-nowrap px-3 text-sm"
+      >
         {config.burnerWallet ? "Test wallet" : config.phantomAppId ? "Sign in" : "Connect"}
       </Button>
     );
@@ -33,6 +36,27 @@ export function WalletButton() {
   );
 }
 
+const NAV = [
+  { href: "/containers", label: "Containers" },
+  { href: "/me", label: "My shipments" },
+  { href: "/forwarder", label: "Forwarders" },
+  { href: "/verify", label: "Verify" },
+] as const;
+
+function NavLink({ href, label, className }: { href: string; label: string; className: string }) {
+  const pathname = usePathname();
+  const active = pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className={`${className} ${active ? "font-semibold underline decoration-accent decoration-2 underline-offset-4" : ""}`}
+    >
+      {label}
+    </Link>
+  );
+}
+
 export function SiteHeader() {
   return (
     <header className="border-b-2 border-rule">
@@ -40,70 +64,37 @@ export function SiteHeader() {
         <Link href="/" className="font-stencil text-2xl uppercase tracking-wide">
           Manifest
         </Link>
-        <nav className="flex items-center gap-1 sm:gap-3">
-          <Link
-            href="/containers"
-            className="hidden rounded-lg px-2 py-2 hover:bg-paper-raised sm:inline"
-          >
-            Containers
-          </Link>
-          <Link
-            href="/me"
-            className="whitespace-nowrap rounded-lg px-2 py-2 text-sm hover:bg-paper-raised sm:text-base"
-          >
-            My shipments
-          </Link>
-          <Link
-            href="/forwarder"
-            className="hidden rounded-lg px-2 py-2 hover:bg-paper-raised sm:inline"
-          >
-            Forwarders
-          </Link>
-          <WalletButton />
+        <nav aria-label="Main" className="hidden items-center gap-3 sm:flex">
+          {NAV.map((n) => (
+            <NavLink
+              key={n.href}
+              {...n}
+              className="whitespace-nowrap rounded-lg px-2 py-2 hover:bg-paper-raised"
+            />
+          ))}
         </nav>
+        <WalletButton />
       </div>
+      {/* Phones: the same links on their own row, so nothing is hidden behind a menu. */}
+      <nav aria-label="Main" className="border-t border-rule sm:hidden">
+        <div className="mx-auto flex max-w-5xl justify-between px-2">
+          {NAV.map((n) => (
+            <NavLink
+              key={n.href}
+              {...n}
+              className="flex min-h-11 items-center whitespace-nowrap px-2 text-sm"
+            />
+          ))}
+        </div>
+      </nav>
     </header>
   );
 }
 
 export function DevnetBanner() {
   const wallet = useWallet();
-  const toast = useToast();
-  const queryClient = useQueryClient();
-  const [busy, setBusy] = useState(false);
+  const faucet = useFaucet();
   if (config.cluster === "mainnet-beta") return null;
-
-  // Real devnet transaction from the server-side gas tank (app/src/app/api/faucet).
-  async function getTestDollars() {
-    if (!wallet.publicKey) {
-      await wallet.connect();
-      return;
-    }
-    setBusy(true);
-    try {
-      const res = await fetch("/api/faucet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address: wallet.publicKey.toBase58() }),
-      });
-      const data = (await res.json()) as { error?: string; explorer?: string; dollars?: number };
-      if (!res.ok) {
-        toast({ kind: "error", title: data.error ?? "The faucet couldn't send right now." });
-        return;
-      }
-      toast({
-        kind: "success",
-        title: `${data.dollars} test dollars sent`,
-        body: "Plus a little SOL for fees if you needed it.",
-        href: data.explorer,
-      });
-      await queryClient.invalidateQueries();
-    } catch {
-      toast({ kind: "error", title: "The faucet couldn't send right now." });
-    } finally {
-      setBusy(false);
-    }
-  }
 
   return (
     <div className="bg-ink text-paper">
@@ -112,14 +103,18 @@ export function DevnetBanner() {
           You&apos;re on the Manifest demo network ({config.cluster}). Money here is test money with
           no real value.
         </p>
-        {config.demoMint && (
+        {faucet.available && (
           <button
             type="button"
-            onClick={() => void getTestDollars()}
-            disabled={busy}
+            onClick={() => void faucet.request()}
+            disabled={faucet.busy}
             className="min-h-9 whitespace-nowrap rounded-lg border-2 border-paper px-3 font-medium hover:bg-paper hover:text-ink disabled:opacity-60"
           >
-            {busy ? "Sending…" : wallet.publicKey ? "Get test dollars" : "Connect for test dollars"}
+            {faucet.busy
+              ? "Sending…"
+              : wallet.publicKey
+                ? "Get test dollars"
+                : "Connect for test dollars"}
           </button>
         )}
       </div>

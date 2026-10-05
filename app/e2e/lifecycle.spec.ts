@@ -5,61 +5,11 @@
  * scans (pastes) it; trader confirms pickup. Every step is a real transaction on the
  * local validator.
  */
-import { readFileSync } from "node:fs";
-import { homedir } from "node:os";
-import { join } from "node:path";
-
-import { expect, test, type Browser, type Page } from "@playwright/test";
-import {
-  createAssociatedTokenAccountIdempotentInstruction,
-  createMintToInstruction,
-  getAssociatedTokenAddressSync,
-} from "@solana/spl-token";
-import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, Transaction } from "@solana/web3.js";
+import { expect, test } from "@playwright/test";
+import { Keypair } from "@solana/web3.js";
 import sharp from "sharp";
 
-const RPC = process.env.E2E_RPC_URL ?? "http://127.0.0.1:8899";
-const MINT = new PublicKey(process.env.E2E_MINT ?? "");
-const USD = 1_000_000n;
-
-const connection = new Connection(RPC, "confirmed");
-const admin = Keypair.fromSecretKey(
-  Uint8Array.from(
-    JSON.parse(
-      readFileSync(join(homedir(), ".config/solana/manifest-dev.json"), "utf8"),
-    ) as number[],
-  ),
-);
-
-async function fund(owner: PublicKey, dollars: bigint) {
-  const sig = await connection.requestAirdrop(owner, 10 * LAMPORTS_PER_SOL);
-  await connection.confirmTransaction(sig, "confirmed");
-  const ata = getAssociatedTokenAddressSync(MINT, owner);
-  const tx = new Transaction().add(
-    createAssociatedTokenAccountIdempotentInstruction(admin.publicKey, ata, owner, MINT),
-    createMintToInstruction(MINT, ata, admin.publicKey, dollars * USD),
-  );
-  await connection
-    .sendTransaction(tx, [admin])
-    .then((s) => connection.confirmTransaction(s, "confirmed"));
-}
-
-async function walletPage(browser: Browser, kp: Keypair): Promise<Page> {
-  const context = await browser.newContext({ viewport: { width: 412, height: 915 } });
-  await context.addInitScript(
-    (secret) => {
-      window.localStorage.setItem("manifest.burner", secret);
-    },
-    JSON.stringify(Array.from(kp.secretKey)),
-  );
-  return context.newPage();
-}
-
-async function expectToast(page: Page, text: string | RegExp) {
-  await expect(page.getByRole("status").filter({ hasText: text }).first()).toBeVisible({
-    timeout: 60_000,
-  });
-}
+import { expectToast, fund, walletPage } from "./helpers";
 
 test("trader and forwarder complete a shipment end to end", async ({ browser }) => {
   const forwarderKp = Keypair.generate();
