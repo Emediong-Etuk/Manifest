@@ -16,6 +16,7 @@ import {
   forwarderPda,
   getConsignment,
   ix,
+  listConsignments,
 } from "@manifest/sdk";
 import type { Keypair, PublicKey } from "@solana/web3.js";
 
@@ -94,8 +95,28 @@ for (const [code, serial, items] of [
   ],
   ["LAG-0815", 412_077, ["Sneakers, 9 cartons", "Kitchenware, 7 cartons", "LED bulbs, 5 cartons"]],
 ] as const) {
-  if (await findContainer(c, eastline, code)) {
+  const existing = await findContainer(c, eastline, code);
+  if (existing && "completed" in existing.account.status) {
     console.log(`${code} exists, skipping`);
+    continue;
+  }
+  if (existing) {
+    // An earlier run stopped part-way (e.g. public RPC rate limits): finish the voyage and
+    // the pickups. History shipments are booked, approved and collected by their trader.
+    console.log(`${code} is unfinished, resuming`);
+    await voyage(c, who.eastline, existing.address, code, serial);
+    const traders = [who.ada, who.bayo, who.chika];
+    for (const s of await listConsignments(p, { container: existing.address })) {
+      if (!("approved" in s.account.status)) continue;
+      const trader = traders.find((t) => t.publicKey.equals(s.account.trader));
+      if (!trader) continue;
+      await send(
+        c,
+        "confirm_pickup",
+        await ix.confirmPickup(p, { holder: trader.publicKey, consignment: s.address }),
+        [trader],
+      );
+    }
     continue;
   }
   const k = await openContainer(
@@ -140,7 +161,13 @@ for (const [code, serial, items] of [
 // LAG-1014: open, 3 shipments at different stages.
 let lag1014 = (await findContainer(c, eastline, "LAG-1014"))?.address ?? null;
 if (lag1014) {
-  console.log("LAG-1014 exists, skipping");
+  // Stage the three shipments unless an earlier run already did (it may have stopped
+  // right after opening the container). Other people's bookings don't count.
+  const staged = (await listConsignments(p, { container: lag1014 })).some((s) =>
+    [who.ada, who.bayo, who.chika].some((t) => t.publicKey.equals(s.account.trader)),
+  );
+  if (staged) console.log("LAG-1014 exists, skipping");
+  else await stagedShipments(c, who, lag1014);
 } else {
   lag1014 = await openContainer(
     c,
