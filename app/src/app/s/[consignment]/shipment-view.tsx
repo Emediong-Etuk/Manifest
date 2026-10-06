@@ -24,7 +24,7 @@ import {
 import { PublicKey } from "@solana/web3.js";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { EvidenceGallery } from "@/components/evidence";
 import { AddressInput, parsePubkey } from "@/components/inputs";
@@ -60,7 +60,7 @@ import {
 } from "@/hooks/queries";
 import { getManifestProgram } from "@/lib/chain";
 import { mintSymbol } from "@/lib/display";
-import { createPickupPayload } from "@/lib/pickup";
+import { createPickupPayload, PICKUP_MAX_AGE_SECS } from "@/lib/pickup";
 import { useWallet } from "@/lib/wallet/context";
 
 export function ShipmentView() {
@@ -558,44 +558,72 @@ function ReasonSelect({
   );
 }
 
-/** Signed pickup proof as a QR code, refreshed every 5 minutes. */
+/**
+ * Signed pickup proof as a QR code. Signed once per tap: every signature is a wallet
+ * pop-up, so nothing re-signs on its own (the page polls the chain and re-creates
+ * PublicKey objects, so the effect is keyed on base58 strings). When the code nears
+ * PICKUP_MAX_AGE_SECS it is shown as expired with a button to sign a new one.
+ */
 function PickupQr({ consignment, holder }: { consignment: PublicKey; holder: PublicKey }) {
   const wallet = useWallet();
   const [payload, setPayload] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [show, setShow] = useState(false);
+  const [expired, setExpired] = useState(false);
+  // Bumped by "Show pickup code" / "Sign a new pickup code"; 0 = not asked yet.
+  const [request, setRequest] = useState(0);
+  const signMessage = useRef(wallet.signMessage);
+  useEffect(() => {
+    signMessage.current = wallet.signMessage;
+  });
+  const consignmentKey = consignment.toBase58();
+  const holderKey = holder.toBase58();
 
   useEffect(() => {
-    if (!show) return;
+    if (request === 0) return;
     let cancelled = false;
-    const refresh = async () => {
-      try {
-        const p = await createPickupPayload(consignment, holder, wallet.signMessage);
-        if (!cancelled) setPayload(JSON.stringify(p));
-      } catch {
+    let expiry: ReturnType<typeof setTimeout> | undefined;
+    createPickupPayload(new PublicKey(consignmentKey), new PublicKey(holderKey), (m) =>
+      signMessage.current(m),
+    )
+      .then((p) => {
+        if (cancelled) return;
+        setPayload(JSON.stringify(p));
+        expiry = setTimeout(() => setExpired(true), (PICKUP_MAX_AGE_SECS - 30) * 1000);
+      })
+      .catch(() => {
         if (!cancelled) setError("Your wallet didn't sign the pickup code.");
-      }
-    };
-    void refresh();
-    const id = setInterval(() => void refresh(), 5 * 60_000);
+      });
     return () => {
       cancelled = true;
-      clearInterval(id);
+      clearTimeout(expiry);
     };
-  }, [show, consignment, holder, wallet.signMessage]);
+  }, [request, consignmentKey, holderKey]);
 
+  const sign = () => {
+    setPayload(null);
+    setError(null);
+    setExpired(false);
+    setRequest((n) => n + 1);
+  };
   return (
     <div className="flex flex-col gap-2">
       <p className="font-semibold">At the warehouse</p>
-      {!show ? (
-        <Button variant="secondary" onClick={() => setShow(true)}>
+      {request === 0 ? (
+        <Button variant="secondary" onClick={sign}>
           Show pickup code
         </Button>
+      ) : expired ? (
+        <>
+          <p className="text-ink-muted">This pickup code has expired.</p>
+          <Button variant="secondary" onClick={sign}>
+            Sign a new pickup code
+          </Button>
+        </>
       ) : payload ? (
         <>
           <QrDisplay value={payload} label="Pickup code for the forwarder to scan" />
           <p className="text-center text-sm text-ink-muted">
-            Show this to the forwarder. It refreshes every 5 minutes.
+            Show this to the forwarder. It&apos;s valid for 10 minutes.
           </p>
           <details className="text-sm">
             <summary className="cursor-pointer text-ink-muted">
@@ -609,7 +637,12 @@ function PickupQr({ consignment, holder }: { consignment: PublicKey; holder: Pub
           </details>
         </>
       ) : error ? (
-        <p className="text-danger">{error}</p>
+        <>
+          <p className="text-danger">{error}</p>
+          <Button variant="secondary" onClick={sign}>
+            Try again
+          </Button>
+        </>
       ) : (
         <p className="text-ink-muted">Sign the pickup code in your wallet…</p>
       )}

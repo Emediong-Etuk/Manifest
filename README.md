@@ -133,9 +133,12 @@ resolve it (`docs/DEMO_SCRIPT.md` shows how).
 
 ## Screenshots
 
-| Container page                                        | Forwarder console                                    |
+All screenshots are from the live devnet app (Oct 6): real accounts, photos verified
+against the hashes onchain.
+
+| Container page                                        | Forwarder profile (track record from the chain)      |
 | ----------------------------------------------------- | ---------------------------------------------------- |
-| ![Container LAG-1014](docs/screenshots/container.png) | ![Forwarder console](docs/screenshots/forwarder.png) |
+| ![Container LAG-1021](docs/screenshots/container.png) | ![Forwarder profile](docs/screenshots/forwarder.png) |
 
 | Cargo Ticket artwork (live from the chain)         | WhatsApp / X link preview                                        | Dispute queue (Squads)                       |
 | -------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------- |
