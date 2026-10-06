@@ -230,8 +230,8 @@ photo hashes>:<ts>`; the server verifies the signature against the onchain forwa
   clock (block time) and mirrors the program's conditions (`now > review_deadline`,
   `now >= cutoff_ts`). Duplicate runs are harmless: the program rejects the second call.
   In practice GitHub delays scheduled runs on this repo to roughly every 6–7 hours (Oct 5–6),
-  so for demos run the workflow by hand (Run workflow) or `pnpm --filter @manifest/scripts
-  crank`; anyone can call the permissionless instructions.
+  so before a demo use Run workflow on the crank workflow, or run
+  `pnpm --filter @manifest/scripts crank`; the instructions it calls are permissionless.
 - **OG and ticket images:** `next/og` in the Node runtime with static OFL `.woff` fonts
   from the Fontsource packages (Satori reads ttf/otf/woff, not woff2), included in the
   serverless trace via `outputFileTracingIncludes`. Images are always light-theme.
