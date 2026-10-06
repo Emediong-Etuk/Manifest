@@ -229,6 +229,7 @@ export const approve = async (c: Chain, trader: Keypair, k: PublicKey) =>
     [trader],
   );
 
+/** Close, load and arrive a container, skipping the steps it has already done (resumable). */
 export async function voyage(
   c: Chain,
   fwd: Keypair,
@@ -236,29 +237,34 @@ export async function voyage(
   code: string,
   serial: number,
 ) {
-  await send(
-    c,
-    `close_booking ${code}`,
-    await ix.closeBooking(c.program, { caller: fwd.publicKey, container }),
-    [fwd],
-  );
-  await send(
-    c,
-    `mark_loaded ${code}`,
-    await ix.markLoaded(c.program, {
-      authority: fwd.publicKey,
-      container,
-      containerNumber: containerNumber("MSC", serial),
-      blHash: await sha256(`demo bill of lading ${code}`),
-    }),
-    [fwd],
-  );
-  await send(
-    c,
-    `mark_arrived ${code}`,
-    await ix.markArrived(c.program, { authority: fwd.publicKey, container }),
-    [fwd],
-  );
+  const status = async () =>
+    Object.keys((await c.program.account.container.fetch(container)).status)[0];
+  if ((await status()) === "open")
+    await send(
+      c,
+      `close_booking ${code}`,
+      await ix.closeBooking(c.program, { caller: fwd.publicKey, container }),
+      [fwd],
+    );
+  if ((await status()) === "closed")
+    await send(
+      c,
+      `mark_loaded ${code}`,
+      await ix.markLoaded(c.program, {
+        authority: fwd.publicKey,
+        container,
+        containerNumber: containerNumber("MSC", serial),
+        blHash: await sha256(`demo bill of lading ${code}`),
+      }),
+      [fwd],
+    );
+  if ((await status()) === "loaded")
+    await send(
+      c,
+      `mark_arrived ${code}`,
+      await ix.markArrived(c.program, { authority: fwd.publicKey, container }),
+      [fwd],
+    );
 }
 
 export const ev = (
