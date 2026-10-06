@@ -28,7 +28,7 @@ you from it.
 Sign in with Phantom, get free test dollars, book space.
 
 Or book straight from this Blink 👇
-[Blink URL: https://dial.to/?action=solana-action:https://manifest-seven-tau.vercel.app/api/actions/book/[LAG-1014 address]&cluster=devnet]
+https://dial.to/?action=solana-action:https://manifest-seven-tau.vercel.app/api/actions/book/4tVzQf56kRS7kXE3fVGM4AoTgDtaJFqkv9TEfEiRCytG&cluster=devnet
 
 5/ Open source (MIT), 143 tests, built for the Colosseum Crypto World's Fair hackathon.
 Code: https://github.com/Emediong-Etuk/Manifest

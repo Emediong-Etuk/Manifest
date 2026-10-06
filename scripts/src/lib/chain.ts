@@ -26,10 +26,31 @@ export interface Chain {
   program: ManifestProgram;
 }
 
+/**
+ * fetch with a patient back-off on HTTP 429. The public devnet RPC rate-limits per method,
+ * and web3.js gives up after ~8 s of retries, which long scripts like seed-demo hit.
+ * Retrying is safe: reads are idempotent and a re-sent signed transaction has the same
+ * signature, so it can't land twice.
+ */
+async function fetchWithBackoff(
+  input: string | URL | Request,
+  init?: RequestInit,
+): Promise<Response> {
+  for (let attempt = 0, delay = 1_000; ; attempt++, delay = Math.min(delay * 2, 16_000)) {
+    const res = await fetch(input, init);
+    if (res.status !== 429 || attempt >= 8) return res;
+    await new Promise((r) => setTimeout(r, delay));
+  }
+}
+
 export function chain(): Chain {
   const cluster = parseCluster(process.env.NEXT_PUBLIC_CLUSTER);
   const rpc = process.env.RPC_URL || process.env.NEXT_PUBLIC_RPC_URL || defaultRpcUrl(cluster);
-  const connection = new Connection(rpc, "confirmed");
+  const connection = new Connection(rpc, {
+    commitment: "confirmed",
+    fetch: fetchWithBackoff,
+    disableRetryOnRateLimit: true,
+  });
   const program = getProgram(connection, resolveProgramId(process.env.NEXT_PUBLIC_PROGRAM_ID));
   return { cluster, connection, program };
 }

@@ -346,7 +346,14 @@ not accepting new apps (see Blockers).
   program, mint and Squads addresses. `init-config --update` pointed Cargo Ticket metadata at
   the production URL. Bug found: an empty `FAUCET_DAILY_CAP` meant a cap of 0 (`Number("")`);
   fixed (`||` instead of `??`, also for the scripts' optional env vars).
-- Waiting on Greg: Pinata (see Blockers); merge to `main` so Vercel builds the fix.
+- **Demo world seeded on devnet (Oct 6)** through the live app; evidence on IPFS (Pinata).
+  LAG-1014 (open) `4tVzQf56kRS7kXE3fVGM4AoTgDtaJFqkv9TEfEiRCytG`, LAG-2207 (Harbour Link)
+  `B1Ct8dwkafWpa1emRQKmY7XCgj7xoqs4GFJBnB2tNehK`, resold blenders ticket
+  `9w4uDLqJCAhnKBatWx2K2viYy5Ko8CTnKtpXYMStLD1R`, open dispute
+  `C8wcJQYNVsR5XgnPYTB2FvvjdkQVq7AkoEsWVA3KsoAm`. `preflight`: all checks passed. Scripts now
+  back off patiently on public-RPC 429s; preflight asks the app where evidence is stored.
+- Next for Greg: merge to `main`; live checks on a real phone (Phantom devnet, WhatsApp
+  preview, Blink on dial.to); optional Helius key for the server RPC.
 
 ## Next
 
@@ -365,8 +372,7 @@ not accepting new apps (see Blockers).
    has no existing Portal app, we need a decision before Phase 3 (see summary).
 2. ~~Devnet deploy~~ resolved Oct 6 (Greg's keys as environment secrets; deploy key left
    with ~5.8 SOL, gas tank 5 SOL).
-3. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
-   seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
+3. ~~Pinata for deployed evidence~~ resolved Oct 6 (set in Vercel; evidence verified on IPFS).
 
 ## Decisions
 
