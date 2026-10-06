@@ -6,10 +6,10 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-manifest = "HQHe42ZUBWmrSbjW4zr9Qt2wdGDYyH1QpiYLJe3z7Jci"
+manifest = "4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9"
 
 [programs.localnet]
-manifest = "HQHe42ZUBWmrSbjW4zr9Qt2wdGDYyH1QpiYLJe3z7Jci"
+manifest = "4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9"
 
 [provider]
 cluster = "devnet"

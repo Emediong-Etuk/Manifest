@@ -20,7 +20,7 @@ pub mod utils;
 use instructions::*;
 use state::ConfigParams;
 
-declare_id!("HQHe42ZUBWmrSbjW4zr9Qt2wdGDYyH1QpiYLJe3z7Jci");
+declare_id!("4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9");
 
 #[program]
 pub mod manifest {

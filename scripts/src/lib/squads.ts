@@ -5,6 +5,7 @@
  * SQDS4ep65T869zMMBKyuUq6aD6EgTu8psMjkvj52pCf on mainnet and devnet, exported by
  * @sqds/multisig as PROGRAM_ID). Demo member keys live in .keys/ (gitignored).
  */
+import { createHmac } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
@@ -19,17 +20,30 @@ import {
 
 import { type Chain, send } from "./chain.js";
 import { REPO_ROOT } from "./env.js";
-import { keypairFromFile } from "./keys.js";
+import { devKeypair, keypairFromFile } from "./keys.js";
 
 export const KEYS_DIR = resolve(REPO_ROOT, ".keys");
 const STATE_FILE = resolve(KEYS_DIR, "squads.json");
 
-/** Load a keypair file from .keys/, creating it (mode 600) on first use. */
+/**
+ * Load a keypair file from .keys/, creating it (mode 600) on first use. New keys are derived
+ * from the dev key (HMAC-SHA256 of the name, used as the ed25519 seed), so any machine or
+ * cloud session holding manifest-dev.json recreates the same demo cast and Squads members;
+ * the dev key can't be recovered from them. Without a dev key file they are random.
+ */
 export function demoKeypair(name: string): Keypair {
   const path = resolve(KEYS_DIR, `${name}.json`);
   if (existsSync(path)) return keypairFromFile(path);
   mkdirSync(KEYS_DIR, { recursive: true, mode: 0o700 });
-  const kp = Keypair.generate();
+  let kp: Keypair;
+  try {
+    const seed = createHmac("sha256", devKeypair().secretKey)
+      .update(`manifest-demo-key:v1:${name}`)
+      .digest();
+    kp = Keypair.fromSeed(seed);
+  } catch {
+    kp = Keypair.generate();
+  }
   writeFileSync(path, JSON.stringify(Array.from(kp.secretKey)), { mode: 0o600 });
   console.log(`  created .keys/${name}.json (${kp.publicKey.toBase58()})`);
   return kp;
