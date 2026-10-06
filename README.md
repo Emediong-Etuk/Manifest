@@ -9,7 +9,7 @@
 ![Tests](https://img.shields.io/badge/tests-143%20passing-2f7d4f)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-<!-- Hero illustration slot: replace app/public/illustrations/hero.svg with Greg's artwork. -->
+![A shared container of cartons on the quay, a phone photographing and measuring one carton with a green verified stamp, a Cargo Ticket, and a ship sailing from Guangzhou to Apapa](app/public/illustrations/hero.svg)
 
 Manifest is a programmable letter of credit for small Nigerian importers. A trader books
 space in a forwarder's shared container from China and locks the goods payment in an
