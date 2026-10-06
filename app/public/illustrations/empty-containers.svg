@@ -1,6 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Illustration placeholder: empty-containers">
-  <!-- Placeholder: replace with Greg's illustration (480 x 360). See README.md in this folder. -->
-  <rect width="480" height="360" fill="#f6f1e7"/>
-  <rect x="12" y="12" width="456" height="336" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="16 12" rx="16"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="20" fill="#4a5470">illustration: empty-containers</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="A quay crane with nothing on its hook above an empty container slot">
+  <rect x="40" y="20" width="400" height="320" rx="40" fill="#ece2cf"/>
+  <!-- Gantry crane -->
+  <rect x="104" y="78" width="16" height="222" fill="#c2410c" stroke="#14213d" stroke-width="4"/>
+  <rect x="360" y="78" width="16" height="222" fill="#c2410c" stroke="#14213d" stroke-width="4"/>
+  <rect x="88" y="62" width="304" height="22" rx="3" fill="#c2410c" stroke="#14213d" stroke-width="4"/>
+  <path d="M120 84L150 112M360 84L330 112" stroke="#14213d" stroke-width="4"/>
+  <rect x="218" y="84" width="44" height="18" rx="2" fill="#14213d"/>
+  <!-- Cables and an empty spreader -->
+  <path d="M230 102V176M250 102V176" stroke="#14213d" stroke-width="3"/>
+  <rect x="198" y="176" width="84" height="12" rx="2" fill="#14213d"/>
+  <path d="M206 188v10M274 188v10" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+  <!-- Quay and the empty slot -->
+  <path d="M72 300H408" stroke="#14213d" stroke-width="5" stroke-linecap="round"/>
+  <rect x="166" y="230" width="148" height="66" rx="4" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="12 9"/>
+  <path d="M226 263h28" stroke="#c2410c" stroke-width="4" stroke-linecap="round"/>
 </svg>

@@ -1,6 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Illustration placeholder: not-found">
-  <!-- Placeholder: replace with Greg's illustration (640 x 480). See README.md in this folder. -->
-  <rect width="640" height="480" fill="#f6f1e7"/>
-  <rect x="12" y="12" width="616" height="456" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="16 12" rx="16"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="26" fill="#4a5470">illustration: not-found</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="A lone shipping container adrift at sea with a seagull sitting on top and a life buoy nearby">
+  <defs>
+    <clipPath id="panel"><rect x="30" y="30" width="580" height="420" rx="50"/></clipPath>
+  </defs>
+  <rect x="30" y="30" width="580" height="420" rx="50" fill="#ece2cf"/>
+  <g clip-path="url(#panel)">
+    <circle cx="500" cy="130" r="56" fill="#efdcbc"/>
+    <path d="M120 130q9-9 18 0q9-9 18 0M176 96q7-7 14 0q7-7 14 0" fill="none" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+    <path d="M0 312q40-18 80 0t80 0t80 0t80 0t80 0t80 0t80 0t80 0V480H0Z" fill="#24345a"/>
+    <!-- Container adrift -->
+    <g transform="translate(0 40) rotate(-10 330 270)">
+      <rect x="226" y="214" width="208" height="104" rx="4" fill="#c2410c" stroke="#14213d" stroke-width="5"/>
+      <path d="M252 224v84M278 224v84M304 224v84M330 224v84M356 224v84M382 224v84M408 224v84" stroke="#14213d" stroke-opacity=".3" stroke-width="4"/>
+      <!-- Seagull -->
+      <ellipse cx="372" cy="196" rx="24" ry="15" fill="#fffdf8" stroke="#14213d" stroke-width="4"/>
+      <circle cx="394" cy="180" r="11" fill="#fffdf8" stroke="#14213d" stroke-width="4"/>
+      <path d="M404 180l14 4-14 4" fill="#e0662a" stroke="#14213d" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="396" cy="177" r="2.5" fill="#14213d"/>
+      <path d="M352 192q12 10 28 2" fill="none" stroke="#4a5470" stroke-width="3" stroke-linecap="round"/>
+      <path d="M366 211v6M378 211v6" stroke="#e0662a" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <!-- Waves in front -->
+    <path d="M0 338q40-16 80 0t80 0t80 0t80 0t80 0t80 0t80 0t80 0V480H0Z" fill="#2c3d66"/>
+    <path d="M90 380q20-12 40 0t40 0M420 400q20-12 40 0t40 0M260 420q20-12 40 0t40 0" fill="none" stroke="#5b6f9c" stroke-width="4" stroke-linecap="round"/>
+    <!-- Life buoy -->
+    <circle cx="150" cy="352" r="30" fill="none" stroke="#fffdf8" stroke-width="16"/>
+    <circle cx="150" cy="352" r="30" fill="none" stroke="#c2410c" stroke-width="16" stroke-dasharray="23.6 23.6"/>
+    <circle cx="150" cy="352" r="38" fill="none" stroke="#14213d" stroke-width="3"/>
+    <circle cx="150" cy="352" r="22" fill="none" stroke="#14213d" stroke-width="3"/>
+  </g>
 </svg>

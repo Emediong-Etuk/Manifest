@@ -4,7 +4,7 @@ import Link from "next/link";
 export default function NotFound() {
   return (
     <main className="mx-auto flex max-w-md flex-col items-center gap-4 px-4 py-16 text-center">
-      {/* Illustration slot: app/public/illustrations/not-found.svg */}
+      {/* Illustration: app/public/illustrations/not-found.svg */}
       <Image
         src="/illustrations/not-found.svg"
         alt=""
