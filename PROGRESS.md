@@ -370,8 +370,14 @@ not accepting new apps (see Blockers).
   LAG-2208, LAG-931 (arrived). DEMO_SCRIPT and rehearsal.spec use the printed pickup and
   dispute. Fixed: Cargo Tickets showed VOID on the public RPC (holder lookup). LAG-1015
   holds a partial staging from a failed run (left open).
+- **Crank secrets (Oct 6):** Greg added APP_URL and CRON_SECRET. The first run with them
+  got Vercel's 308 "Redirecting..." (APP_URL with a trailing slash or http://), and curl
+  doesn't treat a 3xx as a failure, so the run showed green without cranking. The workflow
+  now strips a trailing slash and follows HTTPS redirects. After Greg fixed the secret, a
+  manual run auto-approved 2 consignments (`{"due":2,"ran":2}`). GitHub runs the schedule
+  only every 6–7 hours, so trigger it by hand before a demo.
 - Next for Greg: live phone check (Phantom devnet sign-in, faucet, booking, WhatsApp
-  preview, Blink on dial.to); crank secrets; optional Helius key for the server RPC.
+  preview, Blink on dial.to); optional Helius key for the server RPC.
 
 ## Next
 

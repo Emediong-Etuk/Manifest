@@ -1,6 +1,9 @@
 # Calls the app's crank endpoint every 5 minutes (Vercel Hobby crons run only once a day).
+# GitHub delays scheduled runs (observed: every 6-7 hours); use Run workflow for a pass now.
 # Needs repository secrets APP_URL (e.g. https://manifest.example.vercel.app) and
-# CRON_SECRET (same value as in Vercel). Does nothing until both are set.
+# CRON_SECRET (same value as in Vercel). Does nothing until both are set. A trailing slash or an
+# http:// APP_URL gets a 308 from Vercel, so the URL is normalised and redirects are followed
+# (HTTPS only; curl drops the Authorization header if a redirect changes host).
 name: crank
 
 on:
@@ -24,5 +27,6 @@ jobs:
             echo "APP_URL / CRON_SECRET not set; skipping."
             exit 0
           fi
-          curl --fail-with-body -sS --max-time 90 \
-            -H "Authorization: Bearer $CRON_SECRET" "$APP_URL/api/cron/crank"
+          curl --fail-with-body -sS --max-time 90 -L --proto-redir =https \
+            -H "Authorization: Bearer $CRON_SECRET" "${APP_URL%/}/api/cron/crank"
+          echo
