@@ -358,6 +358,12 @@ not accepting new apps (see Blockers).
   a dispute on Harbour Link's REH-1006 resolved (dismiss) through the Squads 2-of-3 on
   devnet: proposal, two approvals, execute all confirmed. The recorded demo's LAG-1014,
   LAG-0930 and Eastline dispute are untouched.
+- **Greg's live walkthrough (Oct 6):** booked LAG-1014-0 with Phantom, receipt recorded,
+  approved; LAG-1014 then taken to arrived for his pickup (remaining staged shipments
+  received/approved; one auto-approved, so the GitHub crank isn't running yet). New open
+  container for judges: **LAG-1021** `G5F8Jpy2NrcgNZySHWiC2Wq92cMuEbW4iSGYQcUwsHnM`
+  (45-day cut-off; phone cases approved, speakers received, fabric booked). LAG-1016
+  (empty walkthrough container) cancelled. README, Arena draft and Blink link updated.
 - Next for Greg: live phone check (Phantom devnet sign-in, faucet, booking, WhatsApp
   preview, Blink on dial.to); crank secrets; optional Helius key for the server RPC.
 

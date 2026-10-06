@@ -26,7 +26,7 @@ Ticket** for the goods in transit. Built for the Colosseum Crypto World's Fair H
 [Run locally](#run-locally).
 
 > **Try it in 2 minutes** (devnet): open the app on your phone → **Sign in** → **Get 500
-> test dollars** (free, from the demo faucet) → **Book on LAG-1014** with $300 of goods and
+> test dollars** (free, from the demo faucet) → **Book on LAG-1021** with $300 of goods and
 > 0.25 CBM → watch your shipment's timeline. Every step is a real Solana transaction.
 
 ![Manifest on a phone: try-it card, warehouse photos verified against the onchain hash, and the Cargo Ticket](docs/screenshots/mobile.png)
