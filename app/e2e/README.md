@@ -13,6 +13,9 @@ Against a local validator, with the localnet-only test wallet (keypair in localS
   receipt, approve, ticket transfer, pickup, Squads slash, `/admin`). Needs the `seed-demo`
   world and its `.keys/`; skipped without them. Each run uses up Ada's LAG-0930 pickup and
   the dispute, so re-seed on a fresh validator before running it again in full.
+- `phantom.spec.ts`: devnet builds only (Phantom wallet, not the test wallet): the main pages
+  load without a React render loop. Skipped unless `E2E_PHANTOM_URL` is set, e.g.
+  `E2E_PHANTOM_URL=https://manifest-seven-tau.vercel.app pnpm --filter @manifest/app exec playwright test e2e/phantom.spec.ts`.
 
 ```bash
 # 1. Validator with the program (admin = upgrade authority)

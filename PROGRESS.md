@@ -352,8 +352,14 @@ not accepting new apps (see Blockers).
   `9w4uDLqJCAhnKBatWx2K2viYy5Ko8CTnKtpXYMStLD1R`, open dispute
   `C8wcJQYNVsR5XgnPYTB2FvvjdkQVq7AkoEsWVA3KsoAm`. `preflight`: all checks passed. Scripts now
   back off patiently on public-RPC 429s; preflight asks the app where evidence is stored.
-- Next for Greg: merge to `main`; live checks on a real phone (Phantom devnet, WhatsApp
-  preview, Blink on dial.to); optional Helius key for the server RPC.
+- **Oct 6 (later):** logo (header, favicon, app icons); hero, empty-state and 404
+  illustrations; Phantom bridge render loop fixed (devnet pages re-rendered without end)
+  with `e2e/phantom.spec.ts` as a guard (fails on the old code). Devnet dress rehearsal:
+  a dispute on Harbour Link's REH-1006 resolved (dismiss) through the Squads 2-of-3 on
+  devnet: proposal, two approvals, execute all confirmed. The recorded demo's LAG-1014,
+  LAG-0930 and Eastline dispute are untouched.
+- Next for Greg: live phone check (Phantom devnet sign-in, faucet, booking, WhatsApp
+  preview, Blink on dial.to); crank secrets; optional Helius key for the server RPC.
 
 ## Next
 
