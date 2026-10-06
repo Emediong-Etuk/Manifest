@@ -337,7 +337,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-xl border-2 border-dashed border-rule p-8 text-center">
-      {/* Illustration slot: Greg's artwork goes in app/public/illustrations (see README there). */}
+      {/* Spot illustrations: app/public/illustrations (see README there). */}
       {illustration && (
         <Image
           src={`/illustrations/${illustration}.svg`}

@@ -1,6 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="Illustration placeholder: empty-shipments">
-  <!-- Placeholder: replace with Greg's illustration (480 x 360). See README.md in this folder. -->
-  <rect width="480" height="360" fill="#f6f1e7"/>
-  <rect x="12" y="12" width="456" height="336" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="16 12" rx="16"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="20" fill="#4a5470">illustration: empty-shipments</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" role="img" aria-label="An open, empty carton on a pallet with a blank shipping tag">
+  <rect x="40" y="20" width="400" height="320" rx="40" fill="#ece2cf"/>
+  <!-- Pallet -->
+  <rect x="140" y="262" width="200" height="16" rx="3" fill="#b98a55" stroke="#14213d" stroke-width="4"/>
+  <rect x="152" y="278" width="24" height="20" fill="#b98a55" stroke="#14213d" stroke-width="4"/>
+  <rect x="228" y="278" width="24" height="20" fill="#b98a55" stroke="#14213d" stroke-width="4"/>
+  <rect x="304" y="278" width="24" height="20" fill="#b98a55" stroke="#14213d" stroke-width="4"/>
+  <!-- Open carton -->
+  <path d="M190 146H290L278 118H202Z" fill="#d9a66a" stroke="#8a5a2b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M168 168L190 146H290L312 168Z" fill="#6f4520"/>
+  <path d="M168 168L190 146L148 116L126 138Z" fill="#c48b4e" stroke="#8a5a2b" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M312 168L290 146L332 116L354 138Z" fill="#c48b4e" stroke="#8a5a2b" stroke-width="4" stroke-linejoin="round"/>
+  <rect x="168" y="168" width="144" height="94" fill="#d9a66a" stroke="#8a5a2b" stroke-width="4"/>
+  <rect x="232" y="168" width="16" height="94" fill="#c48b4e"/>
+  <!-- Blank tag on a string -->
+  <path d="M306 196C330 196 336 214 350 222" fill="none" stroke="#14213d" stroke-width="3"/>
+  <g transform="rotate(14 380 238)">
+    <path d="M346 218H402A6 6 0 0 1 408 224V254A6 6 0 0 1 402 260H346L332 239Z" fill="#fffdf8" stroke="#14213d" stroke-width="4" stroke-linejoin="round"/>
+    <circle cx="347" cy="239" r="4" fill="#14213d"/>
+    <path d="M360 232H396M360 246H386" stroke="#c9bb9f" stroke-width="5" stroke-linecap="round"/>
+  </g>
 </svg>
