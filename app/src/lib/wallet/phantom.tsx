@@ -78,6 +78,11 @@ function PhantomBridge({ onChange }: WalletHostProps) {
       disconnect,
       signAndSend: async (tx: VersionedTransaction) =>
         (await solanaRef.current.signAndSendTransaction(tx)).signature,
+      // Extension/app wallets can sign without sending; embedded (social) wallets can't.
+      signTransaction: embedded
+        ? undefined
+        : async (tx: VersionedTransaction) =>
+            (await solanaRef.current.signTransaction(tx)) as VersionedTransaction,
       signMessage: async (message: Uint8Array) =>
         (await solanaRef.current.signMessage(message)).signature,
     }),

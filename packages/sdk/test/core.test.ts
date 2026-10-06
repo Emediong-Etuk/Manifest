@@ -76,6 +76,9 @@ describe("errors", () => {
     );
     expect(friendlyError(new Error("User rejected the request")).message).toMatch(/cancelled/);
     expect(friendlyError(new Error("boom")).message).toMatch(/Something went wrong/);
+    expect(
+      friendlyError(new Error("Signature 3vT6 has expired: block height exceeded.")).message,
+    ).toMatch(/didn't reach Solana in time.*Devnet/);
   });
 });
 

@@ -94,6 +94,15 @@ export function friendlyError(err: unknown): { message: string; detail: string; 
       detail,
     };
   }
+  // web3.js TransactionExpiredBlockheightExceededError: it never landed before its
+  // blockhash expired (wallet left open too long, or the wallet sent it to another network).
+  if (/block height exceeded|blockhash not found/i.test(detail)) {
+    return {
+      message:
+        "Your transaction didn't reach Solana in time, so nothing was charged. Make sure your wallet is on Devnet, approve within a minute, and try again.",
+      detail,
+    };
+  }
   const code = extractErrorCode(err);
   const known = code === undefined ? undefined : errorByCode(code);
   if (known) {
