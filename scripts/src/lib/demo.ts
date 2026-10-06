@@ -328,6 +328,90 @@ export async function stagedShipments(
   });
 }
 
+/** Goods value one demo-reset books with Eastline: staged (7,200) + arrived (7,100). */
+export const RESET_GOODS = 14_300n;
+
+/**
+ * An arrived container for the pickup and dispute scenes: Ada's hair extensions ready for
+ * pickup, Bayo's blenders resold in transit to Dele, and Chika's shoes under dispute
+ * (missing cartons). Each take of the demo uses up a pickup and a dispute, so demo-reset
+ * makes a fresh one.
+ */
+export async function arrivedShipments(
+  c: Chain,
+  mint: PublicKey,
+  who: ReturnType<typeof cast>,
+  code: string,
+  serial: number,
+): Promise<{ container: PublicKey; pickup: PublicKey; resold: PublicKey; disputed: PublicKey }> {
+  const container = await openContainer(
+    c,
+    mint,
+    who.eastline,
+    code,
+    ["CNCAN", "NGAPP"],
+    380n,
+    DAY,
+    30 * DAY,
+  );
+  const pickup = await book(c, who.eastline, container, {
+    trader: who.ada,
+    goods: 2_000n,
+    estCbmMilli: 600,
+    payee: who.supplierA,
+    description: "Hair extensions, 6 cartons",
+    evidence: ev(6, 560, "Hair extensions", 300, ["cartons-stack.jpg", "warehouse-label.jpg"]),
+  });
+  const resold = await book(c, who.eastline, container, {
+    trader: who.bayo,
+    goods: 2_600n,
+    estCbmMilli: 1_400,
+    payee: who.supplierA,
+    description: "Kitchen blenders, 10 cartons",
+    evidence: ev(10, 1_350, "Kitchen blenders", 120, ["pallet-wrapped.jpg", "carton-measure.jpg"]),
+  });
+  const disputed = await book(c, who.eastline, container, {
+    trader: who.chika,
+    goods: 2_500n,
+    estCbmMilli: 1_600,
+    payee: who.supplierB,
+    description: "Ladies' shoes, 15 cartons",
+    evidence: ev(15, 1_550, "Ladies' shoes", 450, [
+      "cartons-stack.jpg",
+      "carton-measure.jpg",
+      "warehouse-label.jpg",
+    ]),
+  });
+  for (const [t, s] of [
+    [who.ada, pickup],
+    [who.bayo, resold],
+    [who.chika, disputed],
+  ] as const)
+    await approve(c, t, s);
+  await voyage(c, who.eastline, container, code, serial);
+  await send(
+    c,
+    "transfer Cargo Ticket (Bayo sells the blenders in transit to Dele)",
+    await ix.transferCargoTicket(c.program, {
+      from: who.bayo.publicKey,
+      to: who.buyer.publicKey,
+      consignment: resold,
+    }),
+    [who.bayo],
+  );
+  await send(
+    c,
+    "open_dispute (missing cartons)",
+    await ix.openDispute(c.program, {
+      holder: who.chika.publicKey,
+      consignment: disputed,
+      reason: 3,
+    }),
+    [who.chika],
+  );
+  return { container, pickup, resold, disputed };
+}
+
 export const appUrl = () =>
   (process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000").replace(/\/$/, "");
 

@@ -2,7 +2,8 @@
  * Rehearsal of docs/DEMO_SCRIPT.md on a local validator, click for click (Phantom replaced by
  * the localnet test wallet, dial.to by the same Actions GET/POST a Blink client makes):
  * demo-reset → Blink booking → receipt with photo → VERIFIED → approve → ticket transfer →
- * pickup code paste → confirm pickup → Squads slash via resolve-dispute → /admin.
+ * pickup code paste → confirm pickup → Squads slash via resolve-dispute → /admin. The pickup
+ * and dispute come from the arrived container demo-reset creates, so takes can repeat.
  * Needs the seed-demo world and its keys in .keys/ (skipped otherwise), and the app started
  * like the judge test (GAS_TANK_SECRET_KEY = dev key, NEXT_PUBLIC_DEMO_MINT = E2E_MINT).
  */
@@ -39,8 +40,7 @@ test.skip(!existsSync(resolve(KEYS, "demo-forwarder-eastline.json")), "needs see
 
 test("technical demo script runs end to end", async ({ browser }) => {
   test.setTimeout(600_000);
-  const { decodeFixed, getProgram, listConsignments, listContainers, forwarderPda } =
-    await import("@manifest/sdk");
+  const { getProgram, listConsignments } = await import("@manifest/sdk");
   const program = getProgram(connection);
   const eastline = key("demo-forwarder-eastline");
   const ada = key("demo-trader-ada");
@@ -113,23 +113,17 @@ test("technical demo script runs end to end", async ({ browser }) => {
   await tr.getByRole("button", { name: "Transfer ticket" }).click();
   await expectToast(tr, "Cargo Ticket transferred");
 
-  // 2:05 Ada at LAG-0930: pickup code → forwarder pastes it → confirm pickup.
-  const lag0930 = (
-    await listContainers(program, {
-      forwarder: forwarderPda(eastline.publicKey, program.programId),
-    })
-  ).find((k) => decodeFixed(k.account.code) === "LAG-0930");
-  expect(lag0930).toBeDefined();
-  const ready = (
-    await listConsignments(program, { container: lag0930!.address, trader: ada.publicKey })
-  ).find((s) => "approved" in s.account.status);
-  test.skip(!ready, "Ada's LAG-0930 pickup was already used in an earlier take; re-seed");
+  // 2:05 Ada on the fresh arrived container: pickup code → forwarder pastes it → confirm.
+  const arrived = /\/c\/([1-9A-HJ-NP-Za-km-z]+) \(arrived\)/.exec(reset)?.[1];
+  const pickup = /Ada's pickup[^:]*:\s+\S+\/s\/([1-9A-HJ-NP-Za-km-z]+)/.exec(reset)?.[1];
+  const dispute = /Dispute[^:]*:\s+\S+\/s\/([1-9A-HJ-NP-Za-km-z]+)/.exec(reset)?.[1];
+  expect(arrived && pickup && dispute, reset).toBeTruthy();
   const adaPage = await walletPage(browser, ada);
-  await adaPage.goto(`/s/${ready!.address.toBase58()}`);
+  await adaPage.goto(`/s/${pickup}`);
   await adaPage.getByRole("button", { name: "Show pickup code" }).click();
   await adaPage.getByText("Can't scan? Copy the code").click();
   const pickupCode = await adaPage.locator("textarea").first().inputValue();
-  await fwd.goto(`/forwarder/c/${lag0930!.address.toBase58()}`);
+  await fwd.goto(`/forwarder/c/${arrived}`);
   await fwd.getByText("Paste a code instead").click();
   await fwd.locator("textarea").last().fill(pickupCode);
   await fwd.getByRole("button", { name: "Check code" }).click();
@@ -138,22 +132,17 @@ test("technical demo script runs end to end", async ({ browser }) => {
   await adaPage.getByRole("button", { name: "Confirm pickup" }).click();
   await expectToast(adaPage, "Pickup confirmed");
 
-  // 2:30 Squads slash on the disputed shipment, then /admin.
-  const disputed = (
-    await listConsignments(program, { container: lag0930!.address, status: "disputed" })
-  )[0];
-  if (disputed) {
-    const out = scripts(
-      "resolve-dispute",
-      "--consignment",
-      disputed.address.toBase58(),
-      "--resolution",
-      "slash",
-      "--amount",
-      "500",
-    );
-    expect(out).toContain("Consignment is now compensated");
-  }
+  // 2:30 Squads slash on the fresh dispute (the Resolve command demo-reset printed), then /admin.
+  const out = scripts(
+    "resolve-dispute",
+    "--consignment",
+    dispute!,
+    "--resolution",
+    "slash",
+    "--amount",
+    "500",
+  );
+  expect(out).toContain("Consignment is now compensated");
   await tr.goto("/admin");
   await expect(tr.getByText("Paid from guarantees")).toBeVisible();
 });
