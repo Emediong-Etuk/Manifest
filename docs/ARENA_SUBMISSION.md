@@ -18,7 +18,7 @@ leave a field short rather than inflate it.
 | Chains                            | Solana                                                                          |
 | Category                          | [pick the closest: Payments / DeFi / Infrastructure / RWA]                      |
 | Country                           | Nigeria                                                                         |
-| Website / live product link       | [Vercel production URL]                                                         |
+| Website / live product link       | https://manifest-seven-tau.vercel.app                                           |
 | Repo link                         | https://github.com/Emediong-Etuk/Manifest                                       |
 | Pitch video link                  | [unlisted YouTube / Loom, ≤ 3 min]                                              |
 | Technical demo / demo video link  | [unlisted YouTube / Loom, 2–3 min]                                              |
@@ -33,7 +33,7 @@ leave a field short rather than inflate it.
 
 ## Live product access instructions
 
-> Open [URL] on your phone. It runs on Solana devnet with free test money.
+> Open https://manifest-seven-tau.vercel.app on your phone. It runs on Solana devnet with free test money.
 >
 > 1. Tap **Sign in** (Phantom: Google/Apple or the Phantom app) in the "Try it in 2
 >    minutes" card.

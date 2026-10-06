@@ -71,7 +71,7 @@ console.log("Keys and program");
 // in this container and disappears with it. Never deploy with it.
 const ephemeral = process.env.CLAUDE_CODE_REMOTE === "true" && !process.env.MANIFEST_DEV_KEYPAIR;
 const devPath =
-  process.env.MANIFEST_DEV_KEYPAIR_PATH ?? resolve(homedir(), ".config/solana/manifest-dev.json");
+  process.env.MANIFEST_DEV_KEYPAIR_PATH || resolve(homedir(), ".config/solana/manifest-dev.json");
 const dev = existsSync(devPath) ? tryKey(() => keypairFromFile(devPath)) : null;
 report(
   dev !== null && !(ephemeral && c.cluster !== "localnet"),

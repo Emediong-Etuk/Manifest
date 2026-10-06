@@ -24,11 +24,11 @@ open a dispute. Sell it, and the buyer collects in Lagos.
 Every forwarder posts a guarantee. Disputes go to a Squads multisig that can pay
 you from it.
 
-4/ Try it in 2 minutes, on your phone: [URL]
+4/ Try it in 2 minutes, on your phone: https://manifest-seven-tau.vercel.app
 Sign in with Phantom, get free test dollars, book space.
 
 Or book straight from this Blink 👇
-[Blink URL: https://dial.to/?action=solana-action:[URL]/api/actions/book/[LAG-1014 address]&cluster=devnet]
+[Blink URL: https://dial.to/?action=solana-action:https://manifest-seven-tau.vercel.app/api/actions/book/[LAG-1014 address]&cluster=devnet]
 
 5/ Open source (MIT), 143 tests, built for the Colosseum Crypto World's Fair hackathon.
 Code: https://github.com/Emediong-Etuk/Manifest
@@ -40,7 +40,7 @@ Demo: [demo video]
 > I've built something for people who import from China in shared containers. Your money
 > stays locked until your goods are photographed at the warehouse and you approve them;
 > only then is your supplier paid. It's a test version with free test money; it takes 2
-> minutes on your phone: [URL]. I'd love your honest feedback.
+> minutes on your phone: https://manifest-seven-tau.vercel.app. I'd love your honest feedback.
 
 ## LinkedIn (short)
 
@@ -48,4 +48,4 @@ Demo: [demo video]
 > the Colosseum hackathon I built Manifest, a programmable letter of credit on Solana for
 > traders who ship in shared containers: escrow until the goods are verified at the
 > warehouse, a guarantee from the forwarder, and a transferable ticket for goods in
-> transit. Demo: [URL] · Code: https://github.com/Emediong-Etuk/Manifest
+> transit. Demo: https://manifest-seven-tau.vercel.app · Code: https://github.com/Emediong-Etuk/Manifest

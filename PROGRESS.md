@@ -341,7 +341,12 @@ not accepting new apps (see Blockers).
   (vault `DB2eDNrN7qFxMTo9Vvm4bnipP6PZrmNR81iCJpEaBFEX`) as arbitrator and treasury. Preflight:
   all chain checks green; open: seed-demo, app, Pinata. Demo and Squads member keys are now
   derived from the dev key, so any session with `MANIFEST_DEV_KEYPAIR` recreates `.keys/`.
-- Waiting on Greg: Vercel, Pinata (see Blockers).
+- **Vercel live (Oct 6):** https://manifest-seven-tau.vercel.app (Hobby). Checked: pages 200,
+  `/actions.json`, crank endpoint returns 401 without the secret, client bundle has the devnet
+  program, mint and Squads addresses. `init-config --update` pointed Cargo Ticket metadata at
+  the production URL. Bug found: an empty `FAUCET_DAILY_CAP` meant a cap of 0 (`Number("")`);
+  fixed (`||` instead of `??`, also for the scripts' optional env vars).
+- Waiting on Greg: Pinata (see Blockers); merge to `main` so Vercel builds the fix.
 
 ## Next
 

@@ -47,7 +47,7 @@ async function main() {
     process.exitCode = failed > 0 ? 1 : 0;
     return;
   }
-  const interval = Number(process.env.CRANK_INTERVAL_SECS ?? 30) * 1000;
+  const interval = (Number(process.env.CRANK_INTERVAL_SECS) || 30) * 1000;
   for (;;) {
     await pass(c, payer).catch((err: unknown) => console.error("crank pass failed:", err));
     await new Promise((r) => setTimeout(r, interval));
