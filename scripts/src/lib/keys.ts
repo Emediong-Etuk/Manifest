@@ -33,6 +33,6 @@ export function keypairFromEnv(name: string): Keypair {
 /** The deploy/admin key: MANIFEST_DEV_KEYPAIR_PATH or ~/.config/solana/manifest-dev.json. */
 export function devKeypair(): Keypair {
   return keypairFromFile(
-    process.env.MANIFEST_DEV_KEYPAIR_PATH ?? "~/.config/solana/manifest-dev.json",
+    process.env.MANIFEST_DEV_KEYPAIR_PATH || "~/.config/solana/manifest-dev.json",
   );
 }

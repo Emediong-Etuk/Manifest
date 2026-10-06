@@ -35,9 +35,11 @@ the submission must say so).
 
 ## Devnet
 
-- [ ] Program deployed; ID in `.env.example`, README, `Anchor.toml` and the SDK
-- [ ] `init-config` + `squads-setup` run; arbitrator and treasury = Squads vault
-- [ ] `seed-demo` run against the production app; `demo-reset` right before recording
+- [x] Program deployed (Oct 6): `4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9`; ID in `.env.example`, README, `Anchor.toml` and the SDK
+- [x] `init-config` + `squads-setup` run; arbitrator and treasury = Squads vault
+      (multisig `9uyFwN6dHKPMFLVLq8qr8ndk5gGTWUGgtWzuHJCFMxtq`); `init-config --update`
+      once the Vercel URL exists (ticket metadata still points at localhost)
+- [x] `seed-demo` run against the production app (Oct 6; preflight all green); `demo-reset` right before recording
 - [ ] Faucet works on production (gas tank funded with ≥ 5 devnet SOL)
 - [ ] Crank running (GitHub Actions secrets `APP_URL` + `CRON_SECRET`)
 

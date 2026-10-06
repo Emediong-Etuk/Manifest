@@ -6,7 +6,7 @@
  * IDL can be found at `target/idl/manifest.json`.
  */
 export type Manifest = {
-  "address": "HQHe42ZUBWmrSbjW4zr9Qt2wdGDYyH1QpiYLJe3z7Jci",
+  "address": "4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9",
   "metadata": {
     "name": "manifest",
     "version": "0.1.0",
@@ -1638,7 +1638,7 @@ export type Manifest = {
           "docs": [
             "The program's ProgramData account must name `admin` as upgrade authority."
           ],
-          "address": "HQHe42ZUBWmrSbjW4zr9Qt2wdGDYyH1QpiYLJe3z7Jci"
+          "address": "4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9"
         },
         {
           "name": "programData"

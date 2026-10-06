@@ -15,6 +15,7 @@ import {
   decodeFixed,
   forwarderPda,
   getConfig,
+  listConsignments,
   listContainers,
   MANIFEST_PROGRAM_ID,
   resolveProgramId,
@@ -71,7 +72,7 @@ console.log("Keys and program");
 // in this container and disappears with it. Never deploy with it.
 const ephemeral = process.env.CLAUDE_CODE_REMOTE === "true" && !process.env.MANIFEST_DEV_KEYPAIR;
 const devPath =
-  process.env.MANIFEST_DEV_KEYPAIR_PATH ?? resolve(homedir(), ".config/solana/manifest-dev.json");
+  process.env.MANIFEST_DEV_KEYPAIR_PATH || resolve(homedir(), ".config/solana/manifest-dev.json");
 const dev = existsSync(devPath) ? tryKey(() => keypairFromFile(devPath)) : null;
 report(
   dev !== null && !(ephemeral && c.cluster !== "localnet"),
@@ -241,7 +242,7 @@ if (!squads) {
       kp !== null,
       `.keys/${name}.json`,
       kp ? `${(await sol(kp.publicKey)).toFixed(3)} SOL` : "missing",
-      "Restore .keys/ from your backup (the demo members' keys).",
+      "Run squads-setup: it recreates the member keys from the dev key.",
     );
   }
 }
@@ -250,6 +251,8 @@ if (!squads) {
 console.log("\nDemo world");
 const eastlinePath = resolve(KEYS_DIR, "demo-forwarder-eastline.json");
 const eastline = existsSync(eastlinePath) ? tryKey(() => keypairFromFile(eastlinePath)) : null;
+/** A seeded shipment with warehouse evidence, to check where the app stored it. */
+let evidenceSample: PublicKey | undefined;
 if (!eastline || !deployed) {
   report(
     false,
@@ -265,6 +268,11 @@ if (!eastline || !deployed) {
   const open = containers.filter(
     (k) => "open" in k.account.status && k.account.cutoffTs.toNumber() > now,
   );
+  for (const k of containers) {
+    if (evidenceSample) break;
+    const shipments = await listConsignments(c.program, { container: k.address }).catch(() => []);
+    evidenceSample = shipments.find((s) => s.account.evidenceHash.some((b) => b !== 0))?.address;
+  }
   report(
     containers.length > 0,
     "Eastline containers",
@@ -316,11 +324,25 @@ if (home === 200) {
     "Use the Vercel HTTPS URL as NEXT_PUBLIC_APP_URL.",
   );
 }
+// Pinata is configured in the app's host (Vercel), not here: ask the app where it stored a
+// seeded shipment's evidence. Fall back to this machine's env when there's no sample yet.
+let storedOn = process.env.PINATA_JWT && process.env.PINATA_GATEWAY ? "configured here" : "";
+if (home === 200 && evidenceSample) {
+  try {
+    const res = await fetch(`${appUrl()}/api/evidence/${evidenceSample.toBase58()}`, {
+      signal: AbortSignal.timeout(20_000),
+    });
+    const body = res.ok ? ((await res.json()) as { manifestUri?: string }) : {};
+    storedOn = body.manifestUri?.startsWith("ipfs://") ? "app stores evidence on IPFS" : "";
+  } catch {
+    storedOn = "";
+  }
+}
 report(
-  c.cluster === "localnet" || Boolean(process.env.PINATA_JWT && process.env.PINATA_GATEWAY),
+  c.cluster === "localnet" || storedOn !== "",
   "durable evidence storage (Pinata)",
-  process.env.PINATA_JWT ? "configured" : "local disk only",
-  "Add PINATA_JWT and PINATA_GATEWAY (Vercel's disk isn't durable).",
+  storedOn || "local disk only",
+  "Add PINATA_JWT and PINATA_GATEWAY in Vercel and redeploy (Vercel's disk isn't durable).",
 );
 
 console.log(failed === 0 ? "\nAll checks passed." : `\n${failed} check(s) failed. Next steps:`);

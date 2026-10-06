@@ -23,7 +23,8 @@ export const runtime = "nodejs";
 const FAUCET_DOLLARS = 500n;
 const SOL_THRESHOLD = 0.02 * LAMPORTS_PER_SOL;
 const SOL_DRIP = 0.05 * LAMPORTS_PER_SOL;
-const DAILY_CAP = Number(process.env.FAUCET_DAILY_CAP ?? 300);
+// `||`, not `??`: an empty FAUCET_DAILY_CAP (pasted from .env.example) must not mean a cap of 0.
+const DAILY_CAP = Number(process.env.FAUCET_DAILY_CAP) || 300;
 const DAY = 86_400;
 
 const body = z.object({ address: z.string().min(32).max(44) });

@@ -61,7 +61,8 @@ pnpm --filter @manifest/scripts squads-setup
 Creates the 2-of-3 multisig (Greg + `.keys/arbitrator-1.json` + `.keys/arbitrator-2.json`),
 funds the vault with 0.2 SOL and points `config.arbitrator` and `config.treasury_owner`
 at the vault. Copy the printed `NEXT_PUBLIC_SQUADS_MULTISIG` / `NEXT_PUBLIC_SQUADS_VAULT`
-into `.env.local` and Vercel. Back up `.keys/` (it holds the two demo member keys).
+into `.env.local` and Vercel. The member keys in `.keys/` are derived from the dev key, so
+any session holding `manifest-dev.json` recreates them.
 
 ## 5. Demo world
 
