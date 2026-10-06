@@ -16,11 +16,13 @@ the China warehouse and the trader approves. The trader then holds a transferabl
 Ticket** for the goods in transit. Built for the Colosseum Crypto World's Fair Hackathon
 (Solana track).
 
-| Live demo               | Program (devnet)        | Pitch video      | Technical demo   |
-| ----------------------- | ----------------------- | ---------------- | ---------------- |
-| _link after deploy_ (1) | _devnet deploy pending_ | _link (Phase 6)_ | _link (Phase 6)_ |
+| Live demo               | Program (devnet)                                                                                               | Pitch video      | Technical demo   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- | ---------------- | ---------------- |
+| _link after deploy_ (1) | [`4DCv…a7S9`](https://explorer.solana.com/address/4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9?cluster=devnet) | _link (Phase 6)_ | _link (Phase 6)_ |
 
-(1) Until then, everything runs locally in about five minutes: see [Run locally](#run-locally).
+(1) The program is live on devnet (`4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9`); the
+hosted app follows. Until then, everything runs locally in about five minutes: see
+[Run locally](#run-locally).
 
 > **Try it in 2 minutes** (devnet): open the app on your phone → **Sign in** → **Get 500
 > test dollars** (free, from the demo faucet) → **Book on LAG-1014** with $300 of goods and

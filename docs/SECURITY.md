@@ -78,13 +78,13 @@ Each one is asserted in `tests/src` (helpers `assert_vault_matches_state` and
 
 ## Off-chain services (Phase 4)
 
-| Endpoint                          | Abuse case                                         | Mitigation                                                                                                                                           |
-| --------------------------------- | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `POST /api/faucet`                | Draining the gas tank / farming test dollars       | Off on mainnet; once per address per 24 h + global daily cap (KV); small fixed amounts; the key only holds devnet SOL and the demo mint authority.   |
-| `GET /api/cron/crank`             | Anyone triggering crank transactions               | Bearer `CRON_SECRET` (constant-time compare). It only calls permissionless instructions whose conditions the program checks again, so it can't harm. |
-| `POST /api/actions/book/*`        | A Blink tricking a user into a harmful transaction | Returns an unsigned transaction with the user as fee payer and only the user's signature required; the wallet shows it; simulated before returning.  |
-| `/api/tickets/*`, `/api/og/*`     | Leaking a trader's goods value                     | Metadata and images never include amounts; only route, cartons, volume, status.                                                                      |
-| `squads-setup`, `resolve-dispute` | Losing the demo member keys                        | `.keys/` is gitignored and created with mode 600; 2-of-3 means one lost key doesn't block arbitration. Greg's own wallet is the third member.        |
+| Endpoint                          | Abuse case                                         | Mitigation                                                                                                                                                                                                                    |
+| --------------------------------- | -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /api/faucet`                | Draining the gas tank / farming test dollars       | Off on mainnet; once per address per 24 h + global daily cap (KV); small fixed amounts; the key only holds devnet SOL and the demo mint authority.                                                                            |
+| `GET /api/cron/crank`             | Anyone triggering crank transactions               | Bearer `CRON_SECRET` (constant-time compare). It only calls permissionless instructions whose conditions the program checks again, so it can't harm.                                                                          |
+| `POST /api/actions/book/*`        | A Blink tricking a user into a harmful transaction | Returns an unsigned transaction with the user as fee payer and only the user's signature required; the wallet shows it; simulated before returning.                                                                           |
+| `/api/tickets/*`, `/api/og/*`     | Leaking a trader's goods value                     | Metadata and images never include amounts; only route, cartons, volume, status.                                                                                                                                               |
+| `squads-setup`, `resolve-dispute` | Losing the demo member keys                        | `.keys/` is gitignored, mode 600, and derived from the dev key (HMAC-SHA256 per name), so any holder of the dev key recreates them; the dev key can't be recovered from them. 2-of-3: one lost key doesn't block arbitration. |
 
 ## Known limitations
 

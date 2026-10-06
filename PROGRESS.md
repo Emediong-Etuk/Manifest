@@ -5,15 +5,15 @@ Code freeze: **Mon Oct 12, 6:00 PM WAT**. Submission deadline: **Tue Oct 13, 7:5
 
 ## Phase status
 
-| Phase                        | Dates     | Status                                               |
-| ---------------------------- | --------- | ---------------------------------------------------- |
-| 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check done Oct 5)           |
-| 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                      |
-| 2: Program complete + devnet | Oct 6–7   | ✅ Done except devnet deploy (blocked on keys/SOL)   |
-| 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)          |
-| 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy)   |
-| 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)     |
-| 6: Videos + submission       | Oct 11–12 | 🔨 In progress (Oct 5); recording blocked on deploys |
+| Phase                        | Dates     | Status                                             |
+| ---------------------------- | --------- | -------------------------------------------------- |
+| 0: Setup                     | Sun Oct 4 | ✅ Done (Copilot novelty check done Oct 5)         |
+| 1: Program core              | Oct 4–6   | ✅ Done (Oct 4)                                    |
+| 2: Program complete + devnet | Oct 6–7   | ✅ Done; deployed to devnet Oct 6                  |
+| 3: Frontend core             | Oct 7–9   | ✅ Done on localnet (devnet pending deploy)        |
+| 4: Integrations              | Oct 9–10  | ✅ Done on localnet (Oct 5; devnet pending deploy) |
+| 5: Polish + docs + deploy    | Oct 10–11 | ✅ Done (Oct 5) except deploys (blocked on Greg)   |
+| 6: Videos + submission       | Oct 11–12 | 🔨 In progress; recording waits on Vercel + Pinata |
 
 ## Phase 6 plan (Oct 5–12): videos and submission
 
@@ -334,12 +334,20 @@ not accepting new apps (see Blockers).
 
 ## In progress
 
-- Waiting on Greg: devnet keys + SOL, Vercel, Pinata (see Blockers).
+- **Devnet deploy done (Oct 6).** Program `4DCvHBveVC31TztNNzJp65GeHxNNdPFVxH4vgwDwa7S9`
+  (upgrade authority `CMTu8vvApMUpP5QPK3r6S7SD6aTVXwUTWgjTzPPFN17n`), demo mint
+  `AyNo7xwBF2U1SQj6fkSwHJXVgnQUoka8ez5UuaFpkguc` (gas tank `bk9qwBh3…9B2` is mint authority),
+  config initialized, Squads 2-of-3 multisig `9uyFwN6dHKPMFLVLq8qr8ndk5gGTWUGgtWzuHJCFMxtq`
+  (vault `DB2eDNrN7qFxMTo9Vvm4bnipP6PZrmNR81iCJpEaBFEX`) as arbitrator and treasury. Preflight:
+  all chain checks green; open: seed-demo, app, Pinata. Demo and Squads member keys are now
+  derived from the dev key, so any session with `MANIFEST_DEV_KEYPAIR` recreates `.keys/`.
+- Waiting on Greg: Vercel, Pinata (see Blockers).
 
 ## Next
 
-2. **Devnet deploy** as soon as keys exist: `docs/DEPLOY.md` steps 1–6 (about 30 minutes).
-3. **Vercel deploy** (`docs/DEPLOY.md` step 7), then the real-world checks: Blink on
+2. ~~Devnet deploy~~ ✅ Oct 6.
+3. **Vercel deploy** (`docs/DEPLOY.md` step 7), then `init-config --update` with the Vercel
+   URL (ticket metadata), `seed-demo` against it, and the real-world checks: Blink on
    dial.to, WhatsApp preview, judge path on a real phone, README links and screenshots
    retaken on devnet.
 4. **Phase 6:** demo-reset, rehearse the scripts, Greg records, Arena form, X post.
@@ -350,9 +358,8 @@ not accepting new apps (see Blockers).
    docs.phantom.com/recipes/quickstarts/nextjs, checked Oct 4). Google/Apple embedded
    wallets require a Portal App ID; the injected (extension/app) provider does not. If Greg
    has no existing Portal app, we need a decision before Phase 3 (see summary).
-2. **Devnet deploy (Phase 2, step 10).** Needs durable keypairs from Greg (environment
-   secrets) and ~12 devnet SOL on the deploy key + ~5 on the gas tank. The devnet faucet
-   rate-limits this container (airdrop failed Oct 4). Runbook: `docs/DEPLOY.md`.
+2. ~~Devnet deploy~~ resolved Oct 6 (Greg's keys as environment secrets; deploy key left
+   with ~5.8 SOL, gas tank 5 SOL).
 3. **Pinata for deployed evidence.** On Vercel the local `.data/` fallback is not durable;
    seeding devnet against the deployed app needs `PINATA_JWT` + `PINATA_GATEWAY`.
 
