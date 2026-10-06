@@ -1,6 +1,112 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Illustration placeholder: hero">
-  <!-- Placeholder: replace with Greg's illustration (1200 x 800). See README.md in this folder. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="An open shared container of cartons on the quay, a phone photographing and measuring one carton with a green verified stamp, a Cargo Ticket, and a container ship sailing from Guangzhou to Apapa">
+  <defs>
+    <!-- One shipping container (side view), coloured with the `color` attribute on <use>. -->
+    <symbol id="ctr" viewBox="0 0 72 36">
+      <rect width="72" height="36" rx="2" fill="currentColor"/>
+      <path d="M10 5v26M20 5v26M30 5v26M42 5v26M52 5v26M62 5v26" stroke="#000" stroke-opacity=".22" stroke-width="2.5"/>
+    </symbol>
+    <!-- A cardboard carton with tape and a trader's tag (tag colour via `color`). -->
+    <symbol id="carton" viewBox="0 0 100 80" preserveAspectRatio="none">
+      <rect x="1.5" y="1.5" width="97" height="77" rx="3" fill="#d9a66a" stroke="#8a5a2b" stroke-width="3"/>
+      <rect x="44" y="1.5" width="12" height="77" fill="#c48b4e"/>
+      <rect x="10" y="12" width="24" height="14" rx="2" fill="currentColor"/>
+    </symbol>
+  </defs>
+
+  <!-- Sky -->
   <rect width="1200" height="800" fill="#f6f1e7"/>
-  <rect x="12" y="12" width="1176" height="776" fill="none" stroke="#c2410c" stroke-width="4" stroke-dasharray="16 12" rx="16"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle" font-family="monospace" font-size="50" fill="#4a5470">illustration: hero</text>
+  <circle cx="985" cy="190" r="120" fill="#efdcbc"/>
+  <path d="M780 150q10-10 20 0q10-10 20 0M840 105q8-8 16 0q8-8 16 0M700 210q7-7 14 0q7-7 14 0" fill="none" stroke="#14213d" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Route: Guangzhou to Apapa -->
+  <path d="M96 92Q600 10 1104 92" fill="none" stroke="#c2410c" stroke-width="5" stroke-dasharray="14 12" stroke-linecap="round"/>
+  <circle cx="96" cy="92" r="10" fill="#14213d"/>
+  <circle cx="1104" cy="92" r="10" fill="#28724a"/>
+  <text x="96" y="132" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24" font-weight="700" fill="#14213d" text-anchor="middle">CNCAN</text>
+  <text x="1104" y="132" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="24" font-weight="700" fill="#14213d" text-anchor="middle">NGAPP</text>
+
+  <!-- Sea -->
+  <rect y="575" width="1200" height="225" fill="#24345a"/>
+  <path d="M640 615q20-12 40 0t40 0M860 640q20-12 40 0t40 0M1040 610q20-12 40 0t40 0M760 700q20-12 40 0t40 0M980 730q20-12 40 0t40 0" fill="none" stroke="#5b6f9c" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Container ship heading for Lagos -->
+  <g>
+    <rect x="604" y="392" width="30" height="40" fill="#c2410c"/>
+    <rect x="604" y="392" width="30" height="9" fill="#14213d"/>
+    <rect x="584" y="430" width="70" height="92" rx="4" fill="#fffdf8" stroke="#14213d" stroke-width="5"/>
+    <rect x="593" y="443" width="52" height="14" rx="2" fill="#14213d"/>
+    <rect x="593" y="468" width="52" height="8" rx="2" fill="#d9cfbd"/>
+    <use href="#ctr" x="664" y="484" width="72" height="36" color="#c2410c"/>
+    <use href="#ctr" x="664" y="448" width="72" height="36" color="#e9dcc3"/>
+    <use href="#ctr" x="664" y="412" width="72" height="36" color="#28724a"/>
+    <use href="#ctr" x="738" y="484" width="72" height="36" color="#3b4d78"/>
+    <use href="#ctr" x="738" y="448" width="72" height="36" color="#e0662a"/>
+    <use href="#ctr" x="812" y="484" width="72" height="36" color="#28724a"/>
+    <use href="#ctr" x="812" y="448" width="72" height="36" color="#c2410c"/>
+    <use href="#ctr" x="812" y="412" width="72" height="36" color="#e9dcc3"/>
+    <use href="#ctr" x="886" y="484" width="72" height="36" color="#e9dcc3"/>
+    <use href="#ctr" x="886" y="448" width="72" height="36" color="#3b4d78"/>
+    <use href="#ctr" x="886" y="412" width="72" height="36" color="#c2410c"/>
+    <use href="#ctr" x="960" y="484" width="72" height="36" color="#c2410c"/>
+    <use href="#ctr" x="960" y="448" width="72" height="36" color="#28724a"/>
+    <use href="#ctr" x="1034" y="484" width="72" height="36" color="#3b4d78"/>
+    <path d="M560 520H1160L1112 602H604Z" fill="#14213d"/>
+    <path d="M590 584H1123L1112 602H604Z" fill="#9a3412"/>
+    <circle cx="1108" cy="540" r="7" fill="#f6f1e7"/>
+  </g>
+
+  <!-- Quay -->
+  <path d="M0 640H585L560 800H0Z" fill="#e2d6bf"/>
+  <path d="M0 640H585" stroke="#14213d" stroke-width="5"/>
+  <path d="M40 690h70M170 720h90M330 700h60M120 770h80M420 760h70" stroke="#c9bb9f" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Open shared container on the quay -->
+  <g>
+    <path d="M92 352L34 382V630L92 652Z" fill="#a83a0c" stroke="#14213d" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M52 392V626M74 383V640" stroke="#14213d" stroke-width="4"/>
+    <rect x="92" y="352" width="380" height="300" rx="6" fill="#c2410c" stroke="#14213d" stroke-width="5"/>
+    <rect x="114" y="374" width="336" height="256" fill="#1b2744"/>
+    <path d="M114 374L150 404H414L450 374" fill="#24345a"/>
+    <use href="#carton" x="122" y="545" width="104" height="85" color="#28724a"/>
+    <use href="#carton" x="230" y="562" width="88" height="68" color="#c2410c"/>
+    <use href="#carton" x="322" y="540" width="122" height="90" color="#3b4d78"/>
+    <use href="#carton" x="130" y="468" width="86" height="77" color="#e9dcc3"/>
+    <use href="#carton" x="236" y="494" width="70" height="68" color="#28724a"/>
+    <use href="#carton" x="328" y="462" width="108" height="78" color="#c2410c"/>
+    <use href="#carton" x="142" y="408" width="70" height="60" color="#3b4d78"/>
+    <use href="#carton" x="340" y="404" width="86" height="58" color="#e9dcc3"/>
+  </g>
+
+  <!-- Cargo Ticket -->
+  <g transform="rotate(-6 300 245)">
+    <rect x="150" y="180" width="300" height="140" rx="14" fill="#fffdf8" stroke="#14213d" stroke-width="5"/>
+    <path d="M222 186V314" stroke="#14213d" stroke-width="3" stroke-dasharray="8 7"/>
+    <text x="186" y="262" font-family="'Arial Narrow', Impact, sans-serif" font-size="22" font-weight="800" fill="#c2410c" text-anchor="middle" textLength="84" lengthAdjust="spacingAndGlyphs" transform="rotate(-90 186 255)">TICKET</text>
+    <text x="240" y="226" font-family="Impact, 'Arial Narrow', sans-serif" font-size="32" font-weight="800" fill="#14213d" textLength="190" lengthAdjust="spacingAndGlyphs">CARGO TICKET</text>
+    <text x="240" y="258" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="19" fill="#4a5470" textLength="128" lengthAdjust="spacingAndGlyphs">LAG-1014-3</text>
+    <text x="240" y="290" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="19" font-weight="700" fill="#14213d" textLength="146" lengthAdjust="spacingAndGlyphs">CNCAN → NGAPP</text>
+    <g fill="#14213d">
+      <rect x="398" y="246" width="12" height="12"/><rect x="414" y="246" width="12" height="12"/>
+      <rect x="398" y="262" width="12" height="12"/><rect x="414" y="278" width="12" height="12"/>
+      <rect x="406" y="278" width="6" height="6"/><rect x="420" y="262" width="6" height="6"/>
+    </g>
+  </g>
+
+  <!-- Forwarder's phone: photo, measurement, verified -->
+  <g transform="rotate(7 600 560)">
+    <rect x="508" y="390" width="190" height="340" rx="28" fill="#14213d"/>
+    <rect x="522" y="420" width="162" height="280" rx="12" fill="#fffdf8"/>
+    <rect x="583" y="402" width="40" height="7" rx="3.5" fill="#4a5470"/>
+    <path d="M540 440h22M540 440v22M666 440h-22M666 440v22M540 640h22M540 640v-22M666 640h-22M666 640v-22" stroke="#c2410c" stroke-width="4" fill="none"/>
+    <use href="#carton" x="560" y="490" width="86" height="72" color="#28724a"/>
+    <path d="M560 578H646M560 572v12M646 572v12" stroke="#14213d" stroke-width="3"/>
+    <text x="603" y="608" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="18" font-weight="700" fill="#14213d" text-anchor="middle" textLength="92" lengthAdjust="spacingAndGlyphs">0.22 CBM</text>
+    <text x="603" y="632" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="15" fill="#4a5470" text-anchor="middle">3 cartons</text>
+    <text x="603" y="474" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="14" fill="#4a5470" text-anchor="middle" textLength="132" lengthAdjust="spacingAndGlyphs">SHA-256 ✓ onchain</text>
+  </g>
+  <g transform="rotate(-12 690 700)">
+    <circle cx="690" cy="700" r="58" fill="#28724a" stroke="#14213d" stroke-width="5"/>
+    <circle cx="690" cy="700" r="46" fill="none" stroke="#f6f1e7" stroke-width="3" stroke-dasharray="6 5"/>
+    <path d="M668 700l15 15 29-31" fill="none" stroke="#f6f1e7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

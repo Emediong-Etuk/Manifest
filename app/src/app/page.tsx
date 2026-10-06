@@ -182,7 +182,7 @@ export default function Home() {
             </>
           )}
         </div>
-        {/* Illustration slot: replace app/public/illustrations/hero.svg with Greg's artwork. */}
+        {/* Hero illustration: app/public/illustrations/hero.svg (1200 x 800). */}
         <Image
           src="/illustrations/hero.svg"
           alt=""
