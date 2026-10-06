@@ -11,13 +11,14 @@ import {
   AddressType,
   type PhantomTheme,
   PhantomProvider,
+  type PhantomProviderProps,
   useDisconnect,
   useModal,
   usePhantom,
   useSolana,
 } from "@phantom/react-sdk";
 import { PublicKey, type VersionedTransaction } from "@solana/web3.js";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import { config } from "../config";
 import type { ManifestWallet, WalletHostProps } from "./types";
@@ -37,7 +38,14 @@ function PhantomBridge({ onChange }: WalletHostProps) {
   const { isConnected, isLoading, isConnecting, addresses, errors, user } = usePhantom();
   const { open } = useModal();
   const { disconnect } = useDisconnect();
+  // useSolana() returns a new object on every render. Depending on it rebuilt the wallet
+  // value each render, which re-rendered the host and looped ("Maximum update depth").
+  // Keep the latest one in a ref and call through it.
   const { solana } = useSolana();
+  const solanaRef = useRef(solana);
+  useEffect(() => {
+    solanaRef.current = solana;
+  });
 
   const address = addresses.find((a) => a.addressType === AddressType.solana)?.address;
   // Social-login (embedded) wallets vs the user's own extension/app.
@@ -46,9 +54,9 @@ function PhantomBridge({ onChange }: WalletHostProps) {
   // Embedded wallets broadcast through Phantom; point them at our cluster.
   useEffect(() => {
     if (isConnected && embedded && config.cluster === "devnet") {
-      solana.switchNetwork("devnet").catch(() => undefined);
+      solanaRef.current.switchNetwork("devnet").catch(() => undefined);
     }
-  }, [isConnected, embedded, solana]);
+  }, [isConnected, embedded]);
 
   const value = useMemo<ManifestWallet>(
     () => ({
@@ -69,8 +77,9 @@ function PhantomBridge({ onChange }: WalletHostProps) {
       },
       disconnect,
       signAndSend: async (tx: VersionedTransaction) =>
-        (await solana.signAndSendTransaction(tx)).signature,
-      signMessage: async (message: Uint8Array) => (await solana.signMessage(message)).signature,
+        (await solanaRef.current.signAndSendTransaction(tx)).signature,
+      signMessage: async (message: Uint8Array) =>
+        (await solanaRef.current.signMessage(message)).signature,
     }),
     [
       isConnected,
@@ -81,7 +90,6 @@ function PhantomBridge({ onChange }: WalletHostProps) {
       errors.spendingLimit,
       open,
       disconnect,
-      solana,
     ],
   );
 
@@ -89,17 +97,20 @@ function PhantomBridge({ onChange }: WalletHostProps) {
   return null;
 }
 
+const withAppId = Boolean(config.phantomAppId);
+// Module-level: the provider gets the same config object on every render.
+const phantomConfig = {
+  providers: withAppId ? ["google", "apple", "injected"] : ["injected"],
+  appId: config.phantomAppId || undefined,
+  addressTypes: [AddressType.solana],
+  authOptions: withAppId ? { redirectUrl: `${config.appUrl}/auth/callback` } : undefined,
+} satisfies PhantomProviderProps["config"];
+
 /** Mounted lazily next to the app (not around it) so pages still render on the server. */
 export default function PhantomWallet({ onChange }: WalletHostProps) {
-  const withAppId = Boolean(config.phantomAppId);
   return (
     <PhantomProvider
-      config={{
-        providers: withAppId ? ["google", "apple", "injected"] : ["injected"],
-        appId: config.phantomAppId || undefined,
-        addressTypes: [AddressType.solana],
-        authOptions: withAppId ? { redirectUrl: `${config.appUrl}/auth/callback` } : undefined,
-      }}
+      config={phantomConfig}
       theme={theme}
       appName="Manifest"
       appIcon={`${config.appUrl}/icon.svg`}

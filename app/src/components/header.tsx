@@ -8,6 +8,7 @@ import { useFaucet } from "@/hooks/use-faucet";
 import { config } from "@/lib/config";
 import { useWallet } from "@/lib/wallet/context";
 
+import { LogoMark } from "./logo";
 import { Button } from "./ui";
 
 export function WalletButton() {
@@ -61,7 +62,11 @@ export function SiteHeader() {
   return (
     <header className="border-b-2 border-rule">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="font-stencil text-2xl uppercase tracking-wide">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-stencil text-2xl uppercase tracking-wide"
+        >
+          <LogoMark className="size-8 shrink-0" />
           Manifest
         </Link>
         <nav aria-label="Main" className="hidden items-center gap-3 sm:flex">

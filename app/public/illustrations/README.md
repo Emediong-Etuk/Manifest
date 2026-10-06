@@ -16,3 +16,11 @@ at 2x is fine.
 Palette: paper `#f6f1e7`, ink navy `#14213d`, container orange `#c2410c`,
 stamp green `#2f7d4f`. Illustrations should read on both the light and dark
 (`#0f1626`) backgrounds, or ship a `-dark` variant.
+
+## Logo
+
+The mark (container doors with a green "verified" stamp) is drawn in
+`src/components/logo.tsx` (theme colours, used in the header) and `src/app/icon.svg`
+(favicon; copied to `public/icon.svg` for the PWA and wallet prompts). The PNGs
+(`src/app/apple-icon.png` 180 px full-bleed, `public/icon-192.png`, `public/icon-512.png`)
+are rendered from `icon.svg`; re-render them if the mark changes.
