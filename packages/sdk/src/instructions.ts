@@ -126,8 +126,12 @@ export async function loadConsignment(
   return { address, consignment, container, tokenProgram };
 }
 
-async function holderOf(program: ManifestProgram, ticketMint: PublicKey): Promise<PublicKey> {
-  const holder = await findCargoTicketHolder(program, ticketMint);
+async function holderOf(
+  program: ManifestProgram,
+  ticketMint: PublicKey,
+  trader: PublicKey,
+): Promise<PublicKey> {
+  const holder = await findCargoTicketHolder(program, ticketMint, trader);
   if (!holder) throw new Error("No current Cargo Ticket holder (ticket burned or not minted)");
   return holder.owner;
 }
@@ -439,7 +443,7 @@ export async function claimFreightAfterGrace(
 ): Ixs {
   const ctx = await loadConsignment(program, args.consignment);
   const c = ctx.consignment;
-  const holder = await holderOf(program, c.cargoTicketMint);
+  const holder = await holderOf(program, c.cargoTicketMint, c.trader);
   const ix = await program.methods
     .claimFreightAfterGrace()
     .accountsStrict({
@@ -770,7 +774,7 @@ export async function resolveDispute(
 
   // slashBond
   const f = await program.account.forwarder.fetch(ctx.container.forwarder);
-  const holder = await holderOf(program, c.cargoTicketMint);
+  const holder = await holderOf(program, c.cargoTicketMint, c.trader);
   const bondTokenProgram = await mintTokenProgram(program.provider.connection, f.bondMint);
   const sameMint = f.bondMint.equals(c.mint);
   const holderBondTokenAccount = sameMint ? null : ata(holder, f.bondMint, bondTokenProgram);

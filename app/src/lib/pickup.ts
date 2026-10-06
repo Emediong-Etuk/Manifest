@@ -118,7 +118,7 @@ export async function verifyPickupPayload(
   if (consignmentStatus(c) !== "approved") problems.push("This shipment isn't ready for pickup.");
   const freightFunded = BigInt(c.freightEscrowed.toString()) >= BigInt(c.freightDue.toString());
   if (!freightFunded) problems.push("Freight isn't fully paid yet.");
-  const holder = await findCargoTicketHolder(program, c.cargoTicketMint);
+  const holder = await findCargoTicketHolder(program, c.cargoTicketMint, holderKey);
   if (!holder || !holder.owner.equals(holderKey))
     problems.push("This person doesn't hold the Cargo Ticket.");
 

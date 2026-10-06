@@ -70,7 +70,7 @@ function DisputeCard({
   consignment: ConsignmentAccount;
   code: string;
 }) {
-  const holder = useTicketHolder(consignment.cargoTicketMint);
+  const holder = useTicketHolder(consignment.cargoTicketMint, consignment.trader);
   const preApproval = consignmentPrevStatus(consignment) === "received";
   const reason =
     DISPUTE_REASONS[consignment.disputeReason as DisputeReason] ??
