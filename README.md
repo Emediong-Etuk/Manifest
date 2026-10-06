@@ -1,3 +1,5 @@
+<img src="app/public/icon.svg" alt="Manifest logo: a shipping container with a green verified stamp" width="72" height="72">
+
 # Manifest
 
 **Pay-on-proof escrow for traders who ship in shared containers.**
