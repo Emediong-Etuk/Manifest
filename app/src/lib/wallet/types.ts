@@ -15,6 +15,11 @@ export interface ManifestWallet {
   disconnect: () => Promise<void>;
   /** Sign and broadcast. Embedded wallets only support this combined call. */
   signAndSend: (tx: VersionedTransaction) => Promise<string>;
+  /**
+   * Sign only, when the wallet supports it (Phantom extension/app). The app then broadcasts
+   * to its own cluster, so a wallet left on another network can't send it astray.
+   */
+  signTransaction?: (tx: VersionedTransaction) => Promise<VersionedTransaction>;
   signMessage: (message: Uint8Array) => Promise<Uint8Array>;
 }
 
