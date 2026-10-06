@@ -1,53 +1,162 @@
-# Product demo script (≈2.5 minutes)
+# Product demo (≈2.5 minutes)
 
-A screen recording of the product from the user's side: one trader's shipment from booking to
-pickup, in plain language. For the code, tests and architecture, use the technical demo
-(`docs/DEMO_SCRIPT.md`). Everything is live on **devnet**; nothing on screen is mocked.
+A screen recording of Manifest from the user's side: one shipment from booking to pickup.
+Part 1 is the setup, Part 2 is what to click, and Part 3 is the voice-over, written to be
+recorded separately and laid over the video. Everything is live on devnet; nothing on screen
+is mocked. For the code, tests and architecture, use the technical demo (`docs/DEMO_SCRIPT.md`).
 
-## Setup (once, before the first take)
+## Part 1: Setup (before the first take)
 
-1. **Fresh demo state** from the repo root:
+1. From the repo root, run:
    ```bash
    pnpm --filter @manifest/scripts demo-reset
    ```
-   From the output, note the open container (**LAG-NEW**), the arrived container
+   Note three things from the output: the open container (**LAG-NEW**), the arrived container
    (**LAG-ARR**) and **Ada's pickup URL**. Run demo-reset again before every take.
-2. **Phantom (devnet)** with three accounts, as set up in `docs/DEMO_SCRIPT.md` step 2:
+2. In Phantom (devnet), have three accounts ready, as set up in `docs/DEMO_SCRIPT.md` step 2:
    **Trader** (your own, empty), **Ada** and **Eastline**.
-3. **Two browser windows side by side**, both at https://manifest-seven-tau.vercel.app:
-   - **Window A, the trader:** Phantom on **Trader**, open on the landing page, signed out.
-   - **Window B, the forwarder:** a second Chrome profile, Phantom on **Eastline**, open at
-     `/forwarder/c/<LAG-NEW>`. The landing page's **Book on …** button picks the open
-     container with the soonest cut-off; if it names a different container, open the
-     forwarder window on that one instead.
-4. A carton photo on the desktop (`scripts/demo-assets/cartons-stack.jpg` works).
-5. Close other tabs, hide bookmarks, set the browser zoom to 110–125% so text reads on video.
+3. Open two browser windows side by side at https://manifest-seven-tau.vercel.app:
+   - **Window A (trader):** Phantom on **Trader**, landing page, signed out.
+   - **Window B (forwarder):** a second Chrome profile, Phantom on **Eastline**, open at
+     `/forwarder/c/<LAG-NEW>`.
+4. Put a carton photo on the desktop (`scripts/demo-assets/cartons-stack.jpg` works).
+5. Close other tabs, hide the bookmarks bar, and zoom the browser to 110–125%.
 
-**Timing rule:** once the forwarder records the receipt, the trader has 2 minutes to approve
-before the review window lapses. Keep scenes 4 and 5 back to back.
+## Part 2: Step-by-step recording
 
-## Script
+**Scene 1: The hook (0:00–0:20)**
 
-| #   | Time      | Show                                                                                                                                                                                                                                         | Say                                                                                                                                                                                                                                      |
-| --- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 0:00–0:15 | **Window A**: landing page, slow scroll over the hero                                                                                                                                                                                        | "Small importers in Lagos pay Chinese suppliers upfront and find out weeks later, at the port, whether the goods are short, wrong or never shipped. Manifest changes the order: you pay only after you see proof."                       |
-| 2   | 0:15–0:30 | **Try it in 2 minutes** card: **Sign in** → approve in Phantom → **Get 500 test dollars** → the ✓ appears                                                                                                                                    | "I sign in with my wallet and grab some test dollars. On mainnet, this is USDC."                                                                                                                                                         |
-| 3   | 0:30–0:55 | **Book on LAG-NEW** → **Goods**: `300`, "200 phone cases" → **Next** → **Volume**: `0.25` CBM → **Next** → **Supplier**: **Use a test supplier address** → **Next** → **Summary** → **Lock $… and book** → approve. The shipment page opens. | "I book a quarter of a cubic metre in a shared container from Guangzhou to Apapa. The goods money, freight and fee go into an escrow on Solana. Not to my agent, not to the supplier. Nobody can touch it except the rules."             |
-| 4   | 0:55–1:20 | **Window B** (Eastline): refresh → the new shipment → **Goods arrived at the warehouse: record receipt** → add the photo, measured `0.22` CBM, `3` cartons → **Upload evidence and record receipt** → approve                                | "Two weeks later the cartons reach the forwarder's warehouse in China. They photograph and measure them, and the fingerprint of that evidence is written onchain, so nobody can swap the photos later."                                  |
-| 5   | 1:20–1:45 | **Window A**: the shipment page updates → the photos and the **VERIFIED** badge → **Approve goods** → **Yes, pay $300.00** → approve → the **Cargo Ticket** appears                                                                          | "Back in Lagos, I see my actual goods, and the app confirms the photos match the record onchain. Only now is my supplier paid. Unused freight comes back to me, and I get a Cargo Ticket: my right to collect these goods."              |
-| 6   | 1:45–1:55 | Scroll to **Sell goods in transit (transfer Cargo Ticket)**; don't transfer                                                                                                                                                                  | "The ticket is transferable. If I sell the goods while they're at sea, the buyer collects them."                                                                                                                                         |
-| 7   | 1:55–2:10 | **Window A**: switch Phantom to **Ada** → open Ada's pickup URL (her container has arrived). Point at **Missing, damaged or overdue? Open a dispute**; don't click                                                                           | "Here's Ada, whose container has just landed in Lagos. If anything were missing or damaged, she'd open a dispute. Every forwarder locks a guarantee onchain, and an independent multisig can refund her or pay her from that guarantee." |
-| 8   | 2:10–2:35 | **Show pickup code** → approve. **Window B**: `/forwarder/c/<LAG-ARR>` → **Pickup scanner** → **Paste a code instead** → paste → **Check code** → **Valid ticket**. **Window A**: **I've collected my goods** → **Confirm pickup** → approve | "Everything's fine, so she shows a pickup code from her wallet. The forwarder checks it against the chain, she collects her cartons, and only then is the forwarder paid their freight."                                                 |
-| 9   | 2:35–2:45 | Landing page, live stats                                                                                                                                                                                                                     | "Manifest: a letter of credit for traders too small for a bank. Pay on proof. Built on Solana."                                                                                                                                          |
+1. Window A on the landing page.
+2. Scroll slowly over the headline and the illustration. Pause on the headline.
 
-## Tips
+**Scene 2: Sign in and get money (0:20–0:35)**
 
-- **Record the voice separately** and lay it over the screen recording; it's easier than
-  clicking and talking at once. Each "Say" line fits its time slot at a calm pace.
-- **Phantom popups:** keep them on screen when you approve; they show it's a real transaction.
-- **If the faucet says you already got test dollars today:**
+1. In the **Try it in 2 minutes** card, click **Sign in** and approve in Phantom.
+2. Click **Get 500 test dollars**. Wait for the ✓.
+
+**Scene 3: Book space (0:35–1:00)**
+
+1. Click **Book on LAG-…**. If it names a container other than LAG-NEW, point Window B at
+   that container instead.
+2. **Goods:** enter `300` and "200 phone cases". Click **Next**.
+3. **Volume:** enter `0.25`. Click **Next**.
+4. **Supplier:** click **Use a test supplier address**. Click **Next**.
+5. **Summary:** pause so the breakdown is readable. Click **Lock $… and book** and approve in
+   Phantom.
+6. The shipment page opens. Pause on it.
+
+**Scene 4: The warehouse (1:00–1:25)**
+
+1. Switch to Window B (Eastline) and refresh. The new shipment appears.
+2. Click **Goods arrived at the warehouse: record receipt**.
+3. Add the carton photo, enter `0.22` for the measured volume and `3` cartons.
+4. Click **Upload evidence and record receipt** and approve in Phantom.
+
+> From here, the trader has 2 minutes to approve. Go straight to scene 5.
+
+**Scene 5: Approve and pay (1:25–1:50)**
+
+1. Switch to Window A. The shipment page updates with the photos.
+2. Hover over the **VERIFIED** badge.
+3. Click **Approve goods**, then **Yes, pay $300.00**, and approve in Phantom.
+4. The **Cargo Ticket** appears. Pause on it.
+
+**Scene 6: The ticket can be sold (1:50–2:00)**
+
+1. Scroll to **Sell goods in transit (transfer Cargo Ticket)**. Don't click it.
+
+**Scene 7: Arrival in Lagos (2:00–2:15)**
+
+1. In Window A, switch Phantom to **Ada**.
+2. Open Ada's pickup URL.
+3. Point the cursor at **Missing, damaged or overdue? Open a dispute**. Don't click it.
+
+**Scene 8: Pickup (2:15–2:35)**
+
+1. Click **Show pickup code** and approve in Phantom. Click **Can't scan? Copy the code**.
+2. Switch to Window B and open `/forwarder/c/<LAG-ARR>`.
+3. Scroll to the **Pickup scanner** section and open **Paste a code instead**. Paste the
+   code and click **Check code**. **Valid ticket** appears.
+4. Switch to Window A. Click **I've collected my goods**, then **Confirm pickup**, and approve.
+
+**Scene 9: Close (2:35–2:45)**
+
+1. Go back to the landing page and let it rest on screen.
+
+### If something goes wrong
+
+- **The faucet says you already got test dollars today:** run
   `pnpm --filter @manifest/scripts fund-wallet --address <wallet>`, then refresh.
-- **If the shipment was approved before you clicked** (the review window lapsed): run
+- **The shipment was approved before you clicked** (the 2-minute window passed): run
   demo-reset and retake from scene 3.
-- **Pickup code expired** (it's valid for 10 minutes): click **Sign a new pickup code**.
-- **Keep goods at $300 or less**, because Phantom's embedded wallets have a $1,000/day limit.
+- **The pickup code expired** (it lasts 10 minutes): click **Sign a new pickup code**.
+- **Keep goods at $300 or less.** Phantom's embedded wallets have a $1,000/day limit.
+
+## Part 3: Voice-over
+
+Record this on its own, at a relaxed pace, then lay it over the video. Each block matches a
+scene above. Words in [brackets] are notes for you, not to be read out.
+
+**Scene 1**
+
+> If you buy goods from China and sell them here in Nigeria, you already know the feeling.
+> You send your money, sometimes through an agent you've never met, and then you wait. Weeks
+> later, at the port, you finally find out if your goods are complete, if they're the wrong
+> ones, or if they were ever shipped at all.
+>
+> [If you have a real story here, yours or someone you know, tell it in one or two
+> sentences instead. A true story is the strongest hook you have.]
+>
+> I built Manifest to flip that around. You don't pay first and hope. You pay when you see
+> your goods.
+
+**Scene 2**
+
+> Let me show you. I'm a trader, and I sign in with my wallet. For this demo, I'll grab some
+> test money.
+
+**Scene 3**
+
+> I'm shipping 200 phone cases, and I only need a small slice of a shared container. I tell
+> Manifest what the goods are worth and who my supplier is.
+>
+> Now here's the important part. When I book, my money doesn't go to the supplier, and it
+> doesn't go to an agent. It's locked away, and nobody can touch it until the goods are
+> proven.
+
+**Scene 4**
+
+> A couple of weeks later, my cartons reach the warehouse in China. The shipping company
+> takes photos, measures them, counts the cartons, and records it all. Once it's recorded,
+> nobody can quietly swap the photos later.
+
+**Scene 5**
+
+> Back in Lagos, I get to see my actual goods before a single dollar reaches the supplier.
+> And Manifest checks that these are the same photos the warehouse recorded.
+>
+> They look right, so I approve. Only now does my supplier get paid. And I get this: a Cargo
+> Ticket. Think of it as my receipt, and my right to collect these goods.
+
+**Scene 6**
+
+> And if I find a buyer while my goods are still at sea, I can pass the ticket on to them,
+> and they collect the goods instead.
+
+**Scene 7**
+
+> Now meet Ada. Her container has just landed in Lagos. If anything were missing or damaged,
+> she could raise a complaint right here. Every shipping company on Manifest puts money aside
+> as a guarantee, and if they let her down, she can be paid back from it.
+
+**Scene 8**
+
+> Everything's fine, so Ada shows her pickup code. The shipping company checks it, hands
+> over her cartons, and only then do they get paid for the shipping. Everyone gets paid,
+> but only when they've done their part.
+
+**Scene 9**
+
+> Small traders have never had the protection that big importers get from their banks.
+> Manifest gives them that protection, for orders of any size. You pay when you see your
+> goods. It's built on Solana, and you can try it right now.
