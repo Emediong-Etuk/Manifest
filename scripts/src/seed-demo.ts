@@ -25,6 +25,7 @@ import { loadEnv } from "./lib/env.js";
 import {
   appUrl,
   approve,
+  arrivedShipments,
   book,
   cast,
   DAY,
@@ -188,67 +189,7 @@ let resold: PublicKey | null = null;
 if (await findContainer(c, eastline, "LAG-0930")) {
   console.log("LAG-0930 exists, skipping");
 } else {
-  const k = await openContainer(
-    c,
-    mint,
-    who.eastline,
-    "LAG-0930",
-    ["CNCAN", "NGAPP"],
-    380n,
-    DAY,
-    30 * DAY,
-  );
-  const hair = await book(c, who.eastline, k, {
-    trader: who.ada,
-    goods: 2_000n,
-    estCbmMilli: 600,
-    payee: who.supplierA,
-    description: "Hair extensions, 6 cartons",
-    evidence: ev(6, 560, "Hair extensions", 300, ["cartons-stack.jpg", "warehouse-label.jpg"]),
-  });
-  resold = await book(c, who.eastline, k, {
-    trader: who.bayo,
-    goods: 2_600n,
-    estCbmMilli: 1_400,
-    payee: who.supplierA,
-    description: "Kitchen blenders, 10 cartons",
-    evidence: ev(10, 1_350, "Kitchen blenders", 120, ["pallet-wrapped.jpg", "carton-measure.jpg"]),
-  });
-  disputed = await book(c, who.eastline, k, {
-    trader: who.chika,
-    goods: 2_500n,
-    estCbmMilli: 1_600,
-    payee: who.supplierB,
-    description: "Ladies' shoes, 15 cartons",
-    evidence: ev(15, 1_550, "Ladies' shoes", 450, [
-      "cartons-stack.jpg",
-      "carton-measure.jpg",
-      "warehouse-label.jpg",
-    ]),
-  });
-  for (const [t, s] of [
-    [who.ada, hair],
-    [who.bayo, resold],
-    [who.chika, disputed],
-  ] as const)
-    await approve(c, t, s);
-  await voyage(c, who.eastline, k, "LAG-0930", 412_130);
-  await send(
-    c,
-    "transfer Cargo Ticket (Bayo sells the blenders in transit to Dele)",
-    await ix.transferCargoTicket(p, {
-      from: who.bayo.publicKey,
-      to: who.buyer.publicKey,
-      consignment: resold,
-    }),
-    [who.bayo],
-  );
-  await send(
-    c,
-    "open_dispute (missing cartons)",
-    await ix.openDispute(p, { holder: who.chika.publicKey, consignment: disputed, reason: 3 }),
-    [who.chika],
-  );
+  ({ resold, disputed } = await arrivedShipments(c, mint, who, "LAG-0930", 412_130));
 }
 
 // --- Harbour Link Logistics (new forwarder) -----------------------------------------

@@ -364,6 +364,12 @@ not accepting new apps (see Blockers).
   container for judges: **LAG-1021** `G5F8Jpy2NrcgNZySHWiC2Wq92cMuEbW4iSGYQcUwsHnM`
   (45-day cut-off; phone cases approved, speakers received, fabric booked). LAG-1016
   (empty walkthrough container) cancelled. README, Arena draft and Blink link updated.
+- **Recording prep (Oct 6):** demo-reset now also makes a fresh arrived container (Ada's
+  pickup, resold ticket, open dispute) per take and tops up Eastline's guarantee first
+  (each reset adds $14,300 of open goods; coverage 20%). Tested on devnet: LAG-1017 (open),
+  LAG-2208, LAG-931 (arrived). DEMO_SCRIPT and rehearsal.spec use the printed pickup and
+  dispute. Fixed: Cargo Tickets showed VOID on the public RPC (holder lookup). LAG-1015
+  holds a partial staging from a failed run (left open).
 - Next for Greg: live phone check (Phantom devnet sign-in, faucet, booking, WhatsApp
   preview, Blink on dial.to); crank secrets; optional Helius key for the server RPC.
 

@@ -70,7 +70,10 @@ export function ShipmentView() {
   const container = useContainer(consignment.data?.container ?? null);
   const forwarder = useForwarder(container.data?.forwarder ?? null);
   const configAccount = useConfigAccount();
-  const holder = useTicketHolder(consignment.data?.cargoTicketMint ?? null);
+  const holder = useTicketHolder(
+    consignment.data?.cargoTicketMint ?? null,
+    consignment.data?.trader ?? null,
+  );
   const wallet = useWallet();
   const now = useNow();
 
@@ -209,7 +212,7 @@ export function ShipmentView() {
             container={k}
             consignment={c}
             holder={holderKey?.toBase58()}
-            void={!holderKey}
+            void={holder.isSuccess && !holderKey}
           />
           <p className="text-sm text-ink-muted">
             Whoever holds this ticket can collect the goods and open disputes.

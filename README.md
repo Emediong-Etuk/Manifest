@@ -26,8 +26,9 @@ Ticket** for the goods in transit. Built for the Colosseum Crypto World's Fair H
 [Run locally](#run-locally).
 
 > **Try it in 2 minutes** (devnet): open the app on your phone → **Sign in** → **Get 500
-> test dollars** (free, from the demo faucet) → **Book on LAG-1021** with $300 of goods and
+> test dollars** (free, from the demo faucet) → **Book on LAG-…** (the open container it suggests) with $300 of goods and
 > 0.25 CBM → watch your shipment's timeline. Every step is a real Solana transaction.
+> To take a shipment all the way to pickup, play both sides: [Try both sides](#try-both-sides-about-10-minutes).
 
 ![Manifest on a phone: try-it card, warehouse photos verified against the onchain hash, and the Cargo Ticket](docs/screenshots/mobile.png)
 
@@ -96,6 +97,27 @@ stateDiagram-v2
     Disputed --> Received: resolve_dismiss
     Disputed --> Compensated: resolve_slash_bond
 ```
+
+## Try both sides (about 10 minutes)
+
+A shipment moves between two people: the **trader** (the importer, on the main site) and
+the **forwarder** (the freight company, under **Forwarders**). To see the whole journey on
+your own, use two accounts in Phantom (Add account) on **Solana Devnet** (Settings →
+Developer settings → Testnet mode) and switch between them. No scripts or demo keys needed.
+
+| #   | Account       | Do this in the app                                                                                                                                                                                                                                                                                                                    | Timeline        |
+| --- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------- |
+| 1   | A (forwarder) | **Get 500 test dollars**. **Forwarders** → company name, guarantee currency mUSD (the test dollars) → **Create forwarder account**; then **Deposit** $100 as your guarantee (it covers 20%, so up to $500 of goods). **Open a container**: any code, payment currency mUSD, cut-off tomorrow, arrival in a month → **Open container** |                 |
+| 2   | B (trader)    | **Get 500 test dollars**. Open A's container from **Containers** → book $20 of goods, 0.05 CBM, **Use a test supplier address** → **Lock … and book**                                                                                                                                                                                 | Booked          |
+| 3   | A             | Console → the container → the shipment → **Goods arrived at the warehouse: record receipt**: any photo, measured CBM, cartons → **Upload evidence and record receipt**                                                                                                                                                                | At warehouse    |
+| 4   | B             | The photos show **VERIFIED**. **Approve goods** → **Yes, pay …** within 2 minutes (after that the crank approves for you). The supplier is paid and you hold the Cargo Ticket                                                                                                                                                         | Paid supplier   |
+| 5   | A             | **Close bookings** → **Mark loaded** (container number `MSCU1234566`, any file as the bill of lading)                                                                                                                                                                                                                                 | Loaded, Sailing |
+| 6   | A             | **Mark arrived at …** (the destination port)                                                                                                                                                                                                                                                                                          | Arrived         |
+| 7   | B → A → B     | B: **Show pickup code**. A: **Pickup scanner** → **Paste a code instead** → **Valid ticket**. B: **I've collected my goods** → **Confirm pickup**. Freight goes to A, the ticket is burned                                                                                                                                            | Collected       |
+
+Every click is a devnet transaction you can open on Solana Explorer from the page. Want a
+dispute instead? At step 7, B opens one from the shipment page; the Squads arbitrators
+resolve it (`docs/DEMO_SCRIPT.md` shows how).
 
 ## Why it's different
 

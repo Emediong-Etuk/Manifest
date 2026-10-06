@@ -84,11 +84,13 @@ export function useForwarder(address: PublicKey | null) {
   });
 }
 
-export function useTicketHolder(ticketMint: PublicKey | null) {
+/** Current Cargo Ticket holder; `trader` is checked first (the usual holder, cheapest read). */
+export function useTicketHolder(ticketMint: PublicKey | null, trader: PublicKey | null) {
   const live = ticketMint && !ticketMint.equals(PublicKey.default) ? ticketMint : null;
   return useQuery({
-    queryKey: ["ticketHolder", k(live)],
-    queryFn: () => (live ? findCargoTicketHolder(getManifestProgram(), live) : null),
+    queryKey: ["ticketHolder", k(live), k(trader)],
+    queryFn: () =>
+      live ? findCargoTicketHolder(getManifestProgram(), live, trader ?? undefined) : null,
     enabled: Boolean(live),
     refetchInterval: POLL,
   });
