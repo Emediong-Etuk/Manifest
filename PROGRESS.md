@@ -370,6 +370,12 @@ not accepting new apps (see Blockers).
   LAG-2208, LAG-931 (arrived). DEMO_SCRIPT and rehearsal.spec use the printed pickup and
   dispute. Fixed: Cargo Tickets showed VOID on the public RPC (holder lookup). LAG-1015
   holds a partial staging from a failed run (left open).
+- **Clean Containers page (Oct 7, Greg's request):** every open container cleared onchain:
+  unpaid bookings rejected (refunded), empty containers cancelled (Harbour LAG-2207/2208/2209
+  and a test "10" registered from the Ada key), Eastline LAG-1015/1017/1018/1021 sailed to
+  arrived (their approved shipments stay as history). One fresh open container for the demo
+  and judges: **LAG-1101** `BEb5XEiDaFVeFoxkiPvqZy9vTXqvzpoWA1raF8oyEMWX` (Eastline,
+  CNCAN→NGAPP, 45-day cut-off, empty). Launch-post Blink points at it.
 - **Crank secrets (Oct 6):** Greg added APP_URL and CRON_SECRET. The first run with them
   got Vercel's 308 "Redirecting..." (APP_URL with a trailing slash or http://), and curl
   doesn't treat a 3xx as a failure, so the run showed green without cranking. The workflow
