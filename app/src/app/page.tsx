@@ -147,7 +147,7 @@ export default function Home() {
         <div className="flex flex-col gap-5">
           <RouteLine origin="CNCAN" destination="NGAPP" large />
           <h1 className="font-stencil text-5xl uppercase leading-none tracking-wide sm:text-6xl">
-            Stop paying your China agent and praying.
+            Pay only when you see your goods.
           </h1>
           <p className="text-lg">
             Manifest holds your money until your goods are photographed and measured at the

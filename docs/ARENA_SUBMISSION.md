@@ -41,7 +41,7 @@ leave a field short rather than inflate it.
 > 3. Tap **Book on LAG-…**, enter $300 of goods and 0.25 CBM, tap **Use a test supplier
 >    address**, then **Lock … and book**.
 > 4. Your shipment page shows the timeline. To see the rest of the lifecycle, open
->    container LAG-1021 (shipments at different stages, with warehouse photos) and LAG-0930 (arrived, with a
+>    container LAG-1021 (arrived: approved shipments with warehouse photos and Cargo Tickets) and LAG-0930 (arrived, with a
 >    resold Cargo Ticket and a dispute resolved by the Squads multisig).
 >    Every status is read from the Solana program; every button sends a real devnet transaction.
 
